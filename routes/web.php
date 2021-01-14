@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\ContactController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,6 +17,9 @@ use App\Http\Controllers\EmailController;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('contact', [ContactController::class, "contact"]);
+Route::post('contact', [ContactController::class, "contactPost"])->name('contact.store');
+
 Route::get("send-email", [EmailController::class, "sendEmail"]);
 
 Route::group(['prefix' => 'admin'], function () {
