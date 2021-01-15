@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\HomeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,9 +18,11 @@ use App\Http\Controllers\ContactController;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/home', [HomeController::class, "index"]);
 Route::get('contact', [ContactController::class, "contact"]);
 Route::post('contact', [ContactController::class, "contactPost"])->name('contact.store');
 
+Route::get('mensajes_sin_leer', [ContactController::class, "mensajes_sin_leer"]);
 Route::get("send-email", [EmailController::class, "sendEmail"]);
 
 Route::group(['prefix' => 'admin'], function () {

@@ -37,4 +37,10 @@ class ContactController extends Controller
 //    });
     return back()->with('success', 'Thank you for contacting me!'); 
    }
+
+   public function mensajes_sin_leer()
+   {
+    $count = Contact::select("*")->where("estado", "=", "0")->count();
+    var_dump($count);die();
+   }
 }
