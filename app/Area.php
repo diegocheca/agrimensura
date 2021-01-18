@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Area extends Model
 {
     use SoftDeletes;
+    protected $dates = ['deleted_at'];
 }

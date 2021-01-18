@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MovimientosController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,6 +22,13 @@ Route::get('/', function () {
 Route::get('/home', [HomeController::class, "index"]);
 Route::get('contact', [ContactController::class, "contact"]);
 Route::post('contact', [ContactController::class, "contactPost"])->name('contact.store');
+
+Route::get('/movimientos/{id}', [MovimientosController::class, "traer_movimientos_para_expediente"])->name('movimientos');;
+
+// Route::get('/movimientos', function () {
+//     echo "estoy en moviemintos";
+// });
+
 
 Route::get('mensajes_sin_leer', [ContactController::class, "mensajes_sin_leer"]);
 Route::get("send-email", [EmailController::class, "sendEmail"]);
