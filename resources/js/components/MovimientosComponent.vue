@@ -16,7 +16,7 @@
                                 <div v-if="mostrar_timeline">
                                     <div v-if="mostrar_timeline_sin_datos">
                                         <div class="alert alert-warning" role="alert">
-                                        <h4>No se encontraron movimientos para este expdiente</h4>
+                                            <h4>No se encontraron movimientos para este expdiente</h4>
                                         </div>
                                     </div>
                                     <div id="timeline" v-else>
@@ -100,8 +100,33 @@
                                     </div>
                                 </div>
                                 <div v-if="mostrar_formulario_movimiento">
-                                    <p>aca va el formulario de crear movimiento</p>
-
+                                    <div class="form-group row">
+                                        <div class="form-group col-md-12">
+                                            <div class="form-group col-md-6">
+                                                <label for="exampleFormControlSelect1">Oficina destino:</label>
+                                                <select class="form-control" id="exampleFormControlSelect1">
+                                                    <option>1</option>
+                                                    <option>2</option>
+                                                    <option>3</option>
+                                                    <option>4</option>
+                                                    <option>5</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="exampleFormControlTextarea1">Comentario de moviemiento:</label>
+                                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <hr>
+                                            <div class="form-group col-md-10">
+                                            </div>
+                                            <div class="form-group col-md-2">
+                                                <button type="submit" class="btn btn-warning">Cancelar</button>
+                                                <button type="submit" class="btn btn-primary">Mover</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

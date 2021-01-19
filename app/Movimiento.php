@@ -9,10 +9,12 @@ class Movimiento extends Model
 {
     use SoftDeletes;
     protected $dates = ['deleted_at'];
+    protected $table = ['movimientos'];
     
     protected $fillable = [
         'fecha_entrada',
         'fecha_salida',
+        'comentario',
         'bandera_observacion',
         'observacion',
         'subsanacion',
