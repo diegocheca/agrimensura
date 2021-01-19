@@ -5,6 +5,9 @@ use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MovimientosController;
+use App\Http\Controllers\PDFController;
+use App\Http\Controllers\ExcelCSVController;
+ 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,12 +26,14 @@ Route::get('/home', [HomeController::class, "index"]);
 Route::get('contact', [ContactController::class, "contact"]);
 Route::post('contact', [ContactController::class, "contactPost"])->name('contact.store');
 
-Route::get('/movimientos/{id}', [MovimientosController::class, "traer_movimientos_para_expediente"])->name('movimientos');;
+Route::get('/movimientos_para_exp/{numero}', [MovimientosController::class, "traer_movimientos_para_expediente"])->name('movimientos');;
 
-// Route::get('/movimientos', function () {
-//     echo "estoy en moviemintos";
-// });
+Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
+// excel
 
+Route::get('excel-csv-file', [ExcelCSVController::class, 'index']);
+Route::post('import-excel-csv-file', [ExcelCSVController::class, 'importExcelCSV']);
+Route::get('export-excel-csv-file/{slug}', [ExcelCSVController::class, 'exportExcelCSV']);
 
 Route::get('mensajes_sin_leer', [ContactController::class, "mensajes_sin_leer"]);
 Route::get("send-email", [EmailController::class, "sendEmail"]);

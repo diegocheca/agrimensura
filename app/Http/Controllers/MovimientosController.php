@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Movimiento;
+use App\Expediente;
 
 class MovimientosController extends Controller
 {
@@ -26,11 +27,12 @@ class MovimientosController extends Controller
     {
         //
     }
-    public function traer_movimientos_para_expediente($id)
+    public function traer_movimientos_para_expediente($numero)
     {
         //
-        
-        $mov = Movimiento::select('*')->where("id_expediente", "=", $id)->get();
+        $id = Expediente::select('id')->where('numero_expediente', '=', $numero)->first();
+        //var_dump($id->id);die();
+        $mov = Movimiento::select('*')->where("id_expediente", "=", $id->id)->get();
         //var_dump($mov);die();
         return response()->json($mov);
 
