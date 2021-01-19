@@ -31,7 +31,7 @@
                                                 </svg>
                                             </div>
                                             <div class="timeline-content">
-                                                <h2>El id: {{ movimiento.id}} </h2>
+                                                <h2>El id: {{ movimiento.id}} - fecha: {{movimiento.created_at}}</h2>
                                                 <p>
                                                     con fecha de entrada: {{ movimiento.fecha_entrada }} y una observacion: {{ movimiento.observacion }}
                                                 </p>
@@ -101,31 +101,64 @@
                                 </div>
                                 <div v-if="mostrar_formulario_movimiento">
                                     <div class="form-group row">
-                                        <div class="form-group col-md-12">
-                                            <div class="form-group col-md-6">
-                                                <label for="exampleFormControlSelect1">Oficina destino:</label>
-                                                <select class="form-control" id="exampleFormControlSelect1">
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                    <option>5</option>
-                                                </select>
+                                        <form @submit="formSubmit">
+                                            <div class="form-group col-md-12">
+                                                
+                                                <div class="form-group col-md-6">
+                                                    <label for="exampleFormControlSelect1">Oficina Actual:</label>
+                                                    <input type="text" value="contable" disabled v-model="ultimo_movimiento.nombre" />
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label for="oficina_destino">Oficina destino:</label>
+                                                    <select class="form-control" id="oficina_destino" v-model="nuevo_movimiento.id_area">
+                                                        <option v-for="option in oficinas" :key="option.id" >{{ option.nombre }}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-md-11">
+                                                    <label for="exampleFormControlTextarea1">Comentario de moviemiento:</label>
+                                                    <textarea class="form-control" id="exampleFormControlTextarea1" v-model="nuevo_movimiento.comentario" rows="3"></textarea>
+                                                    <span class="limiter">{{charactersLeftcomentario}}</span>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label for="tiene_obs">Tiene Observacion?</label>
+                                                    <label for="false">No</label>
+                                                    <input type="radio" id="tiene_obs" value="false" v-model="nuevo_movimiento.bandera_observacion">
+                                                    <label for="true">Si</label>
+                                                    <input type="radio" id="tiene_obs" value="true" v-model="nuevo_movimiento.bandera_observacion">
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label for="observacion">Observacion:</label>
+                                                    <textarea class="form-control" id="observacion" rows="3" v-model="nuevo_movimiento.observacion"></textarea>
+                                                    <span class="limiter">{{charactersLeftobservacion}}</span>
+                                                </div>
+                                                
+                                                <div class="form-group col-md-6">
+                                                    <label for="subsanacion">Subsanacion de la observacion:</label>
+                                                    <textarea class="form-control" id="subsanacion" rows="3" v-model="nuevo_movimiento.subsanacion"></textarea>
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="final">Finaliza?</label>
+                                                    <label for="false">No</label>
+                                                    <input type="radio" id="final" value="false" v-model="nuevo_movimiento.tramite_finalizado">
+                                                    <label for="true">Si</label>
+                                                    <input type="radio" id="final" value="true" v-model="nuevo_movimiento.tramite_finalizado">
+                                                </div>
                                             </div>
-                                            <div class="form-group col-md-6">
-                                                <label for="exampleFormControlTextarea1">Comentario de moviemiento:</label>
-                                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                            <div class="form-group col-md-12">
+                                                <hr>
+                                                <div class="form-group col-md-10">
+                                                </div>
+                                                <div class="form-group col-md-2">
+                                                    <button type="button" class="btn btn-warning" @click="mostrar_modal=false">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary">Mover</button>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group col-md-12">
-                                            <hr>
-                                            <div class="form-group col-md-10">
-                                            </div>
-                                            <div class="form-group col-md-2">
-                                                <button type="submit" class="btn btn-warning">Cancelar</button>
-                                                <button type="submit" class="btn btn-primary">Mover</button>
-                                            </div>
-                                        </div>
+                                        </form>
+                                        <strong>Salida:</strong>
+                                        <pre>
+                                        {{output}}
+                                        </pre>
                                     </div>
                                 </div>
                             </div>
@@ -149,6 +182,22 @@ export default {
         mostrar_timeline_sin_datos: false,
         mostrar_formulario_movimiento: false,
         movimientos_del_expediente: [],
+        nuevo_movimiento: {
+            fecha_entrada: null,
+            fecha_salida: null,
+            comentario: '',
+            bandera_observacion: false,
+            observacion: '',
+            subsanacion: null,
+            id_area: null,
+            id_expdiente: null,
+            tramite_finalizado: false,
+            created_by: null
+        },
+        expdiente: [],
+        ultimo_movimiento: [],
+        oficinas: [],
+        output: ''
         }
     },
   /*created(){
@@ -158,6 +207,20 @@ export default {
       console.log(this.notas);
     })
   },*/
+  computed: {
+        charactersLeftcomentario() {
+            var char = this.nuevo_movimiento.comentario.length,
+                limit = 150;
+
+            return (limit - char) + " / " + limit + " caracteres restantes";
+        },
+        charactersLeftobservacion() {
+            var char = this.nuevo_movimiento.observacion.length,
+                limit = 150;
+
+            return (limit - char) + " / " + limit + " caracteres restantes";
+        }
+    },
   methods: {
       Mostrar_modal_function() {
         if(this.mostrar_modal == false) 
@@ -190,10 +253,53 @@ export default {
           this.mostrar_modal =true;
           this.mostrar_formulario_movimiento = true;
           this.mostrar_timeline = false;
+          axios.get('/datos_expediente/'+this.num_expediente).then(res=>{
+                this.expdiente = res.data;
+                console.log('mi expedeinte es:\n');
+                console.log(this.expdiente);
+                //busco el nombre de la oficina actual del expdiente
+                /*for (let i in this.oficinas) {
+                        if(this.oficina[i].id == "")
+                }*/
+            });
+            axios.get('/datos_ultimo_movimiento_para_exp/'+this.num_expediente).then(res=>{
+                this.ultimo_movimiento = res.data;
+                console.log('mi ultimo movimiento es:\n');
+                console.log(this.ultimo_movimiento);
+                //busco el nombre de la oficina actual del expdiente
+                /*for (let i in this.oficinas) {
+                        if(this.oficina[i].id == "")
+                }*/
+            });
+            //busco todos los nombres e id de las oficinas para el select
+            axios.get('/oficinas_para_add_mov').then(res=>{
+                this.oficinas = res.data;
+                console.log('mis oficinas son:\n');
+                console.log(this.oficinas);
+            }) 
 
             
 
-      }
+      },
+        formSubmit(e) {
+            e.preventDefault();
+            let currentObj = this.nuevo_movimiento;
+            axios.post('/crear_movimiento', {
+                comentario: this.nuevo_movimiento.comentario,
+                bandera_observacion: this.nuevo_movimiento.bandera_observacion,
+                observacion: this.nuevo_movimiento.observacion,
+                subsanacion: this.nuevo_movimiento.subsanacion,
+                id_area: this.nuevo_movimiento.id_area,
+                id_expdiente: this.expdiente.id,
+                tramite_finalizado: this.nuevo_movimiento.tramite_finalizado
+            })
+            .then(function (response) {
+                currentObj.output = response.data;
+            })
+            .catch(function (error) {
+                currentObj.output = error;
+            });
+        }
   },
     
 }

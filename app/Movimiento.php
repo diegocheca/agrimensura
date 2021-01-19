@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Movimiento extends Model
 {
     use SoftDeletes;
+    protected $table = 'movimientos';
+
     protected $dates = ['deleted_at'];
-    protected $table = ['movimientos'];
+    
     
     protected $fillable = [
         'fecha_entrada',
@@ -21,7 +23,8 @@ class Movimiento extends Model
         'id_area',
         'id_expediente',
         'tramite_finalizado',
-        'created_by'
+        'created_by',
+        'created_at',
 
     ];
     
