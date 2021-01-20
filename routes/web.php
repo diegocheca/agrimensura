@@ -34,6 +34,8 @@ Route::get('/datos_expediente/{num_exp}', [MovimientosController::class, "traer_
 Route::get('/datos_ultimo_movimiento_para_exp/{num_exp}', [MovimientosController::class, "traer_ultimo_mov_exp"])->name('datos_ultimo_mov');
 Route::post('/crear_movimiento', [MovimientosController::class, "crear_movimiento_desde_component"])->name('crear-movimiento');
 
+Route::get('/pruebafecha', [MovimientosController::class, "probando_la_fecha"])->name('prueba-fecha');
+
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 // excel
 

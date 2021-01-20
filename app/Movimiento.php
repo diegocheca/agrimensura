@@ -10,7 +10,7 @@ class Movimiento extends Model
     use SoftDeletes;
     protected $table = 'movimientos';
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'fecha_entrada', 'fecha_salida','created_at'];
     
     
     protected $fillable = [

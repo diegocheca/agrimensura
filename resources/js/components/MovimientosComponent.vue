@@ -20,7 +20,8 @@
                                         </div>
                                     </div>
                                     <div id="timeline" v-else>
-                                        <div v-for="movimiento in movimientos_del_expediente" :key="movimiento.id" class="timeline-item">
+                                        <div v-for="movimiento in movimientos_del_expediente" :key="movimiento.id" class="timeline-item"  >
+                                            {{bandera_derecha}}
                                             <div class="timeline-icon">
                                                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="21px" height="20px" viewBox="0 0 21 20" enable-background="new 0 0 21 20" xml:space="preserve">
                                                 <path fill="#FFFFFF" d="M19.998,6.766l-5.759-0.544c-0.362-0.032-0.676-0.264-0.822-0.61l-2.064-4.999
@@ -30,8 +31,15 @@
                                                     c-0.081-0.365,0.035-0.729,0.313-0.975l4.34-3.811C21.219,7.921,20.855,6.848,19.998,6.766z"/>
                                                 </svg>
                                             </div>
-                                            <div class="timeline-content">
-                                                <h2>El id: {{ movimiento.id}} - fecha: {{movimiento.created_at}}</h2>
+                                            <div v-if="comprobar_bandera" class="timeline-content">
+                                                <h2>El id: {{ movimiento.id}} - fecha: {{ since(movimiento.created_at) }}</h2>
+                                                <p>
+                                                    con fecha de entrada: {{ movimiento.fecha_entrada }} y una observacion: {{ movimiento.observacion }}
+                                                </p>
+                                                <a href="#" class="btn">mas datos</a>
+                                            </div>
+                                            <div v-else class="timeline-content right">
+                                                <h2>El id: {{ movimiento.id}} - fecha: {{ since(movimiento.created_at) }}</h2>
                                                 <p>
                                                     con fecha de entrada: {{ movimiento.fecha_entrada }} y una observacion: {{ movimiento.observacion }}
                                                 </p>
@@ -49,7 +57,7 @@
                                                 </svg>
                                             </div>
                                             <div class="timeline-content">
-                                                <h2>LOREM IPSUM DOLOR</h2>
+                                                <h2>LOREM IPSUM DOLOR {{ since("2021-01-18 13:10:45") }}</h2>
                                                 <p>
                                                     Lorem ipsum dolor sit amet, consectetur adipisicing elit. 
                                                     Atque, facilis quo maiores magnam modi ab libero praesentium blanditiis.
@@ -111,40 +119,80 @@
                                                 <div class="form-group col-md-6">
                                                     <label for="oficina_destino">Oficina destino:</label>
                                                     <select class="form-control" id="oficina_destino" v-model="nuevo_movimiento.id_area">
-                                                        <option v-for="option in oficinas" :key="option.id" >{{ option.nombre }}</option>
+                                                        <option v-for="option in oficinas" :key="option.id" v-bind:value="option.id">{{ option.nombre }}</option>
                                                     </select>
                                                 </div>
-                                                <div class="form-group col-md-11">
+                                                <hr>
+                                            </div>
+                                            <hr>
+                                            <div class="form-group col-md-12">
+                                                <div class="form-group col-md-12">
                                                     <label for="exampleFormControlTextarea1">Comentario de moviemiento:</label>
                                                     <textarea class="form-control" id="exampleFormControlTextarea1" v-model="nuevo_movimiento.comentario" rows="3"></textarea>
                                                     <span class="limiter">{{charactersLeftcomentario}}</span>
                                                 </div>
-                                                <div class="form-group col-md-6">
-                                                    <label for="tiene_obs">Tiene Observacion?</label>
-                                                    <label for="false">No</label>
-                                                    <input type="radio" id="tiene_obs" value="false" v-model="nuevo_movimiento.bandera_observacion">
-                                                    <label for="true">Si</label>
-                                                    <input type="radio" id="tiene_obs" value="true" v-model="nuevo_movimiento.bandera_observacion">
+                                            </div>
+                                            <hr>
+                                            <div class="form-group col-md-12">
+                                                <div class="form-group col-md-4">
+                                                    <!-- <p>Tiene Obsercacion?</p>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <label for="false" class="custom-control-label" >No, sin observacion</label>
+                                                        <input type="radio" id="tiene_obs" value="false" class="custom-control-input" v-model="nuevo_movimiento.bandera_observacion">
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <label for="true" class="custom-control-label">Si, tiene observacion</label>
+                                                        <input type="radio" id="tiene_obs" value="true" class="custom-control-input" v-model="nuevo_movimiento.bandera_observacion">
+                                                    </div> -->
+                                                    <label class="control-label" for="name">Tiene Observacion?</label>
+                                                    <div class='checkbox-ios'>
+                                                        <input class='checkbox-ios__toggle' id='checkboxQuestion' name='checkboxQuestion' type='checkbox' v-model="nuevo_movimiento.bandera_observacion">
+                                                            <label class='checkbox-ios__label' for='checkboxQuestion'>
+                                                            <span class='checkbox-ios__value left'>No tiene</span>
+                                                            <span class='checkbox-ios__value right'>Si tiene</span>
+                                                            </label>
+                                                        </input>
+                                                    </div>
                                                 </div>
-                                                <div class="form-group col-md-6">
-                                                    <label for="observacion">Observacion:</label>
-                                                    <textarea class="form-control" id="observacion" rows="3" v-model="nuevo_movimiento.observacion"></textarea>
-                                                    <span class="limiter">{{charactersLeftobservacion}}</span>
-                                                </div>
-                                                
-                                                <div class="form-group col-md-6">
+                                                <transition name="slide-fade">
+                                                    <div class="form-group col-md-8" v-if="nuevo_movimiento.bandera_observacion">
+                                                        <label for="observacion">Observacion:</label>
+                                                        <textarea class="form-control" id="observacion" rows="3" v-model="nuevo_movimiento.observacion"></textarea>
+                                                        <span class="limiter">{{charactersLeftobservacion}}</span>
+                                                    </div>
+                                                </transition>
+                                            </div>
+                                            <hr>
+                                                <!-- <div class="form-group col-md-6">
                                                     <label for="subsanacion">Subsanacion de la observacion:</label>
                                                     <textarea class="form-control" id="subsanacion" rows="3" v-model="nuevo_movimiento.subsanacion"></textarea>
+                                                </div> -->
+                                            <div class="form-group col-md-12">
+                                                <div class="form-group col-md-4">
+                                                    <label for="checkboxQuestionAlert">Finaliza?</label>
+                                                    <div class='checkbox-ios checkbox-ios--alert'>
+                                                        <input class='checkbox-ios__toggle' id='checkboxQuestionAlert' name='checkboxQuestionAlert' type='checkbox' v-model="nuevo_movimiento.tramite_finalizado">
+                                                            <label class='checkbox-ios__label' for='checkboxQuestionAlert'>
+                                                            <span class='checkbox-ios__value left'>No</span>
+                                                            <span class='checkbox-ios__value right'>Si</span>
+                                                            </label>
+                                                        </input>
+                                                    </div>
                                                 </div>
-
-                                                <div class="form-group col-md-6">
-                                                    <label for="final">Finaliza?</label>
+                                                <transition name="slide-fade">
+                                                    <div class="form-group col-md-8" v-if="nuevo_movimiento.tramite_finalizado">
+                                                        <div class="alert alert-warning">
+                                                        <strong>Cuidado!</strong> Esta terminando este expdiente con este ultimo movimiento.
+                                                        </div>
+                                                    </div>
+                                                </transition>
+                                                    <!-- <label for="final">Finaliza?</label>
                                                     <label for="false">No</label>
                                                     <input type="radio" id="final" value="false" v-model="nuevo_movimiento.tramite_finalizado">
                                                     <label for="true">Si</label>
-                                                    <input type="radio" id="final" value="true" v-model="nuevo_movimiento.tramite_finalizado">
-                                                </div>
+                                                    <input type="radio" id="final" value="true" v-model="nuevo_movimiento.tramite_finalizado"> -->
                                             </div>
+                                            <hr>
                                             <div class="form-group col-md-12">
                                                 <hr>
                                                 <div class="form-group col-md-10">
@@ -155,10 +203,6 @@
                                                 </div>
                                             </div>
                                         </form>
-                                        <strong>Salida:</strong>
-                                        <pre>
-                                        {{output}}
-                                        </pre>
                                     </div>
                                 </div>
                             </div>
@@ -173,11 +217,16 @@
     </div>
 </template>
 <script>
+import moment from 'moment'
+import toastr from 'toastr'
+moment.locale('es');
 export default {
     props: ['num_expediente'],
+    
     data() {
         return {
         mostrar_modal: false,
+        bandera_derecha: true,
         mostrar_timeline: false,
         mostrar_timeline_sin_datos: false,
         mostrar_formulario_movimiento: false,
@@ -194,6 +243,7 @@ export default {
             tramite_finalizado: false,
             created_by: null
         },
+        prueba: false,
         expdiente: [],
         ultimo_movimiento: [],
         oficinas: [],
@@ -220,8 +270,26 @@ export default {
 
             return (limit - char) + " / " + limit + " caracteres restantes";
         }
+        
     },
   methods: {
+      comprobar_bandera(){
+        if(this.bandera_derecha==true)
+        {
+            this.bandera_derecha= false;
+            return true;
+        }
+            
+        else
+        {
+            this.bandera_derecha= true;
+            return false;
+        }
+            
+      },
+      since(d){
+          return moment(d).fromNow();
+      },
       Mostrar_modal_function() {
         if(this.mostrar_modal == false) 
             this.mostrar_modal =true;
@@ -294,17 +362,139 @@ export default {
                 tramite_finalizado: this.nuevo_movimiento.tramite_finalizado
             })
             .then(function (response) {
-                currentObj.output = response.data;
+                console.log(response.data);
+                if(response.data == 'ok')
+                {
+                    console.log("se guardo correctamente");
+                    //limpiar todo el
+                    /*this.nuevo_movimiento.comentario='';
+                    this.nuevo_movimiento.bandera_observacion=false;
+                    this.nuevo_movimiento.observacion='';
+                    this.nuevo_movimiento.subsanacion='';
+                    this.nuevo_movimiento.id_area=1;
+                    this.expdiente.id=1;
+                    this.nuevo_movimiento.tramite_finalizado=false;
+                    this.mostrar_modal =false;*/
+                    
+                    
+                    toastr.success('Se creo el nuevo movimiento correctamente');
+                    
+                }
+                
+
             })
             .catch(function (error) {
                 currentObj.output = error;
+                toastr.error('hubo un error');
             });
+            this.nuevo_movimiento.comentario='';
+            this.nuevo_movimiento.bandera_observacion=false;
+            this.nuevo_movimiento.observacion='';
+            this.nuevo_movimiento.subsanacion='';
+            this.nuevo_movimiento.id_area=1;
+            this.expdiente.id=1;
+            this.nuevo_movimiento.tramite_finalizado=false;
+            this.mostrar_modal = false;
         }
   },
     
 }
 </script>
 <style scoped>
+.fade-enter-active, .fade-leave-active {
+        transition: opacity .5s;
+        }
+        .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+        opacity: 0.5;
+    }
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
+
+
+
+.clearfix:after, .checkbox-ios:after {
+  content: "";
+  display: table;
+  clear: both;
+  height: 0;
+  visibility: hidden;
+}
+
+.checkbox-ios {
+  width: 35%;
+  margin: 0 auto;
+  margin-bottom: 2px;
+}
+.checkbox-ios__toggle {
+  display: none;
+}
+.checkbox-ios__toggle + .checkbox-ios__label {
+  display: block;
+  position: relative;
+  transition: 0.3s;
+  border-radius: 50px;
+  background-color: #4e4e4e;
+  height: 30px;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+.checkbox-ios__toggle + .checkbox-ios__label:before {
+  transition: 0.3s;
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 50%;
+  background-color: #fff;
+  width: 20px;
+  height: 20px;
+  top: 5px;
+  left: 5px;
+}
+.checkbox-ios__value {
+  display: block;
+  float: left;
+  width: 50%;
+  font-size: 11px;
+  text-align: center;
+  margin-top: 35px;
+  letter-spacing: 1px;
+  line-height: 1.5;
+}
+.checkbox-ios__value.left {
+  text-align: left;
+  font-weight: bold;
+}
+.checkbox-ios__value.right {
+  text-align: right;
+}
+.checkbox-ios__toggle:checked + .checkbox-ios__label {
+  background-color: #2cc524;
+}
+.checkbox-ios__toggle:checked + .checkbox-ios__label:before {
+  left: calc(100% - 20px - 5px);
+}
+.checkbox-ios__toggle:checked + .checkbox-ios__label .right {
+  font-weight: bold;
+}
+.checkbox-ios__toggle:checked + .checkbox-ios__label .left {
+  font-weight: normal;
+}
+.checkbox-ios--blue .checkbox-ios__toggle:checked + .checkbox-ios__label {
+  background-color: #2a9db3;
+}
+.checkbox-ios--alert .checkbox-ios__toggle:checked + .checkbox-ios__label {
+  background-color: #cf201b;
+}
 #timeline .timeline-item:after, #timeline .timeline-item:before {
     content: "";
     display: block;
@@ -470,5 +660,6 @@ export default {
     #timeline .timeline-item .timeline-icon {
         left: 0;
     }
+        
     }
 </style>
