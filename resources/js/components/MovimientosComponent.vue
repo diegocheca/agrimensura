@@ -10,41 +10,38 @@
                                     <button type="button" class="close" @click="mostrar_modal=false">
                                     <span aria-hidden="true">&times;</span>
                                     </button>
-                                    <h4 class="modal-title">Estos son los movimientos del expdiente numero: {{ num_expediente }}</h4>
+                                    <h4 class="modal-title">Estos son los movimientos del expediente numero: <a :href="url_para_ver_expediente(num_expediente)">{{ num_expediente }}</a>  </h4>
                                 </div>
                                 <div class="modal-body">
                                 <div v-if="mostrar_timeline">
                                     <div v-if="mostrar_timeline_sin_datos">
                                         <div class="alert alert-warning" role="alert">
-                                            <h4>No se encontraron movimientos para este expdiente</h4>
+                                            <h4>No se encontraron movimientos para este expediente</h4>
                                         </div>
                                     </div>
                                     <div id="timeline" v-else>
                                         <div v-for="movimiento in movimientos_del_expediente" :key="movimiento.id" class="timeline-item"  >
-                                            {{bandera_derecha}}
                                             <div class="timeline-icon">
+                                                <a :href="url_para_ver_movimiento(movimiento.id)">
                                                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="21px" height="20px" viewBox="0 0 21 20" enable-background="new 0 0 21 20" xml:space="preserve">
-                                                <path fill="#FFFFFF" d="M19.998,6.766l-5.759-0.544c-0.362-0.032-0.676-0.264-0.822-0.61l-2.064-4.999
-                                                    c-0.329-0.825-1.5-0.825-1.83,0L7.476,5.611c-0.132,0.346-0.462,0.578-0.824,0.61L0.894,6.766C0.035,6.848-0.312,7.921,0.333,8.499
-                                                    l4.338,3.811c0.279,0.246,0.395,0.609,0.314,0.975l-1.304,5.345c-0.199,0.842,0.708,1.534,1.468,1.089l4.801-2.822
-                                                    c0.313-0.181,0.695-0.181,1.006,0l4.803,2.822c0.759,0.445,1.666-0.23,1.468-1.089l-1.288-5.345
-                                                    c-0.081-0.365,0.035-0.729,0.313-0.975l4.34-3.811C21.219,7.921,20.855,6.848,19.998,6.766z"/>
+                                                    <path d="M12.319,5.792L8.836,2.328C8.589,2.08,8.269,2.295,8.269,2.573v1.534C8.115,4.091,7.937,4.084,7.783,4.084c-2.592,0-4.7,2.097-4.7,4.676c0,1.749,0.968,3.337,2.528,4.146c0.352,0.194,0.651-0.257,0.424-0.529c-0.415-0.492-0.643-1.118-0.643-1.762c0-1.514,1.261-2.747,2.787-2.747c0.029,0,0.06,0,0.09,0.002v1.632c0,0.335,0.378,0.435,0.568,0.245l3.483-3.464C12.455,6.147,12.455,5.928,12.319,5.792 M8.938,8.67V7.554c0-0.411-0.528-0.377-0.781-0.377c-1.906,0-3.457,1.542-3.457,3.438c0,0.271,0.033,0.542,0.097,0.805C4.149,10.7,3.775,9.762,3.775,8.76c0-2.197,1.798-3.985,4.008-3.985c0.251,0,0.501,0.023,0.744,0.069c0.212,0.039,0.412-0.124,0.412-0.34v-1.1l2.646,2.633L8.938,8.67z M14.389,7.107c-0.34-0.18-0.662,0.244-0.424,0.529c0.416,0.493,0.644,1.118,0.644,1.762c0,1.515-1.272,2.747-2.798,2.747c-0.029,0-0.061,0-0.089-0.002v-1.631c0-0.354-0.382-0.419-0.558-0.246l-3.482,3.465c-0.136,0.136-0.136,0.355,0,0.49l3.482,3.465c0.189,0.186,0.568,0.096,0.568-0.245v-1.533c0.153,0.016,0.331,0.022,0.484,0.022c2.592,0,4.7-2.098,4.7-4.677C16.917,9.506,15.948,7.917,14.389,7.107 M12.217,15.238c-0.251,0-0.501-0.022-0.743-0.069c-0.212-0.039-0.411,0.125-0.411,0.341v1.101l-2.646-2.634l2.646-2.633v1.116c0,0.174,0.126,0.318,0.295,0.343c0.158,0.024,0.318,0.034,0.486,0.034c1.905,0,3.456-1.542,3.456-3.438c0-0.271-0.032-0.541-0.097-0.804c0.648,0.719,1.022,1.659,1.022,2.66C16.226,13.451,14.428,15.238,12.217,15.238"></path>
                                                 </svg>
+                                                </a>
                                             </div>
-                                            <div v-if="comprobar_bandera" class="timeline-content">
-                                                <h2>El id: {{ movimiento.id}} - fecha: {{ since(movimiento.created_at) }}</h2>
+                                            <div v-bind:class="test(movimiento.id)" >
+                                                <h2>Mov.: {{ movimiento.id}} <a :href="url_para_ver_movimiento(movimiento.id)">(ver)</a>  * {{ since(movimiento.created_at) }}</h2>
                                                 <p>
-                                                    con fecha de entrada: {{ movimiento.fecha_entrada }} y una observacion: {{ movimiento.observacion }}
-                                                </p>
-                                                <a href="#" class="btn">mas datos</a>
+                                                    El Movimiento {{ movimiento.id}} tiene fecha de entrada: <strong> {{ formatear_fecha(movimiento.fecha_entrada)  }} </strong> y fecha de salida <strong> {{ formatear_fecha(movimiento.fecha_salida) }}</strong>, contabilizando un total de: <strong> {{calcular_direfencia_de_dias(movimiento.fecha_entrada, movimiento.fecha_salida )}}</strong></p> 
+                                                <p v-if="movimiento.bandera_observacion"> Este movmiento <strong>Si</strong> posee una observacion: {{ movimiento.observacion }} </p>
+                                                <p v-else> Este movmiento <strong>No</strong> posee una observacion</p>
                                             </div>
-                                            <div v-else class="timeline-content right">
-                                                <h2>El id: {{ movimiento.id}} - fecha: {{ since(movimiento.created_at) }}</h2>
+                                            <!-- <div v-else class="timeline-content right">
+                                                <h2>Mov.: {{ movimiento.id}} <a :href="url_para_ver_movimiento(movimiento.id)">(ver)</a>  * {{ since(movimiento.created_at) }}</h2>
                                                 <p>
-                                                    con fecha de entrada: {{ movimiento.fecha_entrada }} y una observacion: {{ movimiento.observacion }}
-                                                </p>
-                                                <a href="#" class="btn">mas datos</a>
-                                            </div>
+                                                    El Movimiento {{ movimiento.id}} tiene fecha de entrada: <strong> {{ formatear_fecha(movimiento.fecha_entrada)  }} </strong> y fecha de salida <strong> {{ formatear_fecha(movimiento.fecha_salida) }}</strong>, contabilizando un total de: <strong> {{calcular_direfencia_de_dias(movimiento.fecha_entrada, movimiento.fecha_salida )}}</strong></p> 
+                                                <p v-if="movimiento.bandera_observacion"> Este movmiento <strong>Si</strong> posee una observacion: {{ movimiento.observacion }} </p>
+                                                <p v-else> Este movmiento <strong>No</strong> posee una observacion</p>
+                                            </div> -->
                                         </div>
                                         <div class="timeline-item">
                                             <div class="timeline-icon">
@@ -182,7 +179,7 @@
                                                 <transition name="slide-fade">
                                                     <div class="form-group col-md-8" v-if="nuevo_movimiento.tramite_finalizado">
                                                         <div class="alert alert-warning">
-                                                        <strong>Cuidado!</strong> Esta terminando este expdiente con este ultimo movimiento.
+                                                        <strong>Cuidado!</strong> Esta terminando este expediente con este ultimo movimiento.
                                                         </div>
                                                     </div>
                                                 </transition>
@@ -213,7 +210,6 @@
         </div>
         <button id="ver-movimientos" @click="mostrar_ver_movimientos" class="btn btn-primary"> ver Mov</button>
         <button id="mover" @click="mostrar_mover_expediente" class="btn btn-success"> Mover</button>
-        <!-- <button type="button" @click="Mostrar_modal_function"  id="show-modal" >MovimientosVUE</button> -->
     </div>
 </template>
 <script>
@@ -221,12 +217,13 @@ import moment from 'moment'
 import toastr from 'toastr'
 moment.locale('es');
 export default {
-    props: ['num_expediente'],
+    props: ['num_expediente', 'link_sis'],
     
     data() {
         return {
         mostrar_modal: false,
-        bandera_derecha: true,
+        url: '',
+        derecha: true,
         mostrar_timeline: false,
         mostrar_timeline_sin_datos: false,
         mostrar_formulario_movimiento: false,
@@ -270,31 +267,10 @@ export default {
 
             return (limit - char) + " / " + limit + " caracteres restantes";
         }
-        
     },
   methods: {
-      comprobar_bandera(){
-        if(this.bandera_derecha==true)
-        {
-            this.bandera_derecha= false;
-            return true;
-        }
-            
-        else
-        {
-            this.bandera_derecha= true;
-            return false;
-        }
-            
-      },
       since(d){
           return moment(d).fromNow();
-      },
-      Mostrar_modal_function() {
-        if(this.mostrar_modal == false) 
-            this.mostrar_modal =true;
-        else this.mostrar_modal =false;
-        alert(this.num_expediente);
       },
       mostrar_ver_movimientos() {
         if(this.mostrar_modal == false)
@@ -395,7 +371,34 @@ export default {
             this.expdiente.id=1;
             this.nuevo_movimiento.tramite_finalizado=false;
             this.mostrar_modal = false;
-        }
+        },
+        url_para_ver_movimiento(numero) {
+            return this.link_sis + '/movimientos/'+ numero;
+        },
+        url_para_ver_expediente(numero) {
+            return this.link_sis + '/expedientes/'+ numero;
+        },
+        calcular_direfencia_de_dias(d_inicio, d_fin){
+            var fecha1 = moment(d_inicio).format('MM/DD/YYYY');
+            var fecha1 = moment(fecha1.toString());
+            var fecha2 = moment(new Date(d_fin)).format('MM/DD/YYYY');
+            var fecha2 = moment(fecha2.toString());
+            //var from = moment(d_inicio, 'DD/MM/YYY');
+            //var to = moment(d_fin, 'DD/MM/YYY');
+            console.log(fecha2.diff(fecha1, 'days') + ' dias de diferencia');
+            return (fecha2.diff(fecha1, 'days') + ' dias de diferencia');
+            //return ( '  4 dias de diferencia');
+            
+        },
+        formatear_fecha (fecha_a_formatear){
+            return moment(fecha_a_formatear).format('DD/MM/YYYY');
+        },
+        test(result) {
+            if (result%2==0)
+                return 'timeline-content';
+            else
+                return 'timeline-content right';
+        },
   },
     
 }
@@ -554,7 +557,7 @@ export default {
     content: "";
     width: 3px;
     height: 100%;
-    background: #ee4d4d;
+    background: #2EF792;
     left: 50%;
     top: 0;
     position: absolute;
@@ -570,7 +573,7 @@ export default {
     position: relative;
     }
     #timeline .timeline-item .timeline-icon {
-    background: #ee4d4d;
+    background: #2EF792;
     width: 50px;
     height: 50px;
     position: absolute;
@@ -590,7 +593,7 @@ export default {
     }
     #timeline .timeline-item .timeline-content {
     width: 45%;
-    background: #fff;
+    background: #ECF5F0;
     padding: 20px;
     -webkit-box-shadow: 0 3px 0 rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 0 3px 0 rgba(0, 0, 0, 0.1);
@@ -607,8 +610,8 @@ export default {
     }
     #timeline .timeline-item .timeline-content h2 {
     padding: 15px;
-    background: #ee4d4d;
-    color: #fff;
+    background: #2EF792;
+    color: #000;
     margin: -20px -20px 0 -20px;
     font-weight: 300;
     -webkit-border-radius: 3px 3px 0 0;
@@ -625,7 +628,7 @@ export default {
     height: 0;
     border-top: 7px solid transparent;
     border-bottom: 7px solid transparent;
-    border-left: 7px solid #ee4d4d;
+    border-left: 7px solid #3C9C67;
     }
     #timeline .timeline-item .timeline-content.right {
     float: right;
@@ -635,7 +638,7 @@ export default {
     right: 45%;
     left: inherit;
     border-left: 0;
-    border-right: 7px solid #ee4d4d;
+    border-right: 7px solid #3C9C67;
     }
 
     @media screen and (max-width: 768px) {
@@ -655,7 +658,7 @@ export default {
         left: 10%;
         margin-left: -6px;
         border-left: 0;
-        border-right: 7px solid #ee4d4d;
+        border-right: 7px solid #3C9C67;
     }
     #timeline .timeline-item .timeline-icon {
         left: 0;
