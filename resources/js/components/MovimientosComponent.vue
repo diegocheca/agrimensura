@@ -43,7 +43,7 @@
                                                 <p v-else> Este movmiento <strong>No</strong> posee una observacion</p>
                                             </div> -->
                                         </div>
-                                        <div class="timeline-item">
+                                        <!-- <div class="timeline-item">
                                             <div class="timeline-icon">
                                                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="21px" height="20px" viewBox="0 0 21 20" enable-background="new 0 0 21 20" xml:space="preserve">
                                                 <path fill="#FFFFFF" d="M19.998,6.766l-5.759-0.544c-0.362-0.032-0.676-0.264-0.822-0.61l-2.064-4.999
@@ -61,8 +61,8 @@
                                                 </p>
                                                 <a href="#" class="btn">button</a>
                                             </div>
-                                        </div>
-                                        <div class="timeline-item">
+                                        </div> -->
+                                        <!-- <div class="timeline-item">
                                             <div class="timeline-icon">
                                                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="21px" height="20px" viewBox="0 0 21 20" enable-background="new 0 0 21 20" xml:space="preserve">
                                                 <g>
@@ -82,8 +82,8 @@
                                                 </p>
                                                 <a href="#" class="btn">button</a>
                                             </div>
-                                        </div>
-                                        <div class="timeline-item">
+                                        </div> -->
+                                        <!-- <div class="timeline-item">
                                             <div class="timeline-icon">
                                                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="21px" height="20px" viewBox="0 0 21 20" enable-background="new 0 0 21 20" xml:space="preserve">
                                                     <path fill="#FFFFFF" d="M19.998,6.766l-5.759-0.544c-0.362-0.032-0.676-0.264-0.822-0.61l-2.064-4.999
@@ -100,7 +100,7 @@
                                                 </p>
                                                 <a href="#" class="btn">button</a>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         </div>
                                     </div>
                                 </div>

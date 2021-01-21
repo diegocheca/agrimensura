@@ -8,6 +8,7 @@ use App\Expediente;
 use App\Area;
 use App\Persona;
 use Carbon\Carbon;
+use Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MovimientoNuevoEmail;
 
@@ -85,6 +86,17 @@ class MovimientosController extends Controller
         return response()->json($ultimo_movimiento);
         
     }
+    
+    public function traer_datos_creado_exp($num_exp){
+        $expediente = Expediente::select('*')->where('numero_expediente', '=', $num_exp)->first();
+        
+        $persona = Persona::select('*')->where('id','=', $expediente->id_persona)->first();
+        //$expediente = Expediente::join('movimientos', 'movimientos.id_area', '=', 'expedientes.')select('*')->where('numero_expediente', '=', $num_exp)->first();
+        //var_dump($persona);die();
+
+        return response()->json($persona);
+        
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -154,6 +166,23 @@ class MovimientosController extends Controller
 
        // return response()->json([$request->all()]);
     }
+    //es llamada desde un modal de vuejs
+    public function recibir_exp_por_movimiento(Request $request)
+    {
+        //
+        $moviento_a_actualizar = Movimiento::find($request->movimiento_id);
+        $moviento_a_actualizar->confirmado = 1;
+        $moviento_a_actualizar->fecha_confirmacion = date("Y-m-d H:i:s");
+        $moviento_a_actualizar->quien_confirmacion = 1;
+        $moviento_a_actualizar->comentario_confirmacion = null;
+        $resultado_update = $moviento_a_actualizar->save();
+        if($resultado_update)
+            return response()->json("ok");
+        else
+            return response()->json("mal");
+
+    }
+
     /**
      * Display the specified resource.
      *
@@ -187,6 +216,8 @@ class MovimientosController extends Controller
     {
         //
     }
+    
+    
 
     /**
      * Remove the specified resource from storage.
