@@ -10,10 +10,14 @@
                                     <button type="button" class="close" @click="mostrar_modal=false">
                                     <span aria-hidden="true">&times;</span>
                                     </button>
-                                    <h4 class="modal-title">Estos son los movimientos del expediente numero: <a :href="url_para_ver_expediente(num_expediente)">{{ num_expediente }}</a>  </h4>
+                                    <h4 class="modal-title">Estos son los movimientos del expediente numero: <a :href="url_para_ver_expediente(num_expediente)" target="_blank">{{ num_expediente }}</a>  </h4>
                                 </div>
                                 <div class="modal-body">
+                                
                                 <div v-if="mostrar_timeline">
+                                    <!--botones de accion-->
+                                    <button type="button" class="btn btn-warning" @click="mostrar_modal=false">Cancelar</button>
+                                    <a :href="url_para_ver_expediente(num_expediente)" target="_blank"><button type="button" class="btn btn-secondary">Ver Expediente</button></a>
                                     <div v-if="mostrar_timeline_sin_datos">
                                         <div class="alert alert-warning" role="alert">
                                             <h4>No se encontraron movimientos para este expediente</h4>
@@ -189,6 +193,7 @@
                                                     <label for="true">Si</label>
                                                     <input type="radio" id="final" value="true" v-model="nuevo_movimiento.tramite_finalizado"> -->
                                             </div>
+                                           
                                             <hr>
                                             <div class="form-group col-md-12">
                                                 <hr>
@@ -238,7 +243,9 @@ export default {
             id_area: null,
             id_expdiente: null,
             tramite_finalizado: false,
-            created_by: null
+            created_by: null,
+            bandera_comentario_recibo: false,
+            comentario_confirmacion:''
         },
         prueba: false,
         expdiente: [],
@@ -267,6 +274,7 @@ export default {
 
             return (limit - char) + " / " + limit + " caracteres restantes";
         }
+
     },
   methods: {
       since(d){
@@ -281,6 +289,7 @@ export default {
                 console.log('mis datos son:\n');
                 console.log(this.movimientos_del_expediente.length);
                 this.mostrar_timeline = true;
+                this.mostrar_formulario_movimiento=false;
                 if(this.movimientos_del_expediente.length != 0)
                 {
                     this.mostrar_timeline_sin_datos = false;
@@ -376,7 +385,7 @@ export default {
             return this.link_sis + '/movimientos/'+ numero;
         },
         url_para_ver_expediente(numero) {
-            return this.link_sis + '/expedientes/'+ numero;
+            return this.link_sis + '/expedientes_por_num/'+ numero;
         },
         calcular_direfencia_de_dias(d_inicio, d_fin){
             var fecha1 = moment(d_inicio).format('MM/DD/YYYY');

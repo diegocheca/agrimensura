@@ -75,7 +75,7 @@
         <p>No se requiere de su intervensión.</p>
         <p>Puede ver el camino ya recorrido por el expediente, haciendo click en el siguiente enlace</p>
         <div class="form-group">
-            <button class="button">Ver historial de  {{$num_expe}}</button>
+            <a {{url('admin/ver_movimientos') }} ><button class="button">Ver historial de  {{$num_expe}}</button></a>
         </div>
         <p>Se le seguiran enviando novedades, gracias por utilizar este servicio</p>
         <h4>Esperamos siga teniendo un gran día</h4>

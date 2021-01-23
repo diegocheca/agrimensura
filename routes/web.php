@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MovimientosController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ExcelCSVController;
+use App\Expediente;
  
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,12 @@ Route::post('contact', [ContactController::class, "contactPost"])->name('contact
 
 Route::get('/movimientos_para_exp/{numero}', [MovimientosController::class, "traer_movimientos_para_expediente"])->name('movimientos');
 
+/* Ver datos del expdiente , vengo con mi url y se la paso a voyager*/
+Route::get('admin/expedientes_por_num/{num_exp}', function ($num_exp){
+    $exp = Expediente::select('*')->where('numero_expediente','=',$num_exp)->first();
+    //var_dump($exp);die();
+    return redirect('/admin/expedientes/'.$exp->id);
+});
 
 Route::get('/oficinas_para_add_mov', [MovimientosController::class, "traer_oficinas_para_select"])->name('oficinas-para-select');
 Route::get('/datos_expediente/{num_exp}', [MovimientosController::class, "traer_expediente_para_component"])->name('datos_expediente');
@@ -41,6 +48,9 @@ Route::post('/recibir_expediente_por_movimiento', [MovimientosController::class,
 Route::get('/pruebafecha', [MovimientosController::class, "probando_la_fecha"])->name('prueba-fecha');
 
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
+//http://localhost:8000/comprobante_exp/Contable/11/12312/Diego-Checarelli
+Route::get('/comprobante_exp/{area}/{id}/{numero_expediente}/{nombre}', [PDFController::class, "generar_comprobante_exp"])->name('generar_comprobante_exp');
+
 // excel
 
 Route::get('excel-csv-file', [ExcelCSVController::class, 'index']);

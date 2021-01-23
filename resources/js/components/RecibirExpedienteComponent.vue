@@ -153,6 +153,26 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                             <div class="form-group col-md-12">
+                                                <div class="form-group col-md-4">
+                                                    <label class="control-label" for="name">Tiene algun comentario del recibo?</label>
+                                                    <div class='checkbox-ios'>
+                                                        <input class='checkbox-ios__toggle' id='checkboxQuestion' name='checkboxQuestion' type='checkbox' v-model="bandera_comentario_recibo">
+                                                            <label class='checkbox-ios__label' for='checkboxQuestion'>
+                                                            <span class='checkbox-ios__value left'>No tengo</span>
+                                                            <span class='checkbox-ios__value right'>Si tengo</span>
+                                                            </label>
+                                                        </input>
+                                                    </div>
+                                                </div>
+                                                <transition name="slide-fade">
+                                                    <div class="form-group col-md-8" v-if="bandera_comentario_recibo">
+                                                        <label for="comentario_al_recibir">Comentario del Recibo:</label>
+                                                        <textarea class="form-control" id="comentario_al_recibir" rows="3" v-model="comentario_confirmacion"></textarea>
+                                                        <span class="limiter">{{charactersLeftcomentario_recibo}}</span>
+                                                    </div>
+                                                </transition>
+                                            </div>
                                             <div class="form-group col-md-12">
                                                 <hr>
                                                 <div class="form-group col-md-10">
@@ -185,7 +205,9 @@ export default {
         showModal_recibir: false,
         expediente: [],
         ultimo_movimiento: [],
-        iniciador: []
+        iniciador: [],
+        bandera_comentario_recibo: false,
+        comentario_confirmacion: ''
         }
     },
     computed: {
@@ -201,12 +223,22 @@ export default {
             //var to = moment(d_fin, 'DD/MM/YYY');
             console.log(fecha2.diff(fecha1, 'days') + ' dias de diferencia');
             return moment(this.expediente.created_at).format('DD/MM/YYYY') + "( hace " + (fecha2.diff(fecha1, 'days') + ' dias )');
-        }
+        },
+        charactersLeftcomentario_recibo() {
+            var char = this.comentario_confirmacion.length,
+                limit = 150;
+
+            return (limit - char) + " / " + limit + " caracteres restantes";
+        },
 
     },
     methods: {
         buscar_datos_de_expediente_y_ult_mov() {
             this.showModal_recibir = true;
+            //limpio inputs
+            this.bandera_comentario_recibo= false;
+            this.comentario_confirmacion= '';
+
             //busco los datos del expediente
             axios.get('/datos_expediente/'+this.num_expediente).then(res=>{
                 this.expediente = res.data;
@@ -228,20 +260,20 @@ export default {
         },
         formRecibirSubmit(e) {
             e.preventDefault();
-            let currentObj = this.nuevo_movimiento;
+            let exp = this.num_expediente;
             axios.post('/recibir_expediente_por_movimiento', {
-                movimiento_id: this.ultimo_movimiento.id
+                movimiento_id: this.ultimo_movimiento.id,
+                comentario_confirmacion: this.comentario_confirmacion,
+                bandera_comentario_recibo: this.bandera_comentario_recibo
             })
             .then(function (response) {
                 console.log(response);
-                if(response.data == 'ok')
-                {
-                    console.log("se guardo correctamente");
-                    toastr.success('El Expdiente'+ this.num_expediente+' se recibio correctamente');
-                }
+                console.log("se guardo correctamente");
+                toastr.success('El Expdiente '+ exp +' se recibio correctamente');
+                //toastr.error('El Expdiente se recibio correctamente');
             })
             .catch(function (error) {
-                toastr.success('El Expdiente'+ this.num_expediente+' se recibio correctamente');
+                toastr.error('El Expdiente'+ exp +' se recibio correctamente');
             });
             this.showModal_recibir = false;
         },
@@ -268,4 +300,81 @@ export default {
         vertical-align: middle;
     }
    
+
+   
+
+
+.clearfix:after, .checkbox-ios:after {
+  content: "";
+  display: table;
+  clear: both;
+  height: 0;
+  visibility: hidden;
+}
+
+.checkbox-ios {
+  width: 35%;
+  margin: 0 auto;
+  margin-bottom: 2px;
+}
+.checkbox-ios__toggle {
+  display: none;
+}
+.checkbox-ios__toggle + .checkbox-ios__label {
+  display: block;
+  position: relative;
+  transition: 0.3s;
+  border-radius: 50px;
+  background-color: #4e4e4e;
+  height: 30px;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+.checkbox-ios__toggle + .checkbox-ios__label:before {
+  transition: 0.3s;
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 50%;
+  background-color: #fff;
+  width: 20px;
+  height: 20px;
+  top: 5px;
+  left: 5px;
+}
+.checkbox-ios__value {
+  display: block;
+  float: left;
+  width: 50%;
+  font-size: 11px;
+  text-align: center;
+  margin-top: 35px;
+  letter-spacing: 1px;
+  line-height: 1.5;
+}
+.checkbox-ios__value.left {
+  text-align: left;
+  font-weight: bold;
+}
+.checkbox-ios__value.right {
+  text-align: right;
+}
+.checkbox-ios__toggle:checked + .checkbox-ios__label {
+  background-color: #2cc524;
+}
+.checkbox-ios__toggle:checked + .checkbox-ios__label:before {
+  left: calc(100% - 20px - 5px);
+}
+.checkbox-ios__toggle:checked + .checkbox-ios__label .right {
+  font-weight: bold;
+}
+.checkbox-ios__toggle:checked + .checkbox-ios__label .left {
+  font-weight: normal;
+}
+.checkbox-ios--blue .checkbox-ios__toggle:checked + .checkbox-ios__label {
+  background-color: #2a9db3;
+}
+.checkbox-ios--alert .checkbox-ios__toggle:checked + .checkbox-ios__label {
+  background-color: #cf201b;
+}
 </style>
