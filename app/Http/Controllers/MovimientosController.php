@@ -136,11 +136,12 @@ class MovimientosController extends Controller
         $movimento_nuevo->fecha_salida = null;
         $movimento_nuevo->comentario = $request->comentario;
         $movimento_nuevo->bandera_observacion = $bandera_observacion;
+        $movimento_nuevo->observacion = $request->observacion;
         $movimento_nuevo->subsanacion = $request->subsanacion;
         $movimento_nuevo->id_area = $request->id_area;
         $movimento_nuevo->id_expediente = $request->id_expdiente;
         $movimento_nuevo->tramite_finalizado = $bandera_fin;
-        $movimento_nuevo->created_by = 1;
+        $movimento_nuevo->created_by = Auth::user()->id;;
         $resultado_paso_4 = $movimento_nuevo->save();
         //Paso 5 - envio email a agrimensor asociado
         //obtener el email del agrimensor
@@ -173,8 +174,8 @@ class MovimientosController extends Controller
         $moviento_a_actualizar = Movimiento::find($request->movimiento_id);
         $moviento_a_actualizar->confirmado = 1;
         $moviento_a_actualizar->fecha_confirmacion = date("Y-m-d H:i:s");
-        $moviento_a_actualizar->quien_confirmacion = 1;
-        $moviento_a_actualizar->comentario_confirmacion = null;
+        $moviento_a_actualizar->quien_confirmacion = Auth::user()->id;
+        $moviento_a_actualizar->comentario_confirmacion = $request->comentario_confirmacion;
         $resultado_update = $moviento_a_actualizar->save();
         if($resultado_update)
             return response()->json("ok");
