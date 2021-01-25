@@ -11,6 +11,7 @@ use Intervention\Image\Facades\Image;
 use League\Flysystem\Plugin\ListWith;
 use TCG\Voyager\Events\MediaFileAdded;
 use TCG\Voyager\Facades\Voyager;
+use App\Expediente;
 
 class VoyagerMediaController extends Controller
 {
@@ -29,9 +30,28 @@ class VoyagerMediaController extends Controller
     {
         // Check permission
         $this->authorize('browse_media');
-
         return Voyager::view('voyager::media.index');
     }
+    public function media_files_expediente($id_exp)
+    {
+        // Check permission
+        $this->authorize('browse_media');
+        /*var_dump(Auth::user()->role_id);// si soy administrador voy a tener 1 , x lo cual voy a poder editar cualquier archivo de cualquier carpeta
+        pero si tengo un role_id distinto a 1, entonces solamente voy a poder ver los archivos del expdiente que paso por parametro
+        */
+        //die();
+        //if(Auth::user()->role_id != 1) // soy cualquier persona menos administrador root
+        //{ //entonces debo pasar por parametro los datos del expediente que me pasaron por parametro
+        $expediente = Expediente::find($id_exp);
+        // var_dump($expediente);die();
+        //}
+        //else echo "soy el
+        // admin";die();
+        //ejemplo: /usuarios_files/user{{ $id_user }}
+        $base_path = 'files_expedientes/exp'.$id_exp;
+        return Voyager::view('voyager::media.index_para_expedientes')->with("basepath", $base_path);
+    }
+
 
     public function files(Request $request)
     {

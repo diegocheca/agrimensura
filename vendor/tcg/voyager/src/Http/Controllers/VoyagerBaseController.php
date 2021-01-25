@@ -461,7 +461,7 @@ class VoyagerBaseController extends Controller
             //Inicio Paso 4 - Enviar por email aviso al agrimensor implicado
             //aviso de nuevo expdietne creado a su email.
             //busco el nombre del area
-            $area = Area::find('3'); // Arreglar esto
+            $area = Area::find('2'); // Arreglar esto
             //busco el nombre de la persona y su email
             $agrimensor = Persona::find($exp->id_persona);
             //var_dump($agrimensor);die();

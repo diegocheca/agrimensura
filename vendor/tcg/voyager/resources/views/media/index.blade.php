@@ -10,6 +10,7 @@
 
                 <div class="admin-section-title">
                     <h3><i class="voyager-images"></i> {{ __('voyager::generic.media') }}</h3>
+                    {{ config('voyager.media.path', '/') }}
                 </div>
                 <div class="clear"></div>
                 <div id="filemanager">

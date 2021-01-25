@@ -59,7 +59,7 @@ class MovimientosController extends Controller
        //var_dump($numero);die();
        $id = Expediente::select('id')->where('numero_expediente', '=', $numero)->first();
        //var_dump($id->id);die();
-       $mov = Movimiento::select('*')->where('id_expediente', '=', $id->id)->get();
+       $mov = Movimiento::select('*')->where('id_expediente', '=', $id->id)->orderBy('created_at', 'desc')->get();
        //var_dump($mov);die();
        return response()->json($mov);
 
