@@ -19,9 +19,11 @@ use App\Http\Controllers\ExcelCSVController;
 |
 */
 
+
 Route::get('/', function () {
     return view('welcome');
 });
+
 Route::get('/home', [HomeController::class, "index"]);
 Route::get('contact', [ContactController::class, "contact"]);
 Route::post('contact', [ContactController::class, "contactPost"])->name('contact.store');
