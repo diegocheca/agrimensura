@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MovimientosController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ExcelCSVController;
+use App\Http\Controllers\ExpedienteController;
 use App\Expediente;
  
 /*
@@ -46,6 +47,10 @@ Route::post('/crear_movimiento', [MovimientosController::class, "crear_movimient
 Route::get('/datos_de_quien_creo_expdiente/{num_exp}', [MovimientosController::class, "traer_datos_creado_exp"])->name('datos_creador_exp');
 Route::post('/recibir_expediente_por_movimiento', [MovimientosController::class, "recibir_exp_por_movimiento"])->name('recibir-exp-por-movimiento');
 
+
+//expedientes
+Route::get('/nombres_archivos_tramites/{num_tra}', [ExpedienteController::class, "traer_nombres_archivos_tramites"])->name('nombres_tramites');
+Route::get('/cargar_profesionales', [ExpedienteController::class, "traer_personas_profesionales"])->name('cargar_profesionales');
 
 Route::get('/pruebafecha', [MovimientosController::class, "probando_la_fecha"])->name('prueba-fecha');
 

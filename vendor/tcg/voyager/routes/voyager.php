@@ -94,6 +94,8 @@ Route::group(['as' => 'voyager.'], function () {
         ], function () use ($namespacePrefix) {
             Route::get('/', ['uses' => $namespacePrefix.'VoyagerMediaController@index',              'as' => 'index']);
             Route::get('/files_expedientes/{id_exp}', ['uses' => $namespacePrefix.'VoyagerMediaController@media_files_expediente',              'as' => 'files_expediente']);
+            Route::get('/files_expedientes_por_num/{num_exp}', ['uses' => $namespacePrefix.'VoyagerMediaController@media_files_expediente_por_num',              'as' => 'files_expediente_num']);
+            
             Route::post('files', ['uses' => $namespacePrefix.'VoyagerMediaController@files',              'as' => 'files']);
             Route::post('new_folder', ['uses' => $namespacePrefix.'VoyagerMediaController@new_folder',         'as' => 'new_folder']);
             Route::post('delete_file_folder', ['uses' => $namespacePrefix.'VoyagerMediaController@delete', 'as' => 'delete']);

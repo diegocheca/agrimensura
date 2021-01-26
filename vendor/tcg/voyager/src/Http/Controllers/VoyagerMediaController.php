@@ -51,6 +51,17 @@ class VoyagerMediaController extends Controller
         $base_path = 'files_expedientes/exp'.$id_exp;
         return Voyager::view('voyager::media.index_para_expedientes')->with("basepath", $base_path);
     }
+    
+    public function media_files_expediente_por_num($num_exp)
+    {
+        // Check permission
+        $this->authorize('browse_media');
+        $expediente = Expediente::select('*')->where('numero_expediente', '=', $num_exp)->first();
+        $base_path = 'files_expedientes/exp'.$expediente->id;
+        //var_dump($expediente->id);die();
+        return Voyager::view('voyager::media.index_para_expedientes')->with("basepath", $base_path);
+    }
+
 
 
     public function files(Request $request)

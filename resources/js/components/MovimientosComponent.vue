@@ -17,6 +17,7 @@
                                 <div v-if="mostrar_timeline">
                                     <!--botones de accion-->
                                     <button type="button" class="btn btn-warning" @click="mostrar_modal=false">Cancelar</button>
+                                    <a :href="url_para_archivos_expediente(num_expediente)" target="_blank"><button type="button" class="btn btn-secondary">Archivos del Exp</button></a>
                                     <a :href="url_para_ver_expediente(num_expediente)" target="_blank"><button type="button" class="btn btn-secondary">Ver Expediente</button></a>
                                     <div v-if="mostrar_timeline_sin_datos">
                                         <div class="alert alert-warning" role="alert">
@@ -387,6 +388,10 @@ export default {
         url_para_ver_expediente(numero) {
             return this.link_sis + '/expedientes_por_num/'+ numero;
         },
+        url_para_archivos_expediente(numero) {
+            return this.link_sis + '/media/files_expedientes_por_num/'+ numero;
+        },
+        
         calcular_direfencia_de_dias(d_inicio, d_fin){
             var fecha1 = moment(d_inicio).format('MM/DD/YYYY');
             var fecha1 = moment(fecha1.toString());
