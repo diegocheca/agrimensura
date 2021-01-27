@@ -6,6 +6,111 @@
         @include('voyager::dimmers')
         <div id="app">
             <example-component></example-component>
+            <tabs>
+                <tab name="About Us" :selected="true">
+                <h1>this is the content of About Us tab.</h1>
+                </tab>
+                <tab name="About Our Culture">
+                <h1>this is the content of About Our Culture tab.</h1>
+                </tab>
+                <tab name="About Our Vision">
+                <h1>this is the content of about About Our Vision tab.</h1>
+                </tab>
+            </tabs>
+
+
+        </div>
+        <div class="row">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="expedientes-tab" data-toggle="tab" href="#mis-expedientes" role="tab" aria-controls="home" aria-selected="false">Mis expedientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#ultimos-movimientos" role="tab" aria-controls="profile" aria-selected="false">Ultimos Movimientos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#mis-novedades" role="tab" aria-controls="contact" aria-selected="false">Mis Notificaciones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="subsanaciones-tab" data-toggle="tab" href="#mis-subsanaciones" role="tab" aria-controls="contact" aria-selected="false">Mis Subsanaciones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="archivos-tab" data-toggle="tab" href="#mis-archivos" role="tab" aria-controls="contact" aria-selected="false">Mis Archivos<span class="badge badge-light">4</span></a>
+                </li>
+            </ul>
+        </div>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade" id="mis-expedientes" role="tabpanel" aria-labelledby="expedientes-tab">
+                <div class="row">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                            <label for="inputEmail4">Email</label>
+                            <input type="email" class="form-control" id="inputEmail4" placeholder="Email">
+                            </div>
+                            <div class="form-group col-md-6">
+                            <label for="inputPassword4">Password</label>
+                            <input type="password" class="form-control" id="inputPassword4" placeholder="Password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputAddress">Address</label>
+                            <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputAddress2">Address 2</label>
+                            <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                            <label for="inputCity">City</label>
+                            <input type="text" class="form-control" id="inputCity">
+                            </div>
+                            <div class="form-group col-md-4">
+                            <label for="inputState">State</label>
+                            <select id="inputState" class="form-control">
+                                <option selected>Choose...</option>
+                                <option>...</option>
+                            </select>
+                            </div>
+                            <div class="form-group col-md-2">
+                            <label for="inputZip">Zip</label>
+                            <input type="text" class="form-control" id="inputZip">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="gridCheck">
+                            <label class="form-check-label" for="gridCheck">
+                                Check me out
+                            </label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign in</button>
+                    </form>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="ultimos-movimientos" role="tabpanel" aria-labelledby="profile-tab">
+                <form>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="mis-novedades" role="tabpanel" aria-labelledby="contact-tab">Mis Notificaciones</div>
+            <div class="tab-pane fade" id="mis-subsanaciones" role="tabpanel" aria-labelledby="subsanaciones-tab">Mis subsanaciones</div>
+            <div class="tab-pane fade" id="mis-archivos" role="tabpanel" aria-labelledby="archivos-tab">Mis archivos</div>
         </div>
         <button type="button" class="btn btn-primary">
             Notifications <span class="badge badge-light">4</span>

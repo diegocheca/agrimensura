@@ -474,6 +474,7 @@ class VoyagerBaseController extends Controller
             //Inicia Paso 9 - crear movimiento
             //crear el nuevo movimiento
             $movimento_nuevo = new Movimiento;
+            $movimento_nuevo->orden = 1;
             $movimento_nuevo->fecha_entrada = $exp->created_at;
             $movimento_nuevo->fecha_salida = null;
             $movimento_nuevo->comentario = 'primer movimiento | generado automaticamente';

@@ -114,6 +114,7 @@ class MovimientosController extends Controller
         /*
         Paso 1 - validar datos en el front
         Paso 2 - validar datos en el back
+        Paso 3 - obtener el orden relativo del ultimo movimiento
         Paso 3 - cerrar el movimiento anterior
         Paso 4 - crear nuevo movimiento
         Paso 5 - envio email a agrimensor asociado
@@ -132,6 +133,7 @@ class MovimientosController extends Controller
         $bandera_observacion = $request->bandera_observacion === 'true'? true: false;
         $bandera_fin = $request->tramite_finalizado === 'true'? true: false;
         $movimento_nuevo = new Movimiento;
+        $movimento_nuevo->orden = int($ultimo_movimiento->orden)+1;
         $movimento_nuevo->fecha_entrada = date("Y-m-d H:i:s");
         $movimento_nuevo->fecha_salida = null;
         $movimento_nuevo->comentario = $request->comentario;

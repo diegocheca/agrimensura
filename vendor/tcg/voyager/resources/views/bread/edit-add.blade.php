@@ -242,7 +242,9 @@
             
             //mis cosas
             //modifico el select para que solamente tenga personas profesionales
-            cargar_profesionales();
+            @if ($dataType->name == "expedientes")
+                cargar_profesionales();
+            @endif
             //para expedientes
             @if ($dataType->name == "expedientes")
                 $('select[name="id_tramite"]').change(function() {
