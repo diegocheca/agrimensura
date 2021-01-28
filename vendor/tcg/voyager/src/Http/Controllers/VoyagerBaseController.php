@@ -50,7 +50,7 @@ class VoyagerBaseController extends Controller
 
         // GET THE DataType based on the slug
         $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
-
+        //var_dump($dataType);die();
         // Check permission
         $this->authorize('browse', app($dataType->model_name));
 
@@ -174,6 +174,21 @@ class VoyagerBaseController extends Controller
         if (view()->exists("voyager::$slug.browse")) {
             $view = "voyager::$slug.browse";
         }
+
+        //var_dump(count($dataTypeContent));die();
+        //var_dump($dataType);die();
+        echo "Mis expediente son:";
+        $elementos_a_eliminar = [];
+        //voy a recorrer el array entero con todos los expedientes. aca voy a ver si hay expediente que yo no deberia ver.
+        //si es asi, entonces voy a anaotarlos en una lista, y luego los saco del array original
+        for ($i=0 , $indice_a_eleminar=0; $i < count($dataTypeContent) ; $i++) { 
+            //aca debo obtener mi persona id . supongamos q es la 2
+
+            if($dataTypeContent[$i]["id_persona"] != 2) // mi supuesto id_persona
+                $elementos_a_eliminar [$indice_a_eleminar] = $dataTypeContent[$i]["id"];
+                $indice_a_eleminar++;
+        }
+        die();
 
         return Voyager::view($view, compact(
             'actions',
