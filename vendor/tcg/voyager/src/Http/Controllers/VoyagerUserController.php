@@ -24,12 +24,14 @@ class VoyagerUserController extends VoyagerBaseController
     // POST BR(E)AD
     public function update(Request $request, $id)
     {
+        
         if (Auth::user()->getKey() == $id) {
             $request->merge([
                 'role_id'                              => Auth::user()->role_id,
                 'user_belongstomany_role_relationship' => Auth::user()->roles->pluck('id')->toArray(),
             ]);
         }
+        //var_dump($request->empleado_agrimensura);die();
 
         return parent::update($request, $id);
     }

@@ -97,6 +97,43 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <label for="domicilio">Domicilio</label>
+                                <input type="text" class="form-control" id="domicilio" name="domicilio" placeholder="Ingrese el domicilio por favor"
+                                       value="{{ old('domicilio', $dataTypeContent->domicilio ?? '') }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="cuil">CUIL</label>
+                                <input type="text" class="form-control" id="cuil" name="cuil" placeholder="Ingrese el cuil por favor"
+                                       value="{{ old('cuil', $dataTypeContent->cuil ?? '') }}">
+                            </div>
+                            <div class="form-group  col-md-12 ">
+                                <div class="col-md-4">
+                                    <label class="control-label" for="empleado_dgr">Es empleado de la DGR?</label>
+                                    @if ( $dataTypeContent->empleado_dgr == 1 )
+                                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" checked data-placement="right" data-html="true" title="" data-original-title="Es empleado de la DGR? Si es así, entonces el esta opcion debe estar marcada." ></span>
+                                    @else
+                                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" data-placement="right" data-html="true" title="" data-original-title="Es empleado de la DGR? Si es así, entonces el esta opcion debe estar marcada."></span>
+                                    @endif
+
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="checkbox" style="width:85%" name="empleado_dgr" id="empleado_dgr" class="toggleswitch" data-on="Si, trabaja DGR" data-off="No, es agrimensor continuar">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_area">Area a la que pertenece</label> <span>(Actual:{{ old('id_area', $dataTypeContent->id_area ?? '') }} )</span>
+                                <input type="hidden" id="id_area_anterior" name="id_area_anterior" value="{{ old('id_area', $dataTypeContent->id_area ?? '') }}"/>
+                               
+                                       <select class="form-control" id="id_area" name="id_area">
+                                       <option>Cargando</option>
+                                       </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="oficina">Oficina dentro del area</label>
+                                <input type="text" class="form-control" id="oficina" name="oficina" placeholder="Ingrese la oficina a la que pertence por favor"
+                                       value="{{ old('oficina', $dataTypeContent->oficina ?? '') }}">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -109,6 +146,17 @@
                                     <img src="{{ filter_var($dataTypeContent->avatar, FILTER_VALIDATE_URL) ? $dataTypeContent->avatar : Voyager::image( $dataTypeContent->avatar ) }}" style="width:200px; height:auto; clear:both; display:block; padding:2px; border:1px solid #ddd; margin-bottom:10px;" />
                                 @endif
                                 <input type="file" data-name="avatar" name="avatar">
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <div class="alert alert-warning" role="alert">
+                                    Esta cuenta no ha verificado su email
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="alert alert-success" role="alert">
+                                    Esta cuenta de email verificada exitosamente
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -131,8 +179,48 @@
 
 @section('javascript')
     <script>
+    //mis funciones 
+    function cargar_areas(){
+            var mi_area = $('input[name="id_area_anterior"]').val(); 
+            //alert("mi area es:"+mi_area);
+            console.log(mi_area);
+            //$("[name='id_area']").html('');
+            $.ajax({
+                type:'get',
+                url: 'http://localhost:8000/oficinas_para_add_mov',
+                dataType: 'json',   
+                success: function(response){
+                    var len = 0;
+                    if (response != null) {
+                        len = response.length;
+                    }
+                    //console.log(len);
+                    if (len>0) {
+                        var option = '';
+                        for (var i = 0; i<len; i++) {
+                            var id = response[i].id;
+                            var name = response[i].nombre;
+                            if(mi_area == id) var option = option+"<option selected value='"+id+"'>"+name+"</option>"; 
+                            else var option = option+"<option value='"+id+"'>"+name+"</option>"; 
+                        }
+                        $("[name='id_area']").html(option);
+                    }
+                },
+                error: function(d)
+                {
+                    alert (d);
+                    console.log("el error es:");
+                    console.log(d);
+                }
+            });
+            return false;
+        }
+    //fin mis funciones
         $('document').ready(function () {
             $('.toggleswitch').bootstrapToggle();
+            //mis cosas
+            cargar_areas();
+            //fin mis cosas
         });
     </script>
 @stop

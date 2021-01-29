@@ -15,8 +15,19 @@ class User extends Authenticatable implements UserContract
     //use Translatable;
     
     //protected $translatable  = ['name', 'created_at'];
-
-
+    protected $fillable = [
+        'role_id',
+        'name',
+        'email',
+        'avatar',
+        'password',
+        'domicilio',
+        'cuil',
+        'empleado_dgr',
+        'created_by',
+        'id_area',
+        'oficina',
+    ];
     protected $guarded = [];
 
     public $additional_attributes = ['locale'];

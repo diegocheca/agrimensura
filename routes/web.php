@@ -47,6 +47,9 @@ Route::post('/crear_movimiento', [MovimientosController::class, "crear_movimient
 Route::get('/datos_de_quien_creo_expdiente/{num_exp}', [MovimientosController::class, "traer_datos_creado_exp"])->name('datos_creador_exp');
 Route::post('/recibir_expediente_por_movimiento', [MovimientosController::class, "recibir_exp_por_movimiento"])->name('recibir-exp-por-movimiento');
 
+//areas
+
+
 
 //expedientes
 Route::get('/nombres_archivos_tramites/{num_tra}', [ExpedienteController::class, "traer_nombres_archivos_tramites"])->name('nombres_tramites');

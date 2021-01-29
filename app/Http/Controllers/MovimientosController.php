@@ -143,7 +143,7 @@ class MovimientosController extends Controller
         $movimento_nuevo->id_area = $request->id_area;
         $movimento_nuevo->id_expediente = $request->id_expdiente;
         $movimento_nuevo->tramite_finalizado = $bandera_fin;
-        $movimento_nuevo->created_by = Auth::user()->id;;
+        $movimento_nuevo->created_by = Auth::user()->id;
         $resultado_paso_4 = $movimento_nuevo->save();
         //Paso 5 - envio email a agrimensor asociado
         //obtener el email del agrimensor

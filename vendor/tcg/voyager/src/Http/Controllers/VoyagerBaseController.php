@@ -175,21 +175,36 @@ class VoyagerBaseController extends Controller
             $view = "voyager::$slug.browse";
         }
 
-        //var_dump(count($dataTypeContent));die();
-        //var_dump($dataType);die();
-        echo "Mis expediente son:";
-        $elementos_a_eliminar = [];
-        //voy a recorrer el array entero con todos los expedientes. aca voy a ver si hay expediente que yo no deberia ver.
-        //si es asi, entonces voy a anaotarlos en una lista, y luego los saco del array original
-        for ($i=0 , $indice_a_eleminar=0; $i < count($dataTypeContent) ; $i++) { 
-            //aca debo obtener mi persona id . supongamos q es la 2
-
-            if($dataTypeContent[$i]["id_persona"] != 2) // mi supuesto id_persona
-                $elementos_a_eliminar [$indice_a_eleminar] = $dataTypeContent[$i]["id"];
-                $indice_a_eleminar++;
+        //MIS MODIFICACIONES
+        // 1 - limito los expedientes que pueden ver los agrimensores
+        //1.1 veo si el slug es expedientes y tmb si soy agrimensor
+        //var_dump(Auth::user()->role_id);die(); el role_id = 3 es el agrimensor
+        //si soy admin o mesa de entrada o empleado de la dgr debo ver todos los expedientes
+        if( ($slug== "expedientes") && (Auth::user()->role_id == 3))
+        {
+            $elementos_a_eliminar = [];
+            //voy a recorrer el array entero con todos los expedientes. aca voy a ver si hay expediente que yo no deberia ver.
+            //si es asi, entonces voy a anaotarlos en una lista, y luego los saco del array original
+            //se tiene q hacer en dos for, no se puede hacer en uno solo, xq a medida q vaya borrando elemmentos del array se modifican los limites del for
+            for ($i=0 , $indice_a_eliminar=0; $i < count($dataTypeContent) ; $i++) { 
+                //aca debo obtener mi persona id . supongamos q es la 2
+                if($dataTypeContent[$i]["id_persona"] != 2) // mi supuesto id_persona
+                {
+                    //echo "---    voy a comprar".$dataTypeContent[$i]["id_persona"]."|2   el id es:".$dataTypeContent[$i]["id"]."en la vuelta:".$i."   ---";
+                    $elementos_a_eliminar [$indice_a_eliminar] = $i; // agrego los id de los exp q no son mios , luego los voy as sacar
+                    $indice_a_eliminar++;// sumo la cantidad de registros que no son mios
+                }
+            }
+            for ($y=0; $y < count($elementos_a_eliminar); $y++) { 
+                //voy a empezar a eliminar los registros que no sean mios
+                //array_splice($dataTypeContent, $elementos_a_eliminar[$y], 1); // empiezo a recorrer el arreglo de eliminar para ir sacandolos del arreay q voy a pasar
+                unset($dataTypeContent[$elementos_a_eliminar[$y]]);
+                // array_splice  (array_a_eliminar_elementos, el indice del elemento a eliminar, cantidad de elementos a eliminar a partir del numero anterior)
+            }
+            //var_dump(count($dataTypeContent));
+            //var_dump($dataTypeContent);
+            // die();
         }
-        die();
-
         return Voyager::view($view, compact(
             'actions',
             'dataType',
@@ -286,7 +301,7 @@ class VoyagerBaseController extends Controller
     public function edit(Request $request, $id)
     {
         $slug = $this->getSlug($request);
-
+        
         $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
 
         if (strlen($dataType->model_name) != 0) {
@@ -333,7 +348,19 @@ class VoyagerBaseController extends Controller
     // POST BR(E)AD
     public function update(Request $request, $id)
     {
+        /*
+        LIsta de pasos para hacer cuando se esta creando un nuevo usuario
+        1- editar el form correctamente y usar jquery al llenar el form
+        2- validacion de datos del front
+        3- validacion de datos del back
+        4- Crear el registro que pertenece a de quien lleno el formulario
+        5- mandar email de verificacion
+        6- crear notificacion
+        7- crear log
+        8-
+        */
         $slug = $this->getSlug($request);
+        //var_dump($slug);die();
 
         $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
 
@@ -355,6 +382,8 @@ class VoyagerBaseController extends Controller
 
         // Validate fields with ajax
         $val = $this->validateBread($request->all(), $dataType->editRows, $dataType->name, $id)->validate();
+        //var_dump($dataType->editRows, $data);die();
+
         $this->insertUpdateData($request, $slug, $dataType->editRows, $data);
 
         event(new BreadDataUpdated($dataType, $data));
@@ -417,6 +446,7 @@ class VoyagerBaseController extends Controller
         if (view()->exists("voyager::$slug.edit-add")) {
             $view = "voyager::$slug.edit-add";
         }
+        //var_dump($dataTypeContent);die();
 
         return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable'));
     }
