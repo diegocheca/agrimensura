@@ -20,6 +20,8 @@ class User extends Authenticatable implements UserContract
         'name',
         'email',
         'avatar',
+        'confirmed',
+        'confirmation_code',
         'password',
         'domicilio',
         'cuil',

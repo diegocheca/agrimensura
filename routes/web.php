@@ -50,6 +50,9 @@ Route::post('/recibir_expediente_por_movimiento', [MovimientosController::class,
 //areas
 
 
+//register and login
+Route::get('/register/verify/{code}', 'App\Http\Controllers\Auth\VerificationController@verify');
+
 
 //expedientes
 Route::get('/nombres_archivos_tramites/{num_tra}', [ExpedienteController::class, "traer_nombres_archivos_tramites"])->name('nombres_tramites');

@@ -22,7 +22,7 @@ class ContactController extends Controller
 
     Mail::to($to_email)->send(new ContactEmail($request->get('name'),$request->get('email'),$request->get('message')));
 
-    return "<p> Success! Your E-mail has been sent.</p>";
+    //return "<p> Success! Your E-mail has been sent.</p>";
 
 
 //     Mail::send('email',

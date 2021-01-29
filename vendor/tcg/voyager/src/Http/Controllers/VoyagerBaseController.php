@@ -17,6 +17,7 @@ use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\Http\Controllers\Traits\BreadRelationshipParser;
 use App\Expediente;
 
+
 use File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -25,6 +26,12 @@ use App\Mail\ExpedienteNuevoEmail;
 use App\Movimiento;
 use App\Area;
 use App\Persona;
+
+
+use App\Mail\VerificationEmail;
+
+
+
 
 
 class VoyagerBaseController extends Controller
@@ -349,7 +356,7 @@ class VoyagerBaseController extends Controller
     public function update(Request $request, $id)
     {
         /*
-        LIsta de pasos para hacer cuando se esta creando un nuevo usuario
+        LIsta de pasos para hacer cuando se esta actualizando los datos un usuario
         1- editar el form correctamente y usar jquery al llenar el form
         2- validacion de datos del front
         3- validacion de datos del back
@@ -418,6 +425,7 @@ class VoyagerBaseController extends Controller
         
 
         $slug = $this->getSlug($request);
+        //var_dump("estoy en el create");die();
 
         $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
 
@@ -460,10 +468,11 @@ class VoyagerBaseController extends Controller
      */
     public function store(Request $request)
     {
+        //esta funcion se llama al crear el nuevo usuario
         
         $slug = $this->getSlug($request);
-        /*var_dump($slug); --> salida ---> string(11) "expedientes"
-        die();*/
+        //var_dump($slug);// --> salida ---> string(11) "expedientes"
+        //die();
 
         $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
 
@@ -475,12 +484,23 @@ class VoyagerBaseController extends Controller
         // voy a preguntar si estoy guardando un expdiente
         //voy a crear una nueva carpeta en el server donde se almacenaran los archivos de ese expediente
         
+        //var_dump($dataType->addRows);
+        if($slug == "users"){
+            $request [ "confirmed"  ] = false;
+            $codigo = Str::random(25);
+            $request [ "confirmation_code"  ] = $codigo;
+            $request [ "created_by" ] =  Auth::user()->id ;
+        }
+        
+
+        /*var_dump($request->get('name'));
+        die();*/
+
         $data = $this->insertUpdateData($request, $slug, $dataType->addRows, new $dataType->model_name());
         //var_dump($data->id);die();
         if($slug == "expedientes")
         {
             /*
-            kkk
             Voy a ahcer el diagrama de flujo de iniciar expediente
             Paso 1 - Completar form de crear expediente (antes)
             Paso 2 - validar los datos en el back (arriba)
@@ -550,6 +570,30 @@ class VoyagerBaseController extends Controller
 
 
         }
+        if($slug == "users"){
+            // voy a crear un nuevo usuario del sistema desde el add de voyager
+            /*Pasos a seguri para crear el usuario nuevo
+            Paso 1- editar el form correctamente y usar jquery al llenar el form
+            Paso 2- validacion de datos del front
+            Paso 3- validacion de datos del back
+            Paso 4- Crear el registro que pertenece a de quien lleno el formulario
+            Paso 5- mandar email de verificacion
+            Paso 6- crear notificacion
+            Paso 7- crear log
+            Paso 8- */
+
+            //Inicia Paso 5 - Mandar email de verificacion 
+            //creacion de la carpeta personal en el servidor
+            //$path = "app\public\usuarios_files\user".$usuario_recien_creado["id"];
+            //$result = File::makeDirectory(storage_path($path));
+
+            // Send confirmation code
+            /*var_dump($request->get('email'), $codigo, $request->get('name') ,$request->get('cuil'));
+            die();*/
+            Mail::to($request->get('email'))->send(new VerificationEmail($codigo, $request->get('name') ,$request->get('cuil')));//nueva
+        }
+
+        
 
 
         event(new BreadDataAdded($dataType, $data));
@@ -571,6 +615,15 @@ class VoyagerBaseController extends Controller
             return response()->json(['success' => true, 'data' => $data]);
         }
     }
+    public function prueba_verificacion(){
+        //var_dump("estoy donde quiero");die();
+        $codigo = 'YJpJ3l6gEaRXjxYM1F2luLPxU';
+        $name  = "Quiroga, Alejandro";
+        $cuil ="21121478529";
+        $resultado = Mail::to("quirogaalsina@hotmail.com")->send(new VerificationEmail($codigo, $name ,$cuil));//nueva
+        var_dump($resultado);
+    }
+    
 
     //***************************************
     //                _____
