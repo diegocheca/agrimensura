@@ -148,16 +148,19 @@
                                 <input type="file" data-name="avatar" name="avatar">
                             </div>
                             <hr>
+                            @if($dataTypeContent->confirmed != 1 )
                             <div class="form-group">
                                 <div class="alert alert-warning" role="alert">
                                     Esta cuenta no ha verificado su email
                                 </div>
                             </div>
+                            @else
                             <div class="form-group">
                                 <div class="alert alert-success" role="alert">
                                     Esta cuenta de email verificada exitosamente
                                 </div>
                             </div>
+                            @endif
                         </div>
                     </div>
                 </div>

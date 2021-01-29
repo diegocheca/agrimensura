@@ -32,7 +32,7 @@ class VerificationEmail extends Mailable
     public function build()
     {
         //return $this->view('view.name');
-        return $this->from("gismineronacional@gmail.com")->view('emails.confirmation_code')->with([
+        return $this->from("no-reply@ingagrimensor.com")->view('emails.confirmation_code')->with([
             'confirmation_code' => $this->confirmation_code,
             'name' => $this->name,
             'cuil' => $this->cuil,
