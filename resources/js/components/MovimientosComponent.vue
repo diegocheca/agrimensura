@@ -21,7 +21,7 @@
                                     <a :href="url_para_ver_expediente(num_expediente)" target="_blank"><button type="button" class="btn btn-secondary">Ver Expediente</button></a>
                                     <div v-if="mostrar_timeline_sin_datos">
                                         <div class="alert alert-warning" role="alert">
-                                            <h4>No se encontraron movimientos para este expediente</h4>
+                                            <h3>No se encontraron movimientos para este expediente</h3>
                                         </div>
                                     </div>
                                     <div id="timeline" v-else>
@@ -33,12 +33,14 @@
                                                 </svg>
                                                 </a>
                                             </div>
-                                            <div v-bind:class="test(movimiento.id)" >
-                                                <h2>Mov.: {{ movimiento.id}} <a :href="url_para_ver_movimiento(movimiento.id)">(ver)</a>  * {{ since(movimiento.created_at) }}</h2>
+                                            <div v-bind:class="test(movimiento.orden)" >
+                                                <h4>Mov.: {{ movimiento.orden}} <a :href="url_para_ver_movimiento(movimiento.id)">(ver)</a>  * {{ since(movimiento.created_at) }}</h4>
                                                 <p>
-                                                    El Movimiento {{ movimiento.id}} tiene fecha de entrada: <strong> {{ formatear_fecha(movimiento.fecha_entrada)  }} </strong> y fecha de salida <strong> {{ formatear_fecha(movimiento.fecha_salida) }}</strong>, contabilizando un total de: <strong> {{calcular_direfencia_de_dias(movimiento.fecha_entrada, movimiento.fecha_salida )}}</strong></p> 
+                                                    El Movimiento tiene el registro <strong>{{ movimiento.id}}</strong> tiene fecha de entrada: <strong> {{ formatear_fecha(movimiento.fecha_entrada)  }} </strong> y fecha de salida <strong> {{ formatear_fecha(movimiento.fecha_salida) }}</strong>, contabilizando un total de: <strong> {{calcular_direfencia_de_dias(movimiento.fecha_entrada, movimiento.fecha_salida )}}</strong></p> 
                                                 <p v-if="movimiento.bandera_observacion"> Este movmiento <strong>Si</strong> posee una observacion: {{ movimiento.observacion }} </p>
                                                 <p v-else> Este movmiento <strong>No</strong> posee una observacion</p>
+                                                <p>Estado: Recibido</p>
+                                                <recibirexpediente v-if="se_puede_recibir(movimiento.confirmado, movimiento.fecha_salida)" :num_expediente=num_expediente  link_sis="localhost:8000//admin/"></recibirexpediente>
                                             </div>
                                             <!-- <div v-else class="timeline-content right">
                                                 <h2>Mov.: {{ movimiento.id}} <a :href="url_para_ver_movimiento(movimiento.id)">(ver)</a>  * {{ since(movimiento.created_at) }}</h2>
@@ -221,9 +223,13 @@
 <script>
 import moment from 'moment'
 import toastr from 'toastr'
+import recibirexpediente from './RecibirExpedienteComponent.vue'
+
 moment.locale('es');
 export default {
     props: ['num_expediente', 'link_sis'],
+    name : "movimientos",
+    components: {recibirexpediente},
     
     data() {
         return {
@@ -413,6 +419,12 @@ export default {
             else
                 return 'timeline-content right';
         },
+        se_puede_recibir(conf,fecha_salida){
+            if((conf != 1) && (fecha_salida != null) )
+                return true;
+            return false;
+            
+        }
   },
     
 }
@@ -622,7 +634,7 @@ export default {
     -ms-transition: all 0.3s ease;
     transition: all 0.3s ease;
     }
-    #timeline .timeline-item .timeline-content h2 {
+    #timeline .timeline-item .timeline-content h4 {
     padding: 15px;
     background: #2EF792;
     color: #000;

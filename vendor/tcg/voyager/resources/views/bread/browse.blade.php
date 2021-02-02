@@ -106,12 +106,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @php
                                 
-                                //var_dump($dataType);
-                                   //         die();
-                                @endphp
                                     @foreach($dataTypeContent as $data)
+                                    
+                                    
                                     <tr>
                                         @if($showCheckboxColumn)
                                             <td>
@@ -125,6 +123,18 @@
                                             }
                                             
                                             @endphp
+                                            @php
+                                            //if($row->field == "numero_expediente")
+                                            //{
+
+                                            
+                                                //var_dump($data->{$row->field}); -->int(75575)
+                                                //var_dump($row->field);  -->string(17) "numero_expediente"
+                                                //var_dump($data["numero_expediente"]);--->int(75575)
+                                                //var_dump($data["numero_expediente"]);--->int(75575)
+                                            //die();
+                                            //}
+                                        @endphp
                                             <td>
                                                 @if (isset($row->details->view))
                                                     @include($row->details->view, ['row' => $row, 'dataType' => $dataType, 'dataTypeContent' => $dataTypeContent, 'content' => $data->{$row->field}, 'action' => 'browse', 'view' => 'browse', 'options' => $row->details])
@@ -258,7 +268,7 @@
                                                 <!-- estoy en el abm de expedientes por tanto pongo el componente de movimientos -->
                                                 @if( ($dataType->name == "expedientes") && ($row->field == "numero_expediente") )
                                                     <movimientos-expediente num_expediente="{{ $data->{$row->field} }}" link_sis="{{asset('admin/')}}"></movimientos-expediente>
-                                                    <recibir-expdiente num_expediente="{{ $data->{$row->field} }}" link_sis="{{asset('admin/')}}"></recibir-expdiente>
+                                                    {{-- <recibir-expdiente num_expediente="{{ $data->{$row->field} }}" link_sis="{{asset('admin/')}}"></recibir-expdiente> --}}
                                                 @endif
                                             </td>
                                         @endforeach

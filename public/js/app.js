@@ -1884,6 +1884,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var toastr__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! toastr */ "./node_modules/toastr/toastr.js");
 /* harmony import */ var toastr__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(toastr__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _RecibirExpedienteComponent_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./RecibirExpedienteComponent.vue */ "./resources/js/components/RecibirExpedienteComponent.vue");
 //
 //
 //
@@ -2104,11 +2105,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+
 
 
 moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['num_expediente', 'link_sis'],
+  name: "movimientos",
+  components: {
+    recibirexpediente: _RecibirExpedienteComponent_vue__WEBPACK_IMPORTED_MODULE_2__.default
+  },
   data: function data() {
     return {
       mostrar_modal: false,
@@ -2278,6 +2286,10 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
     },
     test: function test(result) {
       if (result % 2 == 0) return 'timeline-content';else return 'timeline-content right';
+    },
+    se_puede_recibir: function se_puede_recibir(conf, fecha_salida) {
+      if (conf != 1 && fecha_salida != null) return true;
+      return false;
     }
   }
 });
@@ -2756,7 +2768,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".fade-enter-active[data-v-f281c4ec], .fade-leave-active[data-v-f281c4ec] {\n  transition: opacity .5s;\n}\n.fade-enter[data-v-f281c4ec], .fade-leave-to[data-v-f281c4ec] /* .fade-leave-active below version 2.1.8 */ {\n  opacity: 0.5;\n}\n.slide-fade-enter-active[data-v-f281c4ec] {\n  transition: all .3s ease;\n}\n.slide-fade-leave-active[data-v-f281c4ec] {\n  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);\n}\n.slide-fade-enter[data-v-f281c4ec], .slide-fade-leave-to[data-v-f281c4ec]\r\n/* .slide-fade-leave-active below version 2.1.8 */ {\n  transform: translateX(10px);\n  opacity: 0;\n}\n.clearfix[data-v-f281c4ec]:after, .checkbox-ios[data-v-f281c4ec]:after {\n  content: \"\";\n  display: table;\n  clear: both;\n  height: 0;\n  visibility: hidden;\n}\n.checkbox-ios[data-v-f281c4ec] {\n  width: 35%;\n  margin: 0 auto;\n  margin-bottom: 2px;\n}\n.checkbox-ios__toggle[data-v-f281c4ec] {\n  display: none;\n}\n.checkbox-ios__toggle + .checkbox-ios__label[data-v-f281c4ec] {\n  display: block;\n  position: relative;\n  transition: 0.3s;\n  border-radius: 50px;\n  background-color: #4e4e4e;\n  height: 30px;\n  margin-bottom: 0;\n  cursor: pointer;\n}\n.checkbox-ios__toggle + .checkbox-ios__label[data-v-f281c4ec]:before {\n  transition: 0.3s;\n  content: \"\";\n  display: block;\n  position: absolute;\n  border-radius: 50%;\n  background-color: #fff;\n  width: 20px;\n  height: 20px;\n  top: 5px;\n  left: 5px;\n}\n.checkbox-ios__value[data-v-f281c4ec] {\n  display: block;\n  float: left;\n  width: 50%;\n  font-size: 11px;\n  text-align: center;\n  margin-top: 35px;\n  letter-spacing: 1px;\n  line-height: 1.5;\n}\n.checkbox-ios__value.left[data-v-f281c4ec] {\n  text-align: left;\n  font-weight: bold;\n}\n.checkbox-ios__value.right[data-v-f281c4ec] {\n  text-align: right;\n}\n.checkbox-ios__toggle:checked + .checkbox-ios__label[data-v-f281c4ec] {\n  background-color: #2cc524;\n}\n.checkbox-ios__toggle:checked + .checkbox-ios__label[data-v-f281c4ec]:before {\n  left: calc(100% - 20px - 5px);\n}\n.checkbox-ios__toggle:checked + .checkbox-ios__label .right[data-v-f281c4ec] {\n  font-weight: bold;\n}\n.checkbox-ios__toggle:checked + .checkbox-ios__label .left[data-v-f281c4ec] {\n  font-weight: normal;\n}\n.checkbox-ios--blue .checkbox-ios__toggle:checked + .checkbox-ios__label[data-v-f281c4ec] {\n  background-color: #2a9db3;\n}\n.checkbox-ios--alert .checkbox-ios__toggle:checked + .checkbox-ios__label[data-v-f281c4ec] {\n  background-color: #cf201b;\n}\n#timeline .timeline-item[data-v-f281c4ec]:after, #timeline .timeline-item[data-v-f281c4ec]:before {\n  content: \"\";\n  display: block;\n  width: 100%;\n  clear: both;\n}\n*[data-v-f281c4ec], *[data-v-f281c4ec]:before, *[data-v-f281c4ec]:after {\n  box-sizing: border-box;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n}\nimg[data-v-f281c4ec] {\n  max-width: 100%;\n}\n\n/*\r\n    \r\n     .project-name {\r\n    text-align: center;\r\n    padding: 10px 0;\r\n    } */\n.modal-mask[data-v-f281c4ec] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-f281c4ec] {\n  display: table-cell;\n  vertical-align: middle;\n}\n#timeline[data-v-f281c4ec] {\n  width: 100%;\n  margin: 30px auto;\n  position: relative;\n  padding: 0 10px;\n  transition: all 0.4s ease;\n}\n#timeline[data-v-f281c4ec]:before {\n  content: \"\";\n  width: 3px;\n  height: 100%;\n  background: #2EF792;\n  left: 50%;\n  top: 0;\n  position: absolute;\n}\n#timeline[data-v-f281c4ec]:after {\n  content: \"\";\n  clear: both;\n  display: table;\n  width: 100%;\n}\n#timeline .timeline-item[data-v-f281c4ec] {\n  margin-bottom: 50px;\n  position: relative;\n}\n#timeline .timeline-item .timeline-icon[data-v-f281c4ec] {\n  background: #2EF792;\n  width: 50px;\n  height: 50px;\n  position: absolute;\n  top: 0;\n  left: 50%;\n  overflow: hidden;\n  margin-left: -23px;\n  border-radius: 50%;\n}\n#timeline .timeline-item .timeline-icon svg[data-v-f281c4ec] {\n  position: relative;\n  top: 14px;\n  left: 14px;\n}\n#timeline .timeline-item .timeline-content[data-v-f281c4ec] {\n  width: 45%;\n  background: #ECF5F0;\n  padding: 20px;\n  -ms-box-shadow: 0 3px 0 rgba(0, 0, 0, 0.1);\n  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.1);\n  border-radius: 5px;\n  transition: all 0.3s ease;\n}\n#timeline .timeline-item .timeline-content h2[data-v-f281c4ec] {\n  padding: 15px;\n  background: #2EF792;\n  color: #000;\n  margin: -20px -20px 0 -20px;\n  font-weight: 300;\n  border-radius: 3px 3px 0 0;\n}\n#timeline .timeline-item .timeline-content[data-v-f281c4ec]:before {\n  content: \"\";\n  position: absolute;\n  left: 45%;\n  top: 20px;\n  width: 0;\n  height: 0;\n  border-top: 7px solid transparent;\n  border-bottom: 7px solid transparent;\n  border-left: 7px solid #3C9C67;\n}\n#timeline .timeline-item .timeline-content.right[data-v-f281c4ec] {\n  float: right;\n}\n#timeline .timeline-item .timeline-content.right[data-v-f281c4ec]:before {\n  content: \"\";\n  right: 45%;\n  left: inherit;\n  border-left: 0;\n  border-right: 7px solid #3C9C67;\n}\n@media screen and (max-width: 768px) {\n#timeline[data-v-f281c4ec] {\n    margin: 30px;\n    padding: 0px;\n    width: 90%;\n}\n#timeline[data-v-f281c4ec]:before {\n    left: 0;\n}\n#timeline .timeline-item .timeline-content[data-v-f281c4ec] {\n    width: 90%;\n    float: right;\n}\n#timeline .timeline-item .timeline-content[data-v-f281c4ec]:before, #timeline .timeline-item .timeline-content.right[data-v-f281c4ec]:before {\n    left: 10%;\n    margin-left: -6px;\n    border-left: 0;\n    border-right: 7px solid #3C9C67;\n}\n#timeline .timeline-item .timeline-icon[data-v-f281c4ec] {\n    left: 0;\n}\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".fade-enter-active[data-v-f281c4ec], .fade-leave-active[data-v-f281c4ec] {\n  transition: opacity .5s;\n}\n.fade-enter[data-v-f281c4ec], .fade-leave-to[data-v-f281c4ec] /* .fade-leave-active below version 2.1.8 */ {\n  opacity: 0.5;\n}\n.slide-fade-enter-active[data-v-f281c4ec] {\n  transition: all .3s ease;\n}\n.slide-fade-leave-active[data-v-f281c4ec] {\n  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);\n}\n.slide-fade-enter[data-v-f281c4ec], .slide-fade-leave-to[data-v-f281c4ec]\r\n/* .slide-fade-leave-active below version 2.1.8 */ {\n  transform: translateX(10px);\n  opacity: 0;\n}\n.clearfix[data-v-f281c4ec]:after, .checkbox-ios[data-v-f281c4ec]:after {\n  content: \"\";\n  display: table;\n  clear: both;\n  height: 0;\n  visibility: hidden;\n}\n.checkbox-ios[data-v-f281c4ec] {\n  width: 35%;\n  margin: 0 auto;\n  margin-bottom: 2px;\n}\n.checkbox-ios__toggle[data-v-f281c4ec] {\n  display: none;\n}\n.checkbox-ios__toggle + .checkbox-ios__label[data-v-f281c4ec] {\n  display: block;\n  position: relative;\n  transition: 0.3s;\n  border-radius: 50px;\n  background-color: #4e4e4e;\n  height: 30px;\n  margin-bottom: 0;\n  cursor: pointer;\n}\n.checkbox-ios__toggle + .checkbox-ios__label[data-v-f281c4ec]:before {\n  transition: 0.3s;\n  content: \"\";\n  display: block;\n  position: absolute;\n  border-radius: 50%;\n  background-color: #fff;\n  width: 20px;\n  height: 20px;\n  top: 5px;\n  left: 5px;\n}\n.checkbox-ios__value[data-v-f281c4ec] {\n  display: block;\n  float: left;\n  width: 50%;\n  font-size: 11px;\n  text-align: center;\n  margin-top: 35px;\n  letter-spacing: 1px;\n  line-height: 1.5;\n}\n.checkbox-ios__value.left[data-v-f281c4ec] {\n  text-align: left;\n  font-weight: bold;\n}\n.checkbox-ios__value.right[data-v-f281c4ec] {\n  text-align: right;\n}\n.checkbox-ios__toggle:checked + .checkbox-ios__label[data-v-f281c4ec] {\n  background-color: #2cc524;\n}\n.checkbox-ios__toggle:checked + .checkbox-ios__label[data-v-f281c4ec]:before {\n  left: calc(100% - 20px - 5px);\n}\n.checkbox-ios__toggle:checked + .checkbox-ios__label .right[data-v-f281c4ec] {\n  font-weight: bold;\n}\n.checkbox-ios__toggle:checked + .checkbox-ios__label .left[data-v-f281c4ec] {\n  font-weight: normal;\n}\n.checkbox-ios--blue .checkbox-ios__toggle:checked + .checkbox-ios__label[data-v-f281c4ec] {\n  background-color: #2a9db3;\n}\n.checkbox-ios--alert .checkbox-ios__toggle:checked + .checkbox-ios__label[data-v-f281c4ec] {\n  background-color: #cf201b;\n}\n#timeline .timeline-item[data-v-f281c4ec]:after, #timeline .timeline-item[data-v-f281c4ec]:before {\n  content: \"\";\n  display: block;\n  width: 100%;\n  clear: both;\n}\n*[data-v-f281c4ec], *[data-v-f281c4ec]:before, *[data-v-f281c4ec]:after {\n  box-sizing: border-box;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n}\nimg[data-v-f281c4ec] {\n  max-width: 100%;\n}\n\n/*\r\n    \r\n     .project-name {\r\n    text-align: center;\r\n    padding: 10px 0;\r\n    } */\n.modal-mask[data-v-f281c4ec] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-f281c4ec] {\n  display: table-cell;\n  vertical-align: middle;\n}\n#timeline[data-v-f281c4ec] {\n  width: 100%;\n  margin: 30px auto;\n  position: relative;\n  padding: 0 10px;\n  transition: all 0.4s ease;\n}\n#timeline[data-v-f281c4ec]:before {\n  content: \"\";\n  width: 3px;\n  height: 100%;\n  background: #2EF792;\n  left: 50%;\n  top: 0;\n  position: absolute;\n}\n#timeline[data-v-f281c4ec]:after {\n  content: \"\";\n  clear: both;\n  display: table;\n  width: 100%;\n}\n#timeline .timeline-item[data-v-f281c4ec] {\n  margin-bottom: 50px;\n  position: relative;\n}\n#timeline .timeline-item .timeline-icon[data-v-f281c4ec] {\n  background: #2EF792;\n  width: 50px;\n  height: 50px;\n  position: absolute;\n  top: 0;\n  left: 50%;\n  overflow: hidden;\n  margin-left: -23px;\n  border-radius: 50%;\n}\n#timeline .timeline-item .timeline-icon svg[data-v-f281c4ec] {\n  position: relative;\n  top: 14px;\n  left: 14px;\n}\n#timeline .timeline-item .timeline-content[data-v-f281c4ec] {\n  width: 45%;\n  background: #ECF5F0;\n  padding: 20px;\n  -ms-box-shadow: 0 3px 0 rgba(0, 0, 0, 0.1);\n  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.1);\n  border-radius: 5px;\n  transition: all 0.3s ease;\n}\n#timeline .timeline-item .timeline-content h4[data-v-f281c4ec] {\n  padding: 15px;\n  background: #2EF792;\n  color: #000;\n  margin: -20px -20px 0 -20px;\n  font-weight: 300;\n  border-radius: 3px 3px 0 0;\n}\n#timeline .timeline-item .timeline-content[data-v-f281c4ec]:before {\n  content: \"\";\n  position: absolute;\n  left: 45%;\n  top: 20px;\n  width: 0;\n  height: 0;\n  border-top: 7px solid transparent;\n  border-bottom: 7px solid transparent;\n  border-left: 7px solid #3C9C67;\n}\n#timeline .timeline-item .timeline-content.right[data-v-f281c4ec] {\n  float: right;\n}\n#timeline .timeline-item .timeline-content.right[data-v-f281c4ec]:before {\n  content: \"\";\n  right: 45%;\n  left: inherit;\n  border-left: 0;\n  border-right: 7px solid #3C9C67;\n}\n@media screen and (max-width: 768px) {\n#timeline[data-v-f281c4ec] {\n    margin: 30px;\n    padding: 0px;\n    width: 90%;\n}\n#timeline[data-v-f281c4ec]:before {\n    left: 0;\n}\n#timeline .timeline-item .timeline-content[data-v-f281c4ec] {\n    width: 90%;\n    float: right;\n}\n#timeline .timeline-item .timeline-content[data-v-f281c4ec]:before, #timeline .timeline-item .timeline-content.right[data-v-f281c4ec]:before {\n    left: 10%;\n    margin-left: -6px;\n    border-left: 0;\n    border-right: 7px solid #3C9C67;\n}\n#timeline .timeline-item .timeline-icon[data-v-f281c4ec] {\n    left: 0;\n}\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -53957,7 +53969,7 @@ var render = function() {
                                             attrs: { role: "alert" }
                                           },
                                           [
-                                            _c("h4", [
+                                            _c("h3", [
                                               _vm._v(
                                                 "No se encontraron movimientos para este expediente"
                                               )
@@ -54034,15 +54046,15 @@ var render = function() {
                                                   "div",
                                                   {
                                                     class: _vm.test(
-                                                      movimiento.id
+                                                      movimiento.orden
                                                     )
                                                   },
                                                   [
-                                                    _c("h2", [
+                                                    _c("h4", [
                                                       _vm._v(
                                                         "Mov.: " +
                                                           _vm._s(
-                                                            movimiento.id
+                                                            movimiento.orden
                                                           ) +
                                                           " "
                                                       ),
@@ -54069,11 +54081,15 @@ var render = function() {
                                                     _vm._v(" "),
                                                     _c("p", [
                                                       _vm._v(
-                                                        "\n                                                El Movimiento " +
-                                                          _vm._s(
-                                                            movimiento.id
-                                                          ) +
-                                                          " tiene fecha de entrada: "
+                                                        "\n                                                El Movimiento tiene el registro "
+                                                      ),
+                                                      _c("strong", [
+                                                        _vm._v(
+                                                          _vm._s(movimiento.id)
+                                                        )
+                                                      ]),
+                                                      _vm._v(
+                                                        " tiene fecha de entrada: "
                                                       ),
                                                       _c("strong", [
                                                         _vm._v(
@@ -54141,8 +54157,30 @@ var render = function() {
                                                           _vm._v(
                                                             " posee una observacion"
                                                           )
-                                                        ])
-                                                  ]
+                                                        ]),
+                                                    _vm._v(" "),
+                                                    _c("p", [
+                                                      _vm._v("Estado: Recibido")
+                                                    ]),
+                                                    _vm._v(" "),
+                                                    _vm.se_puede_recibir(
+                                                      movimiento.confirmado,
+                                                      movimiento.fecha_salida
+                                                    )
+                                                      ? _c(
+                                                          "recibirexpediente",
+                                                          {
+                                                            attrs: {
+                                                              num_expediente:
+                                                                _vm.num_expediente,
+                                                              link_sis:
+                                                                "localhost:8000//admin/"
+                                                            }
+                                                          }
+                                                        )
+                                                      : _vm._e()
+                                                  ],
+                                                  1
                                                 )
                                               ]
                                             )

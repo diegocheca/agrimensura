@@ -133,7 +133,7 @@ class MovimientosController extends Controller
         $bandera_observacion = $request->bandera_observacion === 'true'? true: false;
         $bandera_fin = $request->tramite_finalizado === 'true'? true: false;
         $movimento_nuevo = new Movimiento;
-        $movimento_nuevo->orden = int($ultimo_movimiento->orden)+1;
+        $movimento_nuevo->orden = intval($ultimo_movimiento->orden)+1;
         $movimento_nuevo->fecha_entrada = date("Y-m-d H:i:s");
         $movimento_nuevo->fecha_salida = null;
         $movimento_nuevo->comentario = $request->comentario;
@@ -143,8 +143,16 @@ class MovimientosController extends Controller
         $movimento_nuevo->id_area = $request->id_area;
         $movimento_nuevo->id_expediente = $request->id_expdiente;
         $movimento_nuevo->tramite_finalizado = $bandera_fin;
+        $movimento_nuevo->confirmado = 0;
+        $movimento_nuevo->fecha_confirmacion = null ;
+        $movimento_nuevo->quien_confirmacion= null ;
+        $movimento_nuevo->comentario_confirmacion = null;
         $movimento_nuevo->created_by = Auth::user()->id;
         $resultado_paso_4 = $movimento_nuevo->save();
+        /*var_dump($resultado_paso_3);
+        var_dump($resultado_paso_4);
+        var_dump($movimento_nuevo);
+        die();*/
         //Paso 5 - envio email a agrimensor asociado
         //obtener el email del agrimensor
         $exp = Expediente::select('*')->where('id','=',$request->id_expdiente)->first();

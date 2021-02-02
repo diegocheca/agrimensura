@@ -107,33 +107,7 @@
                                 <input type="text" class="form-control" id="cuil" name="cuil" placeholder="Ingrese el cuil por favor"
                                        value="{{ old('cuil', $dataTypeContent->cuil ?? '') }}">
                             </div>
-                            <div class="form-group  col-md-12 ">
-                                <div class="col-md-4">
-                                    <label class="control-label" for="empleado_dgr">Es empleado de la DGR?</label>
-                                    @if ( $dataTypeContent->empleado_dgr == 1 )
-                                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" checked data-placement="right" data-html="true" title="" data-original-title="Es empleado de la DGR? Si es así, entonces el esta opcion debe estar marcada." ></span>
-                                    @else
-                                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" data-placement="right" data-html="true" title="" data-original-title="Es empleado de la DGR? Si es así, entonces el esta opcion debe estar marcada."></span>
-                                    @endif
-
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="checkbox" style="width:85%" name="empleado_dgr" id="empleado_dgr" class="toggleswitch" data-on="Si, trabaja DGR" data-off="No, es agrimensor continuar">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_area">Area a la que pertenece</label> <span>(Actual:{{ old('id_area', $dataTypeContent->id_area ?? '') }} )</span>
-                                <input type="hidden" id="id_area_anterior" name="id_area_anterior" value="{{ old('id_area', $dataTypeContent->id_area ?? '') }}"/>
-                               
-                                       <select class="form-control" id="id_area" name="id_area">
-                                       <option>Cargando</option>
-                                       </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="oficina">Oficina dentro del area</label>
-                                <input type="text" class="form-control" id="oficina" name="oficina" placeholder="Ingrese la oficina a la que pertence por favor"
-                                       value="{{ old('oficina', $dataTypeContent->oficina ?? '') }}">
-                            </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -161,6 +135,34 @@
                                 </div>
                             </div>
                             @endif
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <label class="control-label" for="empleado_dgr">Es empleado de la DGR?</label>
+                                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip"  data-placement="right" data-html="true" title="" data-original-title="Es empleado de la DGR? Si es así, entonces el esta opcion debe estar marcada." ></span>
+                                </div>
+                                <div class="col-md-6">
+                                    @if ( $dataTypeContent->empleado_dgr == 1 )
+                                        <input type="checkbox" style="width:95%" checked name="empleado_dgr" id="empleado_dgr" class="toggleswitch" data-on="Si, trabaja DGR" data-off="No, es agrimensor continuar">
+                                    @else
+                                        <input type="checkbox" style="width:95%" name="empleado_dgr" id="empleado_dgr" class="toggleswitch" data-on="Si, trabaja DGR" data-off="No, es agrimensor continuar">
+                                    @endif    
+                                </div>
+                            </div>
+                            <hr>
+                            <br>
+                            <div class="form-group" id="div_id_area">
+                                <label for="id_area">Area a la que pertenece</label> <span>(Actual:{{ old('id_area', $dataTypeContent->id_area ?? '') }} )</span>
+                                <input type="hidden" id="id_area_anterior" name="id_area_anterior" value="{{ old('id_area', $dataTypeContent->id_area ?? '') }}"/>
+                               
+                                       <select class="form-control" id="id_area" name="id_area">
+                                       <option>Cargando</option>
+                                       </select>
+                            </div>
+                            <div class="form-group" id="div_oficina">
+                                <label for="oficina">Oficina dentro del area</label>
+                                <input type="text" class="form-control" id="oficina" name="oficina" placeholder="Ingrese la oficina a la que pertence por favor"
+                                       value="{{ old('oficina', $dataTypeContent->oficina ?? '') }}">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -199,7 +201,7 @@
                     }
                     //console.log(len);
                     if (len>0) {
-                        var option = '';
+                        var option = '<option value=0 selected>Ninguna</option>';
                         for (var i = 0; i<len; i++) {
                             var id = response[i].id;
                             var name = response[i].nombre;
@@ -224,6 +226,37 @@
             //mis cosas
             cargar_areas();
             //fin mis cosas
+            $("#div_id_area").hide();
+            $("#div_oficina").hide();
+            
+            $('#empleado_dgr').change(function() {
+                if(this.checked) {
+                    var returnVal = confirm("Estas seguro que esta persona trabaja en la DGC?");
+                    console.log(returnVal);
+                    if(returnVal.toString() == "true")
+                    {
+                        //significa que si es un empleado de la dgc, por tanto habilito el campo de area y ofcina
+                        $(this).prop("checked", returnVal);
+                        $("[name='id_area']").val(0);
+                        $("[name='oficina']").val('');
+                        $("#div_id_area").show();
+                        $("#div_oficina").show();
+                    }
+                    
+                        
+                }
+                else{
+                    //significa que esta en false , por eso limpio y oculto
+                        $("#div_id_area").hide();
+                        $("#div_oficina").hide();
+                        $("[name='id_area']").val(0);
+                        $("[name='oficina']").val('');
+                        
+
+
+                }
+                //$('#empleado_dgr').val(this.checked);        
+            });
         });
     </script>
 @stop
