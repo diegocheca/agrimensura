@@ -187,7 +187,55 @@ class VoyagerBaseController extends Controller
         //1.1 veo si el slug es expedientes y tmb si soy agrimensor
         //var_dump(Auth::user()->role_id);die(); el role_id = 3 es el agrimensor
         //si soy admin o mesa de entrada o empleado de la dgr debo ver todos los expedientes
-        if( ($slug== "expedientes") && (Auth::user()->role_id == 3))
+        if( ($slug== "expedientes") && (Auth::user()->role_id == 4)) // para el caso de ser agente de la dgr
+        {
+            $elementos_a_eliminar = [];
+            //voy a recorrer el array entero con todos los expedientes. aca voy a ver si hay expediente que yo no deberia ver.
+            //si es asi, entonces voy a anaotarlos en una lista, y luego los saco del array original
+            //se tiene q hacer en dos for, no se puede hacer en uno solo, xq a medida q vaya borrando elemmentos del array se modifican los limites del for
+            /*
+            PASOS a seguir:
+            1- busco todos los movimientos que esten en mi oficina
+            2 - join con los expedientes relacionados a esos movimientos
+            3 - luego
+            */
+            $movimientos_en_oficina = Movimiento::select('*')
+            ->where('id_area', '=', Auth::user()->id_area)
+            ->groupBy('id_expediente')
+            ->orderBy('orden', 'desc')
+            ->get();
+            //$movimientos_en_oficina = $movimientos_en_oficina->groupBy('id_expediente');
+            //var_dump(Auth::user()->id_area);die();
+            for ($i=0 ; $i < count($movimientos_en_oficina) ; $i++) { 
+                var_dump( " id:  ". $movimientos_en_oficina[$i]["id"]. " id_expe: ". $movimientos_en_oficina[$i]["id_expediente"]);
+                
+            }
+            die();
+
+
+            for ($i=0 , $indice_a_eliminar=0; $i < count($dataTypeContent) ; $i++) { 
+                // mi numero de departamento o area es: Auth::user()->id_area
+                
+                
+                //voy a comprobar si cada uno de esots 
+                if($dataTypeContent[$i]["id_persona"] != Auth::user()->id) // mi supuesto id_persona
+                {
+                    //echo "---    voy a comprar".$dataTypeContent[$i]["id_persona"]."|2   el id es:".$dataTypeContent[$i]["id"]."en la vuelta:".$i."   ---";
+                    $elementos_a_eliminar [$indice_a_eliminar] = $i; // agrego los id de los exp q no son mios , luego los voy as sacar
+                    $indice_a_eliminar++;// sumo la cantidad de registros que no son mios
+                }
+            }
+            for ($y=0; $y < count($elementos_a_eliminar); $y++) { 
+                //voy a empezar a eliminar los registros que no sean mios
+                //array_splice($dataTypeContent, $elementos_a_eliminar[$y], 1); // empiezo a recorrer el arreglo de eliminar para ir sacandolos del arreay q voy a pasar
+                unset($dataTypeContent[$elementos_a_eliminar[$y]]);
+                // array_splice  (array_a_eliminar_elementos, el indice del elemento a eliminar, cantidad de elementos a eliminar a partir del numero anterior)
+            }
+            //var_dump(count($dataTypeContent));
+            //var_dump($dataTypeContent);
+            // die();
+        }
+        if( ($slug== "expedientes") && (Auth::user()->role_id == 3)) 
         {
             $elementos_a_eliminar = [];
             //voy a recorrer el array entero con todos los expedientes. aca voy a ver si hay expediente que yo no deberia ver.
@@ -195,7 +243,7 @@ class VoyagerBaseController extends Controller
             //se tiene q hacer en dos for, no se puede hacer en uno solo, xq a medida q vaya borrando elemmentos del array se modifican los limites del for
             for ($i=0 , $indice_a_eliminar=0; $i < count($dataTypeContent) ; $i++) { 
                 //aca debo obtener mi persona id . supongamos q es la 2
-                if($dataTypeContent[$i]["id_persona"] != 2) // mi supuesto id_persona
+                if($dataTypeContent[$i]["id_persona"] != Auth::user()->id) // mi supuesto id_persona
                 {
                     //echo "---    voy a comprar".$dataTypeContent[$i]["id_persona"]."|2   el id es:".$dataTypeContent[$i]["id"]."en la vuelta:".$i."   ---";
                     $elementos_a_eliminar [$indice_a_eliminar] = $i; // agrego los id de los exp q no son mios , luego los voy as sacar
@@ -546,7 +594,7 @@ class VoyagerBaseController extends Controller
             $movimento_nuevo->bandera_observacion = false;
             $movimento_nuevo->observacion = null;
             $movimento_nuevo->subsanacion = null;
-            $movimento_nuevo->id_area = $area->id;
+            $movimento_nuevo->id_area = 3;// antes era asi: $area->id | ahora: 3 (3 es el id del area mesa de entrada)
             $movimento_nuevo->id_expediente = $data->id;
             $movimento_nuevo->tramite_finalizado = false;
             $movimento_nuevo->created_by = Auth::user()->id;;

@@ -132,15 +132,25 @@ class MovimientosController extends Controller
         //Paso 4 - crear nuevo movimiento
         $bandera_observacion = $request->bandera_observacion === 'true'? true: false;
         $bandera_fin = $request->tramite_finalizado === 'true'? true: false;
+
         $movimento_nuevo = new Movimiento;
+        if($bandera_fin == true) // entonces se termina el expediente
+        {
+            $movimento_nuevo->id_area = 9; // id fijo del departamento archivo
+        }
+        else // entonces es un movimiento intermedio
+        {
+            $movimento_nuevo->id_area = $request->id_area;
+        }
+        
         $movimento_nuevo->orden = intval($ultimo_movimiento->orden)+1;
         $movimento_nuevo->fecha_entrada = date("Y-m-d H:i:s");
         $movimento_nuevo->fecha_salida = null;
         $movimento_nuevo->comentario = $request->comentario;
         $movimento_nuevo->bandera_observacion = $bandera_observacion;
         $movimento_nuevo->observacion = $request->observacion;
-        $movimento_nuevo->subsanacion = $request->subsanacion;
-        $movimento_nuevo->id_area = $request->id_area;
+        $movimento_nuevo->subsanacion = $request->subsanacion; // siempre viene vacio xq no esta en el form del front
+        //$movimento_nuevo->id_area = $request->id_area;
         $movimento_nuevo->id_expediente = $request->id_expdiente;
         $movimento_nuevo->tramite_finalizado = $bandera_fin;
         $movimento_nuevo->confirmado = 0;

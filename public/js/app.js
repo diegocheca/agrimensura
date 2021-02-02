@@ -2290,6 +2290,11 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
     se_puede_recibir: function se_puede_recibir(conf, fecha_salida) {
       if (conf != 1 && fecha_salida != null) return true;
       return false;
+    },
+    cambio_finalizo: function cambio_finalizo() {
+      console.log('el valor es');
+      console.log(this.nuevo_movimiento.tramite_finalizado);
+      if (this.nuevo_movimiento.tramite_finalizado == true) this.nuevo_movimiento.id_area = 9;
     }
   }
 });
@@ -54291,7 +54296,10 @@ var render = function() {
                                                   ],
                                                   staticClass: "form-control",
                                                   attrs: {
-                                                    id: "oficina_destino"
+                                                    id: "oficina_destino",
+                                                    disabled:
+                                                      _vm.nuevo_movimiento
+                                                        .tramite_finalizado
                                                   },
                                                   on: {
                                                     change: function($event) {
@@ -54724,53 +54732,61 @@ var render = function() {
                                                             .tramite_finalizado
                                                     },
                                                     on: {
-                                                      change: function($event) {
-                                                        var $$a =
-                                                            _vm.nuevo_movimiento
-                                                              .tramite_finalizado,
-                                                          $$el = $event.target,
-                                                          $$c = $$el.checked
-                                                            ? true
-                                                            : false
-                                                        if (
-                                                          Array.isArray($$a)
-                                                        ) {
-                                                          var $$v = null,
-                                                            $$i = _vm._i(
-                                                              $$a,
-                                                              $$v
-                                                            )
-                                                          if ($$el.checked) {
-                                                            $$i < 0 &&
-                                                              _vm.$set(
-                                                                _vm.nuevo_movimiento,
-                                                                "tramite_finalizado",
-                                                                $$a.concat([
-                                                                  $$v
-                                                                ])
+                                                      change: [
+                                                        function($event) {
+                                                          var $$a =
+                                                              _vm
+                                                                .nuevo_movimiento
+                                                                .tramite_finalizado,
+                                                            $$el =
+                                                              $event.target,
+                                                            $$c = $$el.checked
+                                                              ? true
+                                                              : false
+                                                          if (
+                                                            Array.isArray($$a)
+                                                          ) {
+                                                            var $$v = null,
+                                                              $$i = _vm._i(
+                                                                $$a,
+                                                                $$v
                                                               )
-                                                          } else {
-                                                            $$i > -1 &&
-                                                              _vm.$set(
-                                                                _vm.nuevo_movimiento,
-                                                                "tramite_finalizado",
-                                                                $$a
-                                                                  .slice(0, $$i)
-                                                                  .concat(
-                                                                    $$a.slice(
-                                                                      $$i + 1
+                                                            if ($$el.checked) {
+                                                              $$i < 0 &&
+                                                                _vm.$set(
+                                                                  _vm.nuevo_movimiento,
+                                                                  "tramite_finalizado",
+                                                                  $$a.concat([
+                                                                    $$v
+                                                                  ])
+                                                                )
+                                                            } else {
+                                                              $$i > -1 &&
+                                                                _vm.$set(
+                                                                  _vm.nuevo_movimiento,
+                                                                  "tramite_finalizado",
+                                                                  $$a
+                                                                    .slice(
+                                                                      0,
+                                                                      $$i
                                                                     )
-                                                                  )
-                                                              )
+                                                                    .concat(
+                                                                      $$a.slice(
+                                                                        $$i + 1
+                                                                      )
+                                                                    )
+                                                                )
+                                                            }
+                                                          } else {
+                                                            _vm.$set(
+                                                              _vm.nuevo_movimiento,
+                                                              "tramite_finalizado",
+                                                              $$c
+                                                            )
                                                           }
-                                                        } else {
-                                                          _vm.$set(
-                                                            _vm.nuevo_movimiento,
-                                                            "tramite_finalizado",
-                                                            $$c
-                                                          )
-                                                        }
-                                                      }
+                                                        },
+                                                        _vm.cambio_finalizo
+                                                      ]
                                                     }
                                                   }),
                                                   _vm._v(" "),
@@ -54833,7 +54849,7 @@ var render = function() {
                                                             _vm._v("Cuidado!")
                                                           ]),
                                                           _vm._v(
-                                                            " Esta terminando este expediente con este ultimo movimiento.\n                                                    "
+                                                            " Esta terminando este expediente con este ultimo movimiento. La oficina donde se mandará será Archivo.\n                                                    "
                                                           )
                                                         ]
                                                       )

@@ -122,7 +122,7 @@
                                                 </div>
                                                 <div class="form-group col-md-6">
                                                     <label for="oficina_destino">Oficina destino:</label>
-                                                    <select class="form-control" id="oficina_destino" v-model="nuevo_movimiento.id_area">
+                                                    <select class="form-control" id="oficina_destino" v-model="nuevo_movimiento.id_area" :disabled="nuevo_movimiento.tramite_finalizado">
                                                         <option v-for="option in oficinas" :key="option.id" v-bind:value="option.id">{{ option.nombre }}</option>
                                                     </select>
                                                 </div>
@@ -175,7 +175,7 @@
                                                 <div class="form-group col-md-4">
                                                     <label for="checkboxQuestionAlert">Finaliza?</label>
                                                     <div class='checkbox-ios checkbox-ios--alert'>
-                                                        <input class='checkbox-ios__toggle' id='checkboxQuestionAlert' name='checkboxQuestionAlert' type='checkbox' v-model="nuevo_movimiento.tramite_finalizado">
+                                                        <input class='checkbox-ios__toggle' id='checkboxQuestionAlert' name='checkboxQuestionAlert' type='checkbox' v-model="nuevo_movimiento.tramite_finalizado" v-on:change="cambio_finalizo">
                                                             <label class='checkbox-ios__label' for='checkboxQuestionAlert'>
                                                             <span class='checkbox-ios__value left'>No</span>
                                                             <span class='checkbox-ios__value right'>Si</span>
@@ -186,7 +186,7 @@
                                                 <transition name="slide-fade">
                                                     <div class="form-group col-md-8" v-if="nuevo_movimiento.tramite_finalizado">
                                                         <div class="alert alert-warning">
-                                                        <strong>Cuidado!</strong> Esta terminando este expediente con este ultimo movimiento.
+                                                        <strong>Cuidado!</strong> Esta terminando este expediente con este ultimo movimiento. La oficina donde se mandará será Archivo.
                                                         </div>
                                                     </div>
                                                 </transition>
@@ -424,6 +424,13 @@ export default {
                 return true;
             return false;
             
+        },
+        cambio_finalizo() {
+            console.log('el valor es');
+            console.log(this.nuevo_movimiento.tramite_finalizado);
+            if( this.nuevo_movimiento.tramite_finalizado == true )
+                this.nuevo_movimiento.id_area = 9;
+
         }
   },
     
