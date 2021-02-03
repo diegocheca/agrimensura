@@ -50,6 +50,8 @@ class VoyagerBaseController extends Controller
     //
     //****************************************
 
+    
+
     public function index(Request $request)
     {
         // GET THE SLUG, ex. 'posts', 'pages', etc.
@@ -199,32 +201,88 @@ class VoyagerBaseController extends Controller
             2 - join con los expedientes relacionados a esos movimientos
             3 - luego
             */
+
             $movimientos_en_oficina = Movimiento::select('*')
             ->where('id_area', '=', Auth::user()->id_area)
-            ->groupBy('id_expediente')
-            ->orderBy('orden', 'desc')
-            ->get();
-            //$movimientos_en_oficina = $movimientos_en_oficina->groupBy('id_expediente');
-            //var_dump(Auth::user()->id_area);die();
-            for ($i=0 ; $i < count($movimientos_en_oficina) ; $i++) { 
-                var_dump( " id:  ". $movimientos_en_oficina[$i]["id"]. " id_expe: ". $movimientos_en_oficina[$i]["id_expediente"]);
-                
+            ->where('fecha_salida', '=', null)
+            ->orderBy('id', 'desc')
+            ->get()
+            ->unique('id_expediente');
+            $movimientos_ordenados = [];
+            //var_dump($movimientos_en_oficina);die();
+            for ($i=0 , $contador = 0; $i < 99999 ; $i++) { 
+                if(isset($movimientos_en_oficina[$i]))
+                {
+                    $movimientos_ordenados [$contador] = [ "id"=> $movimientos_en_oficina[$i]["id"] , "id_exp"=> $movimientos_en_oficina[$i]["id_expediente"]] ;
+                    $contador++;
+                }
+                if($contador >= count($movimientos_en_oficina))
+                    break;
             }
-            die();
-
-
-            for ($i=0 , $indice_a_eliminar=0; $i < count($dataTypeContent) ; $i++) { 
+            //var_dump($movimientos_ordenados);
+            $y = $i;
+            $l = $contador;
+            // ordenar
+            //https://juncotic.com/ordenamiento-de-burbuja-algoritmos-de-ordenamiento/
+            do
+            {
+                $n=0;
+                //Recorrer la lista
+                for($i=1;$i< $l;$i++)
+                {
+                    //Verificar si los dos valores estan ordenados
+                    if(intval($movimientos_ordenados[$i-1]["id_exp"]) < intval($movimientos_ordenados[$i]["id_exp"]))
+                    {
+                        //Ordenar si es necesario
+                        $temp=$movimientos_ordenados[$i-1];
+                        $movimientos_ordenados[$i-1]=$movimientos_ordenados[$i];
+                        $movimientos_ordenados[$i]=$temp;
+                        $n=$i;
+                    }
+                }
+                $l=$n;
+            }
+            while($n!=0);
+            //var_dump("--------------------------------------------------");
+            //var_dump($movimientos_ordenados);
+            //die();
+            //var_dump(count($dataTypeContent));die();
+            for ($i=0 , $indice_a_eliminar=0, $indice_elem_ordenados = 0; $i < count($dataTypeContent) ; $i++) { 
                 // mi numero de departamento o area es: Auth::user()->id_area
-                
+
                 
                 //voy a comprobar si cada uno de esots 
-                if($dataTypeContent[$i]["id_persona"] != Auth::user()->id) // mi supuesto id_persona
-                {
-                    //echo "---    voy a comprar".$dataTypeContent[$i]["id_persona"]."|2   el id es:".$dataTypeContent[$i]["id"]."en la vuelta:".$i."   ---";
+                /*var_dump("comparo:       ");
+                var_dump($dataTypeContent[$i]["id"]);
+                var_dump(" - y: ");*/
+                
+                //corto cuando termino de recoorer el array mas cortito (el de movimientos de mi area)
+                if($indice_elem_ordenados >= count($movimientos_ordenados))
+                { // significa que ya complete mi array de elementos a borrar , entonces borro el resto de "todos"
+                    //var_dump("nada");
                     $elementos_a_eliminar [$indice_a_eliminar] = $i; // agrego los id de los exp q no son mios , luego los voy as sacar
                     $indice_a_eliminar++;// sumo la cantidad de registros que no son mios
+                    continue;
+                }
+                else {
+                    //var_dump($movimientos_ordenados[$indice_elem_ordenados]["id_exp"]);
+                    if($dataTypeContent[$i]["id"] != $movimientos_ordenados[$indice_elem_ordenados]["id_exp"] ) // mi supuesto id_persona
+                    {
+                        //echo "son desiguales";
+                        //echo "---    voy a comprar".$dataTypeContent[$i]["id_persona"]."|2   el id es:".$dataTypeContent[$i]["id"]."en la vuelta:".$i."   ---";
+                        $elementos_a_eliminar [$indice_a_eliminar] = $i; // agrego los id de los exp q no son mios , luego los voy as sacar
+                        $indice_a_eliminar++;// sumo la cantidad de registros que no son mios
+                    }
+                    else // significa que los elementos coinciden y no tienen q ser borrados, pero si avanzo el $indice_elem_ordenados
+                    {
+                        //echo "son iguales";
+                        $indice_elem_ordenados++;
+                    }
                 }
             }
+            if($i )
+            //var_dump($elementos_a_eliminar);
+            //die();
             for ($y=0; $y < count($elementos_a_eliminar); $y++) { 
                 //voy a empezar a eliminar los registros que no sean mios
                 //array_splice($dataTypeContent, $elementos_a_eliminar[$y], 1); // empiezo a recorrer el arreglo de eliminar para ir sacandolos del arreay q voy a pasar
@@ -233,7 +291,7 @@ class VoyagerBaseController extends Controller
             }
             //var_dump(count($dataTypeContent));
             //var_dump($dataTypeContent);
-            // die();
+            //die();
         }
         if( ($slug== "expedientes") && (Auth::user()->role_id == 3)) 
         {
@@ -277,7 +335,12 @@ class VoyagerBaseController extends Controller
             'showCheckboxColumn'
         ));
     }
-
+    public function object_sorter($clave,$orden=null) {
+        return function ($a, $b) use ($clave,$orden) {
+              $result=  ($orden=="DESC") ? strnatcmp($b->$clave, $a->$clave) :  strnatcmp($a->$clave, $b->$clave);
+              return $result;
+        };
+    }
     //***************************************
     //                _____
     //               |  __ \
@@ -597,7 +660,11 @@ class VoyagerBaseController extends Controller
             $movimento_nuevo->id_area = 3;// antes era asi: $area->id | ahora: 3 (3 es el id del area mesa de entrada)
             $movimento_nuevo->id_expediente = $data->id;
             $movimento_nuevo->tramite_finalizado = false;
-            $movimento_nuevo->created_by = Auth::user()->id;;
+            $movimento_nuevo->confirmado = 1;
+            $movimento_nuevo->fecha_confirmacion = date("Y-m-d H:i:s");
+            $movimento_nuevo->quien_confirmacion = Auth::user()->id;
+            $movimento_nuevo->comentario_confirmacion = "confirmacion automatica";
+            $movimento_nuevo->created_by = Auth::user()->id;
             $resultado_paso_8 = $movimento_nuevo->save();
             //Fin Paso 9
             //Suspendida Paso 5 - crear notificacion interna 
