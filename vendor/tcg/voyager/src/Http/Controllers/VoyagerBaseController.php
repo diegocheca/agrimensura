@@ -1147,12 +1147,14 @@ class VoyagerBaseController extends Controller
      */
     public function relation(Request $request)
     {
-        echo "aca";die();
+        
         $slug = $this->getSlug($request);
+        //var_dump($slug);die();
         $page = $request->input('page');
         $on_page = 50;
         $search = $request->input('search', false);
         $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+
 
         $method = $request->input('method', 'add');
 
@@ -1160,6 +1162,9 @@ class VoyagerBaseController extends Controller
         if ($method != 'add') {
             $model = $model->find($request->input('id'));
         }
+        //var_dump($request->type);die();
+
+
 
         $this->authorize($method, $model);
 
@@ -1198,6 +1203,27 @@ class VoyagerBaseController extends Controller
                     $relationshipOptions = $model->take($on_page)->skip($skip)->get();
                 }
 
+                //var_dump($relationshipOptions[0]);die();
+                if(($slug == "expedientes") && ($request->type == "expediente_belongsto_persona_relationship"))
+                {// se que estoy en la relacion de expedientes y users
+                    //voy a eliminar aquellos resultados que no son agentes de la dgr. es decir, voy a sacar los admin, y los agrimensores
+                    $elementos_a_eliminar = []; // en este array pongo los indices de los elementos del array original para luego sacarlos
+                    for ($i=0 , $indice_a_eliminar=0, $indice_elem_ordenados = 0; $i < count($relationshipOptions) ; $i++) { 
+                        //var_dump($results[$i]["text"]);die();
+                        if($relationshipOptions[$i]["role_id"] != 3 ) // significa que no es agrimensor
+                        {
+                            $elementos_a_eliminar [$indice_a_eliminar] = $i; // agrego los id de los exp q no son mios , luego los voy as sacar
+                            $indice_a_eliminar++;// sumo la cantidad de registros que no son mios
+                        }
+                    }
+                    for ($y=0; $y < count($elementos_a_eliminar); $y++) { 
+                        //voy a empezar a eliminar los registros que no son agrimensores
+                        unset($relationshipOptions[$elementos_a_eliminar[$y]]);
+                    }
+                }
+                //var_dump($relationshipOptions);die();
+
+
                 $results = [];
 
                 if (!$row->required && !$search && $page == 1) {
@@ -1222,6 +1248,9 @@ class VoyagerBaseController extends Controller
                         'text' => $relationshipOption->{$options->label},
                     ];
                 }
+                
+                
+                    //var_dump($total_count);die();
 
                 return response()->json([
                     'results'    => $results,
@@ -1231,6 +1260,13 @@ class VoyagerBaseController extends Controller
                 ]);
             }
         }
+
+        /*
+         
+        
+
+        */
+
 
         // No result found, return empty array
         return response()->json([], 404);
