@@ -565,7 +565,7 @@ class VoyagerBaseController extends Controller
         if (view()->exists("voyager::$slug.edit-add")) {
             $view = "voyager::$slug.edit-add";
         }
-        //var_dump($dataTypeContent);die();
+        //var_dump($dataType);die();
 
         return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable'));
     }
@@ -1147,6 +1147,7 @@ class VoyagerBaseController extends Controller
      */
     public function relation(Request $request)
     {
+        echo "aca";die();
         $slug = $this->getSlug($request);
         $page = $request->input('page');
         $on_page = 50;

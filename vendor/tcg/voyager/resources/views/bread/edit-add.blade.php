@@ -243,7 +243,7 @@
             //mis cosas
             //modifico el select para que solamente tenga personas profesionales
             @if ($dataType->name == "expedientes")
-                cargar_profesionales();
+                //cargar_profesionales();
             @endif
             //para expedientes
             @if ($dataType->name == "expedientes")

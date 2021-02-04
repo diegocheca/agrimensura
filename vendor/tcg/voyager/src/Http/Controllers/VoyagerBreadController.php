@@ -246,6 +246,8 @@ class VoyagerBreadController extends Controller
      */
     public function addRelationship(Request $request)
     {
+        echo "aca";die();
+        //echo "estoy aca";die();
         $relationshipField = $this->getRelationshipField($request);
 
         if (!class_exists($request->relationship_model)) {
@@ -324,6 +326,7 @@ class VoyagerBreadController extends Controller
      */
     private function getRelationshipField($request)
     {
+        
         // We need to make sure that we aren't creating an already existing field
 
         $dataType = Voyager::model('DataType')->find($request->data_type_id);
