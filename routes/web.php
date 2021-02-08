@@ -43,6 +43,9 @@ Route::get('/oficinas_para_add_mov', [MovimientosController::class, "traer_ofici
 Route::get('/datos_expediente/{num_exp}', [MovimientosController::class, "traer_expediente_para_component"])->name('datos_expediente');
 Route::get('/datos_ultimo_movimiento_para_exp/{num_exp}', [MovimientosController::class, "traer_ultimo_mov_exp"])->name('datos_ultimo_mov');
 Route::post('/crear_movimiento', [MovimientosController::class, "crear_movimiento_desde_component"])->name('crear-movimiento');
+Route::post('/devolver_movimiento/{id}', [MovimientosController::class, "devolver_movimiento_desde_component"])->name('devolver-movimiento');
+Route::get('/devolver_movimiento/{id}', [MovimientosController::class, "devolver_movimiento_desde_component"])->name('devolver-movimiento');
+
 
 Route::get('/datos_de_quien_creo_expdiente/{num_exp}', [MovimientosController::class, "traer_datos_creado_exp"])->name('datos_creador_exp');
 Route::post('/recibir_expediente_por_movimiento', [MovimientosController::class, "recibir_exp_por_movimiento"])->name('recibir-exp-por-movimiento');

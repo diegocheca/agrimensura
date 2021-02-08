@@ -2107,6 +2107,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -2248,6 +2252,7 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
           this.mostrar_modal =false;*/
 
           toastr__WEBPACK_IMPORTED_MODULE_1___default().success('Se creo el nuevo movimiento correctamente');
+          setInterval(location.reload(true), 5000);
         }
       })["catch"](function (error) {
         currentObj.output = error;
@@ -2288,13 +2293,64 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
       if (result % 2 == 0) return 'timeline-content';else return 'timeline-content right';
     },
     se_puede_recibir: function se_puede_recibir(conf, fecha_salida) {
-      if (conf != 1 && fecha_salida != null) return true;
+      if (conf != 1 && fecha_salida == null) return true;
+      return false;
+    },
+    se_puede_mover: function se_puede_mover(conf, fecha_salida) {
+      if (conf == 1 && fecha_salida == null) return true;
       return false;
     },
     cambio_finalizo: function cambio_finalizo() {
       console.log('el valor es');
       console.log(this.nuevo_movimiento.tramite_finalizado);
       if (this.nuevo_movimiento.tramite_finalizado == true) this.nuevo_movimiento.id_area = 9;
+    },
+    revertir_movimiento: function revertir_movimiento(id_mov) {
+      var mensaje = confirm("¿Realmente desea devolver este movimiento?"); //Detectamos si el usuario acepto el mensaje
+
+      if (mensaje) {
+        alert("¡Gracias por aceptar!");
+        axios.post('/devolver_movimiento/' + id_mov, {}).then(function (response) {
+          console.log(response);
+          console.log(response.data);
+
+          if (response.data == 'ok') {
+            console.log("con data ... se guardo correctamente"); //limpiar todo el
+
+            /*this.nuevo_movimiento.comentario='';
+            this.nuevo_movimiento.bandera_observacion=false;
+            this.nuevo_movimiento.observacion='';
+            this.nuevo_movimiento.subsanacion='';
+            this.nuevo_movimiento.id_area=1;
+            this.expdiente.id=1;
+            this.nuevo_movimiento.tramite_finalizado=false;
+            this.mostrar_modal =false;*/
+
+            toastr__WEBPACK_IMPORTED_MODULE_1___default().success('con data Se creo el nuevo movimiento correctamente'); //setInterval(location.reload(true),5000);
+          }
+
+          if (response == 'ok') {
+            console.log("sin data ....... se guardo correctamente"); //limpiar todo el
+
+            /*this.nuevo_movimiento.comentario='';
+            this.nuevo_movimiento.bandera_observacion=false;
+            this.nuevo_movimiento.observacion='';
+            this.nuevo_movimiento.subsanacion='';
+            this.nuevo_movimiento.id_area=1;
+            this.expdiente.id=1;
+            this.nuevo_movimiento.tramite_finalizado=false;
+            this.mostrar_modal =false;*/
+
+            toastr__WEBPACK_IMPORTED_MODULE_1___default().success('sindata Se creo el nuevo movimiento correctamente'); //setInterval(location.reload(true),5000);
+          }
+        })["catch"](function (error) {
+          currentObj.output = error;
+          toastr__WEBPACK_IMPORTED_MODULE_1___default().error('hubo un error');
+        });
+      } //Detectamos si el usuario denegó el mensaje
+      else {
+          alert("¡Haz denegado el mensaje!");
+        }
     }
   }
 });
@@ -2529,7 +2585,7 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
   },
   computed: {
     nombre_completo: function nombre_completo() {
-      return this.iniciador.apellido + ', ' + this.iniciador.nombre;
+      return this.iniciador.name;
     },
     fecha_creacion: function fecha_creacion() {
       var fecha1 = moment__WEBPACK_IMPORTED_MODULE_0___default()(this.expediente.created_at).format('MM/DD/YYYY');
@@ -54085,6 +54141,19 @@ var render = function() {
                                                     ]),
                                                     _vm._v(" "),
                                                     _c("p", [
+                                                      _vm._v("Oficina: "),
+                                                      _c("strong", [
+                                                        _vm._v(
+                                                          " " +
+                                                            _vm._s(
+                                                              movimiento.nombre
+                                                            ) +
+                                                            " "
+                                                        )
+                                                      ])
+                                                    ]),
+                                                    _vm._v(" "),
+                                                    _c("p", [
                                                       _vm._v(
                                                         "\n                                                El Movimiento tiene el registro "
                                                       ),
@@ -54182,6 +54251,50 @@ var render = function() {
                                                                 "localhost:8000//admin/"
                                                             }
                                                           }
+                                                        )
+                                                      : _vm._e(),
+                                                    _vm._v(" "),
+                                                    _vm.se_puede_recibir(
+                                                      movimiento.confirmado,
+                                                      movimiento.fecha_salida
+                                                    )
+                                                      ? _c(
+                                                          "button",
+                                                          {
+                                                            staticClass:
+                                                              "btn btn-danger",
+                                                            on: {
+                                                              click: function(
+                                                                $event
+                                                              ) {
+                                                                return _vm.revertir_movimiento(
+                                                                  movimiento.id
+                                                                )
+                                                              }
+                                                            }
+                                                          },
+                                                          [_vm._v("Devolver")]
+                                                        )
+                                                      : _vm._e(),
+                                                    _vm._v(" "),
+                                                    _vm.se_puede_mover(
+                                                      movimiento.confirmado,
+                                                      movimiento.fecha_salida
+                                                    )
+                                                      ? _c(
+                                                          "button",
+                                                          {
+                                                            staticClass:
+                                                              "btn btn-success",
+                                                            attrs: {
+                                                              id: "mover"
+                                                            },
+                                                            on: {
+                                                              click:
+                                                                _vm.mostrar_mover_expediente
+                                                            }
+                                                          },
+                                                          [_vm._v(" Mover")]
                                                         )
                                                       : _vm._e()
                                                   ],
@@ -54933,16 +55046,6 @@ var render = function() {
         on: { click: _vm.mostrar_ver_movimientos }
       },
       [_vm._v(" ver Mov")]
-    ),
-    _vm._v(" "),
-    _c(
-      "button",
-      {
-        staticClass: "btn btn-success",
-        attrs: { id: "mover" },
-        on: { click: _vm.mostrar_mover_expediente }
-      },
-      [_vm._v(" Mover")]
     )
   ])
 }

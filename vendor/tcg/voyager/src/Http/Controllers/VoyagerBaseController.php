@@ -26,6 +26,7 @@ use App\Mail\ExpedienteNuevoEmail;
 use App\Movimiento;
 use App\Area;
 use App\Persona;
+use TCG\Voyager\Models\User;
 
 
 use App\Mail\VerificationEmail;
@@ -637,15 +638,15 @@ class VoyagerBaseController extends Controller
             //Inicio Paso 4 - Enviar por email aviso al agrimensor implicado
             //aviso de nuevo expdietne creado a su email.
             //busco el nombre del area
-            $area = Area::find('2'); // Arreglar esto
+            $area = Area::find(Auth::user()->area); // Arreglar esto
             //busco el nombre de la persona y su email
-            $agrimensor = Persona::find($exp->id_persona);
+            //$agrimensor = Persona::find($exp->id_persona);
+            $agrimensor = User::find($exp->id_persona);
             //var_dump($agrimensor);die();
-            
             $to_email = 'diegochecarelli@gmail.com';
             //buscar email de la persona
             //constructor de email : //($nombre, $fecha_creado, $nombre_area, $id_expediente, $num_expe, $tramite)
-            Mail::to($to_email)->send(new ExpedienteNuevoEmail($agrimensor->apellido ,$exp->created_at ,$area->nombre, $data->id, $exp->numero_expediente, "tramite en proceso"));
+            Mail::to($to_email)->send(new ExpedienteNuevoEmail(Auth::user()->name ,$exp->created_at ,$area->nombre, $data->id, $exp->numero_expediente, "tramite en proceso"));
             //Fin Paso 4
             //Inicia Paso 9 - crear movimiento
             //crear el nuevo movimiento

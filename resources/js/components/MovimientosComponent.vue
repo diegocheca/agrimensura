@@ -35,12 +35,16 @@
                                             </div>
                                             <div v-bind:class="test(movimiento.orden)" >
                                                 <h4>Mov.: {{ movimiento.orden}} <a :href="url_para_ver_movimiento(movimiento.id)">(ver)</a>  * {{ since(movimiento.created_at) }}</h4>
+                                                <p>Oficina: <strong> {{ movimiento.nombre}} </strong></p>
                                                 <p>
                                                     El Movimiento tiene el registro <strong>{{ movimiento.id}}</strong> tiene fecha de entrada: <strong> {{ formatear_fecha(movimiento.fecha_entrada)  }} </strong> y fecha de salida <strong> {{ formatear_fecha(movimiento.fecha_salida) }}</strong>, contabilizando un total de: <strong> {{calcular_direfencia_de_dias(movimiento.fecha_entrada, movimiento.fecha_salida )}}</strong></p> 
                                                 <p v-if="movimiento.bandera_observacion"> Este movmiento <strong>Si</strong> posee una observacion: {{ movimiento.observacion }} </p>
                                                 <p v-else> Este movmiento <strong>No</strong> posee una observacion</p>
                                                 <p>Estado: Recibido</p>
                                                 <recibirexpediente v-if="se_puede_recibir(movimiento.confirmado, movimiento.fecha_salida)" :num_expediente=num_expediente  link_sis="localhost:8000//admin/"></recibirexpediente>
+                                                <button class="btn btn-danger" v-if="se_puede_recibir(movimiento.confirmado, movimiento.fecha_salida)" @click="revertir_movimiento(movimiento.id)">Devolver</button>
+                                                <button v-if="se_puede_mover(movimiento.confirmado, movimiento.fecha_salida)" id="mover" @click="mostrar_mover_expediente" class="btn btn-success"> Mover</button>
+
                                             </div>
                                             <!-- <div v-else class="timeline-content right">
                                                 <h2>Mov.: {{ movimiento.id}} <a :href="url_para_ver_movimiento(movimiento.id)">(ver)</a>  * {{ since(movimiento.created_at) }}</h2>
@@ -217,7 +221,7 @@
             </transition>
         </div>
         <button id="ver-movimientos" @click="mostrar_ver_movimientos" class="btn btn-primary"> ver Mov</button>
-        <button id="mover" @click="mostrar_mover_expediente" class="btn btn-success"> Mover</button>
+        
     </div>
 </template>
 <script>
@@ -370,6 +374,7 @@ export default {
                     
                     
                     toastr.success('Se creo el nuevo movimiento correctamente');
+                    setInterval(location.reload(true),5000);
                     
                 }
                 
@@ -420,18 +425,89 @@ export default {
                 return 'timeline-content right';
         },
         se_puede_recibir(conf,fecha_salida){
-            if((conf != 1) && (fecha_salida != null) )
+            if((conf != 1) && (fecha_salida == null) )
                 return true;
             return false;
             
         },
+        
+        se_puede_mover(conf,fecha_salida){
+            if((conf == 1) && (fecha_salida == null) )
+                return true;
+            return false;
+            
+        },
+
         cambio_finalizo() {
             console.log('el valor es');
             console.log(this.nuevo_movimiento.tramite_finalizado);
             if( this.nuevo_movimiento.tramite_finalizado == true )
                 this.nuevo_movimiento.id_area = 9;
 
+        },
+        revertir_movimiento(id_mov)
+        {
+            var mensaje = confirm("¿Realmente desea devolver este movimiento?");
+            //Detectamos si el usuario acepto el mensaje
+            if (mensaje) {
+                alert("¡Gracias por aceptar!");
+                
+                axios.post('/devolver_movimiento/'+id_mov, {
+            })
+            .then(function (response) {
+                console.log(response);
+                console.log(response.data);
+                if(response.data == 'ok')
+                {
+                    console.log("con data ... se guardo correctamente");
+                    //limpiar todo el
+                    /*this.nuevo_movimiento.comentario='';
+                    this.nuevo_movimiento.bandera_observacion=false;
+                    this.nuevo_movimiento.observacion='';
+                    this.nuevo_movimiento.subsanacion='';
+                    this.nuevo_movimiento.id_area=1;
+                    this.expdiente.id=1;
+                    this.nuevo_movimiento.tramite_finalizado=false;
+                    this.mostrar_modal =false;*/
+                    
+                    
+                    toastr.success('con data Se creo el nuevo movimiento correctamente');
+                    //setInterval(location.reload(true),5000);
+                    
+                }
+                if(response == 'ok')
+                {
+                    console.log("sin data ....... se guardo correctamente");
+                    //limpiar todo el
+                    /*this.nuevo_movimiento.comentario='';
+                    this.nuevo_movimiento.bandera_observacion=false;
+                    this.nuevo_movimiento.observacion='';
+                    this.nuevo_movimiento.subsanacion='';
+                    this.nuevo_movimiento.id_area=1;
+                    this.expdiente.id=1;
+                    this.nuevo_movimiento.tramite_finalizado=false;
+                    this.mostrar_modal =false;*/
+                    
+                    
+                    toastr.success('sindata Se creo el nuevo movimiento correctamente');
+                    //setInterval(location.reload(true),5000);
+                    
+                }
+                
+
+            })
+            .catch(function (error) {
+                currentObj.output = error;
+                toastr.error('hubo un error');
+            });
+
+            }
+            //Detectamos si el usuario denegó el mensaje
+            else {
+                alert("¡Haz denegado el mensaje!");
+            }
         }
+
   },
     
 }

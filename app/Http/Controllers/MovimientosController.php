@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MovimientoNuevoEmail;
+use TCG\Voyager\Models\User;
 
 class MovimientosController extends Controller
 {
@@ -59,7 +60,10 @@ class MovimientosController extends Controller
        //var_dump($numero);die();
        $id = Expediente::select('id')->where('numero_expediente', '=', $numero)->first();
        //var_dump($id->id);die();
-       $mov = Movimiento::select('*')->where('id_expediente', '=', $id->id)->orderBy('created_at', 'desc')->get();
+       $mov = Movimiento::select('movimientos.id','movimientos.orden','movimientos.fecha_entrada','movimientos.fecha_salida','movimientos.comentario','movimientos.bandera_observacion','movimientos.observacion','movimientos.subsanacion','movimientos.id_area','movimientos.id_expediente','movimientos.tramite_finalizado','movimientos.confirmado','movimientos.fecha_confirmacion','movimientos.quien_confirmacion','movimientos.comentario_confirmacion','movimientos.created_by','areas.nombre')
+       ->join('areas','areas.id','=', 'movimientos.id_area')
+       ->where('id_expediente', '=', $id->id)
+       ->orderBy('movimientos.created_at', 'desc')->get();
        //var_dump($mov);die();
        return response()->json($mov);
 
@@ -90,7 +94,7 @@ class MovimientosController extends Controller
     public function traer_datos_creado_exp($num_exp){
         $expediente = Expediente::select('*')->where('numero_expediente', '=', $num_exp)->first();
         
-        $persona = Persona::select('*')->where('id','=', $expediente->id_persona)->first();
+        $persona = User::select('*')->where('id','=', $expediente->id_persona)->first();
         //$expediente = Expediente::join('movimientos', 'movimientos.id_area', '=', 'expedientes.')select('*')->where('numero_expediente', '=', $num_exp)->first();
         //var_dump($persona);die();
 
@@ -108,6 +112,39 @@ class MovimientosController extends Controller
         //
     }
     
+    public function devolver_movimiento_desde_component($id_mov){
+        /* PASOS A SEGUIR PARA HACER ESTA FUNCION:
+        Paso 1 - Buscar el movimiento actual  */
+        $movimiento_a_borrar = Movimiento::find($id_mov);
+        $orden_anterior = $movimiento_a_borrar["orden"];
+        //var_dump($movimiento_a_borrar);
+        //var_dump("-----------------------");
+        //Paso 2 - eliminar el ultimo movimiento
+        $resultado2 = $movimiento_a_borrar->delete();
+        //var_dump($resultado2);
+        //var_dump("-----------------------");
+        //Paso 3 - buscar el movimiento anterior
+        $movimiento_anterior = Movimiento::select('*')->where('id', '=', intval($id_mov)-1)->first();
+        //var_dump($movimiento_anterior);
+        //var_dump("-----------------------");
+        //Paso 4 - modificar el ultimo movimiento
+        $movimiento_anterior->fecha_salida = null;
+        $movimiento_anterior->confirmado = 0;
+        $movimiento_anterior->fecha_confirmacion = null;
+        $movimiento_anterior->quien_confirmacion = null;
+        $movimiento_anterior->comentario_confirmacion = null;
+        //Paso 5 - actualizar el registro
+        $resultado5= $movimiento_anterior->save();
+        //var_dump($resultado5);
+        //var_dump("-----------------------");
+        //Paso 6 responder en base a los resultados
+        if($resultado2 && $resultado5)
+            return response('ok', 200);
+        else return response('mal', 200);
+
+
+    }
+    
     public function crear_movimiento_desde_component(Request $request)
     {
         //Proceso a realizar
@@ -122,9 +159,7 @@ class MovimientosController extends Controller
         Paso 7 - hacer algo de confirmacion de pase o algo asi
         Paso 8 - Fin
         */
-
         //  Paso 2:validar los datos
-
         // Paso 3: cerrar el movimiento anterior
         $ultimo_movimiento = Movimiento::select('*')->where('movimientos.id_expediente','=', $request->id_expdiente)->latest('created_at')->first();
         $ultimo_movimiento->fecha_salida = date("Y-m-d H:i:s");
@@ -132,7 +167,6 @@ class MovimientosController extends Controller
         //Paso 4 - crear nuevo movimiento
         $bandera_observacion = $request->bandera_observacion === 'true'? true: false;
         $bandera_fin = $request->tramite_finalizado === 'true'? true: false;
-
         $movimento_nuevo = new Movimiento;
         if($bandera_fin == true) // entonces se termina el expediente
         {
@@ -142,7 +176,6 @@ class MovimientosController extends Controller
         {
             $movimento_nuevo->id_area = $request->id_area;
         }
-        
         $movimento_nuevo->orden = intval($ultimo_movimiento->orden)+1;
         $movimento_nuevo->fecha_entrada = date("Y-m-d H:i:s");
         $movimento_nuevo->fecha_salida = null;
@@ -159,16 +192,11 @@ class MovimientosController extends Controller
         $movimento_nuevo->comentario_confirmacion = null;
         $movimento_nuevo->created_by = Auth::user()->id;
         $resultado_paso_4 = $movimento_nuevo->save();
-        /*var_dump($resultado_paso_3);
-        var_dump($resultado_paso_4);
-        var_dump($movimento_nuevo);
-        die();*/
+        /*
         //Paso 5 - envio email a agrimensor asociado
         //obtener el email del agrimensor
         $exp = Expediente::select('*')->where('id','=',$request->id_expdiente)->first();
-        
         $agrimensor = Persona::select('*')->where('id','=',$exp->id_persona)->first();
-        
         $to_email = "diegochecarelli@gmail.com";
         //$to_email = $agrimensor->email;
         $area = Area::select('*')->where('id','=',$request->id_area)->first();
@@ -176,6 +204,8 @@ class MovimientosController extends Controller
         //$bandera_observacion , $area->nombre, $bandera_fin, $request->id_expdiente, $exp->numero_expediente);die();
         Mail::to($to_email)->send(new MovimientoNuevoEmail($agrimensor->nombre ,date("Y-m-d H:i:s") ,$request->comentario,
         $bandera_observacion , $area->nombre, $bandera_fin, $request->id_expdiente, $exp->numero_expediente));
+        //Fin Paso 5
+        */
         //  Paso 6 - crear notificacion para empleados de la nueva area a la que va el expediente.
         //ni idea de esto
 
@@ -191,12 +221,37 @@ class MovimientosController extends Controller
     public function recibir_exp_por_movimiento(Request $request)
     {
         //
+        /*Paso a segir:
+        Paso 1: buscar el registro del mov
+        Paso 2: crear objeeto actualizado
+        Paso 3: actualizar
+        Paso 4: mandar email al agrimensor del expediente
+        */
+        //Paso 1
         $moviento_a_actualizar = Movimiento::find($request->movimiento_id);
+        //Fin Paso 1
+        //Paso 2
         $moviento_a_actualizar->confirmado = 1;
         $moviento_a_actualizar->fecha_confirmacion = date("Y-m-d H:i:s");
         $moviento_a_actualizar->quien_confirmacion = Auth::user()->id;
         $moviento_a_actualizar->comentario_confirmacion = $request->comentario_confirmacion;
+        //Fin Paso 2
+        //Paso 3
         $resultado_update = $moviento_a_actualizar->save();
+        //Fin Paso 3
+        //Paso 4 - envio email a agrimensor asociado
+        //obtener el email del agrimensor
+        $exp = Expediente::find($moviento_a_actualizar->id_expediente);
+        $agrimensor = User::find($exp->id_persona);
+        $to_email = "diegochecarelli@gmail.com"; // esto en desarrollo
+        //$to_email = $agrimensor->email; esto es en produccion
+        $area = Area::find($agrimensor->id_area);
+        //$bandera_observacion , $area->nombre, $bandera_fin, $request->id_expdiente, $exp->numero_expediente);die();
+        $bandera_observacion = ($request->comentario!= null) ? true : false;
+        $bandera_fin = false; // no puede ser final si estoy recibiendo
+        Mail::to($to_email)->send(new MovimientoNuevoEmail($agrimensor->name ,date("Y-m-d H:i:s") ,$request->comentario,
+        $bandera_observacion , $area->nombre, $bandera_fin, $exp->id, $exp->numero_expediente));
+        //Fin Paso 4
         if($resultado_update)
             return response()->json("ok");
         else

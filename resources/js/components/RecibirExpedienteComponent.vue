@@ -212,7 +212,7 @@ export default {
     },
     computed: {
         nombre_completo(){
-            return this.iniciador.apellido + ', ' + this.iniciador.nombre; 
+            return this.iniciador.name; 
         },
         fecha_creacion(){
             var fecha1 = moment(this.expediente.created_at).format('MM/DD/YYYY');
