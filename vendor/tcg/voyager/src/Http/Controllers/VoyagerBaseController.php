@@ -638,7 +638,7 @@ class VoyagerBaseController extends Controller
             //Inicio Paso 4 - Enviar por email aviso al agrimensor implicado
             //aviso de nuevo expdietne creado a su email.
             //busco el nombre del area
-            $area = Area::find(Auth::user()->area); // Arreglar esto
+            $area = Area::find(3); // va siempre a mensa de entrada cuando comienza el exp
             //busco el nombre de la persona y su email
             //$agrimensor = Persona::find($exp->id_persona);
             $agrimensor = User::find($exp->id_persona);
@@ -646,6 +646,7 @@ class VoyagerBaseController extends Controller
             $to_email = 'diegochecarelli@gmail.com';
             //buscar email de la persona
             //constructor de email : //($nombre, $fecha_creado, $nombre_area, $id_expediente, $num_expe, $tramite)
+            //var_dump($area, Auth::user()->id_area);
             Mail::to($to_email)->send(new ExpedienteNuevoEmail(Auth::user()->name ,$exp->created_at ,$area->nombre, $data->id, $exp->numero_expediente, "tramite en proceso"));
             //Fin Paso 4
             //Inicia Paso 9 - crear movimiento

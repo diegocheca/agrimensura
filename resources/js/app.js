@@ -26,7 +26,7 @@ Vue.component('movimientos-expediente', require('./components/MovimientosCompone
 Vue.component('recibir-expdiente', require('./components/RecibirExpedienteComponent.vue').default);
 Vue.component('tabs', require('./components/TabsComponent.vue').default);
 Vue.component('tab', require('./components/TabComponent.vue').default);
-
+Vue.component('grafica-component', require('./components/graficos.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

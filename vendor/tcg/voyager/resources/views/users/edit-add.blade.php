@@ -24,6 +24,10 @@
             @endif
             {{ csrf_field() }}
 
+            @php 
+                isset($dataTypeContent->id) ? $soyagrimensor= true : $soyagrimensor=false ;
+            @endphp
+
             <div class="row">
                 <div class="col-md-8">
                     <div class="panel panel-bordered">
@@ -42,7 +46,11 @@
                             <div class="form-group">
                                 <label for="name">{{ __('voyager::generic.name') }}</label>
                                 <input type="text" class="form-control" id="name" name="name" placeholder="{{ __('voyager::generic.name') }}"
-                                       value="{{ old('name', $dataTypeContent->name ?? '') }}">
+                                       value="{{ old('name', $dataTypeContent->name ?? '') }}" 
+                                        @if($soyagrimensor) 
+                                            disabled
+                                        @endif
+                                >
                             </div>
 
                             <div class="form-group">
@@ -81,14 +89,18 @@
                                 </div>
                             @endcan
                             @php
-                            if (isset($dataTypeContent->locale)) {
-                                $selected_locale = $dataTypeContent->locale;
-                            } else {
-                                $selected_locale = config('app.locale', 'en');
-                            }
+                                if (isset($dataTypeContent->locale)) {
+                                    $selected_locale = $dataTypeContent->locale;
+                                } else {
+                                    $selected_locale = config('app.locale', 'en');
+                                }
 
                             @endphp
-                            <div class="form-group">
+                            <div class="form-group" 
+                                @if($soyagrimensor) 
+                                 style="display:none"
+                                @endif
+                            >
                                 <label for="locale">{{ __('voyager::generic.locale') }}</label>
                                 <select class="form-control select2" id="locale" name="locale">
                                     @foreach (Voyager::getLocales() as $locale)
@@ -135,44 +147,44 @@
                                 </div>
                             </div>
                             @endif
-                            <div class="form-group">
-                                <div class="col-md-6">
-                                    <label class="control-label" for="empleado_dgr">Es empleado de la DGR?</label>
-                                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip"  data-placement="right" data-html="true" title="" data-original-title="Es empleado de la DGR? Si es así, entonces el esta opcion debe estar marcada." ></span>
+                            @if(!$soyagrimensor) 
+                                <div class="form-group">
+                                    <div class="col-md-6">
+                                        <label class="control-label" for="empleado_dgr">Es empleado de la DGR?</label>
+                                            <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip"  data-placement="right" data-html="true" title="" data-original-title="Es empleado de la DGR? Si es así, entonces el esta opcion debe estar marcada." ></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        @if ( $dataTypeContent->empleado_dgr == 1 )
+                                            <input type="checkbox" style="width:95%" checked name="empleado_dgr" id="empleado_dgr" class="toggleswitch" data-on="Si, trabaja DGR" data-off="No, es agrimensor continuar">
+                                        @else
+                                            <input type="checkbox" style="width:95%" name="empleado_dgr" id="empleado_dgr" class="toggleswitch" data-on="Si, trabaja DGR" data-off="No, es agrimensor continuar">
+                                        @endif    
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    @if ( $dataTypeContent->empleado_dgr == 1 )
-                                        <input type="checkbox" style="width:95%" checked name="empleado_dgr" id="empleado_dgr" class="toggleswitch" data-on="Si, trabaja DGR" data-off="No, es agrimensor continuar">
-                                    @else
-                                        <input type="checkbox" style="width:95%" name="empleado_dgr" id="empleado_dgr" class="toggleswitch" data-on="Si, trabaja DGR" data-off="No, es agrimensor continuar">
-                                    @endif    
+                                <hr>
+                                <br>
+                                <div class="form-group" id="div_id_area">
+                                    <label for="id_area">Area a la que pertenece</label> <span>(Actual:{{ old('id_area', $dataTypeContent->id_area ?? '') }} )</span>
+                                    <input type="hidden" id="id_area_anterior" name="id_area_anterior" value="{{ old('id_area', $dataTypeContent->id_area ?? '') }}"/>
+                                
+                                        <select class="form-control" id="id_area" name="id_area">
+                                        <option>Cargando</option>
+                                        </select>
                                 </div>
-                            </div>
-                            <hr>
-                            <br>
-                            <div class="form-group" id="div_id_area">
-                                <label for="id_area">Area a la que pertenece</label> <span>(Actual:{{ old('id_area', $dataTypeContent->id_area ?? '') }} )</span>
-                                <input type="hidden" id="id_area_anterior" name="id_area_anterior" value="{{ old('id_area', $dataTypeContent->id_area ?? '') }}"/>
-                               
-                                       <select class="form-control" id="id_area" name="id_area">
-                                       <option>Cargando</option>
-                                       </select>
-                            </div>
-                            <div class="form-group" id="div_oficina">
-                                <label for="oficina">Oficina dentro del area</label>
-                                <input type="text" class="form-control" id="oficina" name="oficina" placeholder="Ingrese la oficina a la que pertence por favor"
-                                       value="{{ old('oficina', $dataTypeContent->oficina ?? '') }}">
-                            </div>
+                                <div class="form-group" id="div_oficina">
+                                    <label for="oficina">Oficina dentro del area</label>
+                                    <input type="text" class="form-control" id="oficina" name="oficina" placeholder="Ingrese la oficina a la que pertence por favor"
+                                        value="{{ old('oficina', $dataTypeContent->oficina ?? '') }}">
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
-
             <button type="submit" class="btn btn-primary pull-right save">
                 {{ __('voyager::generic.save') }}
             </button>
         </form>
-
         <iframe id="form_target" name="form_target" style="display:none"></iframe>
         <form id="my_form" action="{{ route('voyager.upload') }}" target="form_target" method="post" enctype="multipart/form-data" style="width:0px;height:0;overflow:hidden">
             {{ csrf_field() }}

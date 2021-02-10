@@ -220,7 +220,7 @@
                 </div>
             </transition>
         </div>
-        <button id="ver-movimientos" @click="mostrar_ver_movimientos" class="btn btn-primary"> ver Mov</button>
+        <button id="ver-movimientos" @click="mostrar_ver_movimientos" class="btn btn-primary"> Movimientos</button>
         
     </div>
 </template>

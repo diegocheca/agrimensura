@@ -2,7 +2,7 @@
 
 return [
     'avatar'           => 'Avatar',
-    'edit'             => 'Edit My Profile',
+    'edit'             => 'Editar mi perfil',
     'edit_user'        => 'Edit User',
     'password'         => 'Password',
     'password_hint'    => 'Leave empty to keep the same',

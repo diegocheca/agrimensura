@@ -6,6 +6,7 @@
         @include('voyager::dimmers')
         <div id="app">
             <example-component></example-component>
+            <grafica-component></grafica-component>
             <tabs>
                 <tab name="About Us" :selected="true">
                 <h1>this is the content of About Us tab.</h1>

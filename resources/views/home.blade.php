@@ -23,7 +23,7 @@
             <div class="ml-4">
                 <p class="text-lg leading-6 font-medium text-gray-900">Find the perfect component</p>
                 <p class="mt-1 max-w-xl text-base leading-6 text-gray-500 lg:mt-2">
-                    Every component is embedded live directly on the page, and you can even see what they look like at different breakpoints by dragging the slider on the right.
+                    Every componenddddddddddt is embedded live directly on the page, and you can even see what they look like at different breakpoints by dragging the slider on the right.
                 </p>
             </div>
         </div>
