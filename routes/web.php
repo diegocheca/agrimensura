@@ -67,6 +67,8 @@ Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 //http://localhost:8000/comprobante_exp/Contable/11/12312/Diego-Checarelli
 Route::get('/comprobante_exp/{area}/{id}/{numero_expediente}/{nombre}', [PDFController::class, "generar_comprobante_exp"])->name('generar_comprobante_exp');
 
+
+Route::get('/datos_expedientes_para_buscador', [ExpedienteController::class, "traer_exp_buscador"])->name('traer_exp_buscador');
 // excel
 
 Route::get('excel-csv-file', [ExcelCSVController::class, 'index']);

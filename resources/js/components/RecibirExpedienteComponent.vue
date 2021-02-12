@@ -134,7 +134,8 @@
                                                         <label for="posee_subsanacion">Posee subsanacion?:</label>
                                                     </div>
                                                     <div class="form-group col-md-8">
-                                                        <textarea style="width:100%" class="form-control" id="posee_subsanacion" disabled v-model="ultimo_movimiento.subsanacion" rows="3"></textarea>
+                                                        <input v-if="ultimo_movimiento.subsanacion != '' " style="width:100%" class="form-control" type="text" id="posee_subsanacion" disabled value="Si, si posee"/>
+                                                        <input v-else style="width:100%" class="form-control" type="text" id="posee_subsanacion" disabled value="No, no posee"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group col-md-6">
@@ -270,10 +271,11 @@ export default {
                 console.log(response);
                 console.log("se guardo correctamente");
                 toastr.success('El Expdiente '+ exp +' se recibio correctamente');
+                setInterval(location.reload(true),5000);
                 //toastr.error('El Expdiente se recibio correctamente');
             })
             .catch(function (error) {
-                toastr.error('El Expdiente'+ exp +' se recibio correctamente');
+                toastr.error('El Expdiente '+ exp +' no pudo ser recibido');
             });
             this.showModal_recibir = false;
         },

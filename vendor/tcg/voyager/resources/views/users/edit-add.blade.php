@@ -25,7 +25,7 @@
             {{ csrf_field() }}
 
             @php 
-                isset($dataTypeContent->id) ? $soyagrimensor= true : $soyagrimensor=false ;
+                ( (isset($dataTypeContent->id)) && ($dataTypeContent->role_id == 3) ) ? $soyagrimensor= true : $soyagrimensor=false ;
             @endphp
 
             <div class="row">

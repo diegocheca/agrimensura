@@ -40,6 +40,10 @@
                                                     El Movimiento tiene el registro <strong>{{ movimiento.id}}</strong> tiene fecha de entrada: <strong> {{ formatear_fecha(movimiento.fecha_entrada)  }} </strong> y fecha de salida <strong> {{ formatear_fecha(movimiento.fecha_salida) }}</strong>, contabilizando un total de: <strong> {{calcular_direfencia_de_dias(movimiento.fecha_entrada, movimiento.fecha_salida )}}</strong></p> 
                                                 <p v-if="movimiento.bandera_observacion"> Este movmiento <strong>Si</strong> posee una observacion: {{ movimiento.observacion }} </p>
                                                 <p v-else> Este movmiento <strong>No</strong> posee una observacion</p>
+                                                <br>
+                                                <p v-if="movimiento.subsanacion != ''"> Este movmiento <strong>Si</strong> posee una subsanacion: {{ movimiento.subsanacion }} </p>
+                                                <p v-else> Este movmiento <strong>No</strong> posee una subsanacion</p>
+                                                <br>
                                                 <p>Estado: Recibido</p>
                                                 <recibirexpediente v-if="se_puede_recibir(movimiento.confirmado, movimiento.fecha_salida)" :num_expediente=num_expediente  link_sis="localhost:8000//admin/"></recibirexpediente>
                                                 <button class="btn btn-danger" v-if="se_puede_recibir(movimiento.confirmado, movimiento.fecha_salida)" @click="revertir_movimiento(movimiento.id)">Devolver</button>
@@ -126,7 +130,7 @@
                                                 </div>
                                                 <div class="form-group col-md-6">
                                                     <label for="oficina_destino">Oficina destino:</label>
-                                                    <select class="form-control" id="oficina_destino" v-model="nuevo_movimiento.id_area" :disabled="nuevo_movimiento.tramite_finalizado">
+                                                    <select class="form-control" id="oficina_destino" v-model="nuevo_movimiento.id_area" :disabled="nuevo_movimiento.tramite_finalizado || nuevo_movimiento.bandera_subsanacion ">
                                                         <option v-for="option in oficinas" :key="option.id" v-bind:value="option.id">{{ option.nombre }}</option>
                                                     </select>
                                                 </div>
@@ -171,10 +175,39 @@
                                                 </transition>
                                             </div>
                                             <hr>
-                                                <!-- <div class="form-group col-md-6">
-                                                    <label for="subsanacion">Subsanacion de la observacion:</label>
-                                                    <textarea class="form-control" id="subsanacion" rows="3" v-model="nuevo_movimiento.subsanacion"></textarea>
-                                                </div> -->
+                                            <div class="form-group col-md-12">
+                                                <div class="form-group col-md-4">
+                                                    <!-- <p>Tiene Obsercacion?</p>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <label for="false" class="custom-control-label" >No, sin observacion</label>
+                                                        <input type="radio" id="tiene_obs" value="false" class="custom-control-input" v-model="nuevo_movimiento.bandera_observacion">
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <label for="true" class="custom-control-label">Si, tiene observacion</label>
+                                                        <input type="radio" id="tiene_obs" value="true" class="custom-control-input" v-model="nuevo_movimiento.bandera_observacion">
+                                                    </div> -->
+                                                    <label class="control-label" for="name">Tiene Subsanacion?</label>
+                                                    <div class='checkbox-ios'>
+                                                        <input class='checkbox-ios__toggle' id='checkboxQuestiondos' name='checkboxQuestiondos' type='checkbox' v-model="nuevo_movimiento.bandera_subsanacion" v-on:change="cambio_subsanacion">
+                                                            <label class='checkbox-ios__label' for='checkboxQuestiondos'>
+                                                            <span class='checkbox-ios__value left'>No tiene</span>
+                                                            <span class='checkbox-ios__value right'>Si tiene</span>
+                                                            </label>
+                                                        </input>
+                                                    </div>
+                                                </div>
+                                                <transition name="slide-fade">
+                                                    <div class="form-group col-md-8" v-if="nuevo_movimiento.bandera_subsanacion">
+                                                        <label for="subsanacion">Subsanacion de la observacion:</label>
+                                                        <textarea class="form-control" id="subsanacion" rows="3" v-model="nuevo_movimiento.subsanacion"></textarea>
+                                                        <span class="limiter">{{charactersLeftsubsanacion}}</span>
+                                                    </div>
+                                                </transition>
+                                            </div>
+                                                    
+                                                <div class="form-group col-md-6">
+                                                   
+                                                </div>
                                             <div class="form-group col-md-12">
                                                 <div class="form-group col-md-4">
                                                     <label for="checkboxQuestionAlert">Finaliza?</label>
@@ -249,8 +282,9 @@ export default {
             fecha_salida: null,
             comentario: '',
             bandera_observacion: false,
+            bandera_subsanacion: false,
             observacion: '',
-            subsanacion: null,
+            subsanacion: '',
             id_area: null,
             id_expdiente: null,
             tramite_finalizado: false,
@@ -284,7 +318,14 @@ export default {
                 limit = 150;
 
             return (limit - char) + " / " + limit + " caracteres restantes";
+        },
+        charactersLeftsubsanacion() {
+            var char = this.nuevo_movimiento.subsanacion.length,
+                limit = 150;
+
+            return (limit - char) + " / " + limit + " caracteres restantes";
         }
+        
 
     },
   methods: {
@@ -351,6 +392,7 @@ export default {
             axios.post('/crear_movimiento', {
                 comentario: this.nuevo_movimiento.comentario,
                 bandera_observacion: this.nuevo_movimiento.bandera_observacion,
+                bandera_subsanacion: this.nuevo_movimiento.bandera_subsanacion,
                 observacion: this.nuevo_movimiento.observacion,
                 subsanacion: this.nuevo_movimiento.subsanacion,
                 id_area: this.nuevo_movimiento.id_area,
@@ -386,6 +428,7 @@ export default {
             });
             this.nuevo_movimiento.comentario='';
             this.nuevo_movimiento.bandera_observacion=false;
+            this.nuevo_movimiento.bandera_subsanacion=false;
             this.nuevo_movimiento.observacion='';
             this.nuevo_movimiento.subsanacion='';
             this.nuevo_movimiento.id_area=1;
@@ -437,12 +480,33 @@ export default {
             return false;
             
         },
+        cambio_subsanacion() {
+            console.log('el valor es');
+            console.log(this.nuevo_movimiento.subsanacion);
+            if( this.nuevo_movimiento.bandera_subsanacion == true )
+            {
+                this.nuevo_movimiento.id_area = 3;
+                this.nuevo_movimiento.tramite_finalizado = false;
+            }
+            if( this.nuevo_movimiento.bandera_subsanacion == false )
+            {
+                this.nuevo_movimiento.subsanacion = '';
+                this.nuevo_movimiento.bandera_subsanacion = false;
+            }
+                
+
+        },
 
         cambio_finalizo() {
             console.log('el valor es');
             console.log(this.nuevo_movimiento.tramite_finalizado);
             if( this.nuevo_movimiento.tramite_finalizado == true )
+            {
                 this.nuevo_movimiento.id_area = 9;
+                this.nuevo_movimiento.bandera_subsanacion = false;
+
+            }
+                
 
         },
         revertir_movimiento(id_mov)
@@ -450,64 +514,37 @@ export default {
             var mensaje = confirm("¿Realmente desea devolver este movimiento?");
             //Detectamos si el usuario acepto el mensaje
             if (mensaje) {
-                alert("¡Gracias por aceptar!");
-                
+                //alert("¡Gracias por aceptar!");
                 axios.post('/devolver_movimiento/'+id_mov, {
-            })
-            .then(function (response) {
-                console.log(response);
-                console.log(response.data);
-                if(response.data == 'ok')
-                {
-                    console.log("con data ... se guardo correctamente");
-                    //limpiar todo el
-                    /*this.nuevo_movimiento.comentario='';
-                    this.nuevo_movimiento.bandera_observacion=false;
-                    this.nuevo_movimiento.observacion='';
-                    this.nuevo_movimiento.subsanacion='';
-                    this.nuevo_movimiento.id_area=1;
-                    this.expdiente.id=1;
-                    this.nuevo_movimiento.tramite_finalizado=false;
-                    this.mostrar_modal =false;*/
-                    
-                    
-                    toastr.success('con data Se creo el nuevo movimiento correctamente');
-                    //setInterval(location.reload(true),5000);
-                    
-                }
-                if(response == 'ok')
-                {
-                    console.log("sin data ....... se guardo correctamente");
-                    //limpiar todo el
-                    /*this.nuevo_movimiento.comentario='';
-                    this.nuevo_movimiento.bandera_observacion=false;
-                    this.nuevo_movimiento.observacion='';
-                    this.nuevo_movimiento.subsanacion='';
-                    this.nuevo_movimiento.id_area=1;
-                    this.expdiente.id=1;
-                    this.nuevo_movimiento.tramite_finalizado=false;
-                    this.mostrar_modal =false;*/
-                    
-                    
-                    toastr.success('sindata Se creo el nuevo movimiento correctamente');
-                    //setInterval(location.reload(true),5000);
-                    
-                }
-                
-
-            })
-            .catch(function (error) {
-                currentObj.output = error;
-                toastr.error('hubo un error');
-            });
-
+                })
+                .then(function (response) {
+                    console.log(response);
+                    console.log(response.data);
+                    if(response.data == 'ok')
+                    {
+                        //console.log("con data ... se guardo correctamente");
+                        //limpiar todo el
+                        /*this.nuevo_movimiento.comentario='';
+                        this.nuevo_movimiento.bandera_observacion=false;
+                        this.nuevo_movimiento.observacion='';
+                        this.nuevo_movimiento.subsanacion='';
+                        this.nuevo_movimiento.id_area=1;
+                        this.expdiente.id=1;
+                        this.nuevo_movimiento.tramite_finalizado=false;
+                        this.mostrar_modal =false;*/
+                        toastr.success('Se devolvio el expediente exitosamente');
+                    }
+                })
+                .catch(function (error) {
+                    currentObj.output = error;
+                    toastr.error('hubo un error');
+                });
             }
             //Detectamos si el usuario denegó el mensaje
             else {
                 alert("¡Haz denegado el mensaje!");
             }
         }
-
   },
     
 }

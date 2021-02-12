@@ -2,9 +2,14 @@
 
 @section('content')
     <div class="login-container">
+        @if(isset($notification))
+            <div class="alert alert-success" role="alert">
+                {{$notification}}
+            </div>
+        @endif
 
-        <p>{{ __('voyager::login.signin_below') }}</p>
-
+        {{-- <p>{{ __('voyager::login.signin_below') }}</p> --}}
+        <p>Por favor, ingreses sus credenciales: </p>
         <form action="{{ route('voyager.login') }}" method="POST">
             {{ csrf_field() }}
             <div class="form-group form-group-default" id="emailGroup">
@@ -27,12 +32,18 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-block login-button">
-                <span class="signingin hidden"><span class="voyager-refresh"></span> {{ __('voyager::login.loggingin') }}...</span>
-                <span class="signin">{{ __('voyager::generic.login') }}</span>
-            </button>
+            <div class="form-group">
+                <button type="submit" class="btn btn-block login-button" style="margin-right: 25px;">
+                    <span class="signingin hidden"><span class="voyager-refresh"></span> {{ __('voyager::login.loggingin') }}...</span>
+                    <span class="signin">{{ __('voyager::generic.login') }}</span>
+                </button>
+            </div>
+            <div class="form-group" >
+                <a href="{{asset('password/reset')}}"><button type="button" class="btn btn-block login-button" style="margin-left: 25px;"> Olvide mi clave</button></a>
+            </div>
 
         </form>
+        
 
         <div style="clear:both"></div>
 

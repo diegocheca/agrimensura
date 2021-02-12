@@ -8,11 +8,18 @@ use TCG\Voyager\Contracts\User as UserContract;
 use TCG\Voyager\Traits\VoyagerUser;
 //use TCG\Voyager\Traits\Translatable;
 //use TCG\Voyager\Translatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements UserContract
 {
     use VoyagerUser;
     //use Translatable;
+
+    use SoftDeletes;
+    protected $dates = ['created_at', 'updated_at','deleted_at'];
+
+
+
     
     //protected $translatable  = ['name', 'created_at'];
     protected $fillable = [

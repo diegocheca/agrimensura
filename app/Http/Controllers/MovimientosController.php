@@ -7,10 +7,13 @@ use App\Movimiento;
 use App\Expediente;
 use App\Area;
 use App\Persona;
+use App\Log;
 use Carbon\Carbon;
 use Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MovimientoNuevoEmail;
+use App\Mail\MovimientoConSubsanacionEmail;
+
 use TCG\Voyager\Models\User;
 
 class MovimientosController extends Controller
@@ -114,35 +117,68 @@ class MovimientosController extends Controller
     
     public function devolver_movimiento_desde_component($id_mov){
         /* PASOS A SEGUIR PARA HACER ESTA FUNCION:
-        Paso 1 - Buscar el movimiento actual  */
+        Paso 1 - Buscar el movimiento actual
+        Paso 2 - guardar el log
+        Paso 3 - eliminar el ultimo movimiento
+        Paso 4 - buscar el movimiento anterior
+        Paso 5 - modificar el ultimo movimiento
+        Paso 6 - actualizar el registro
+        Paso 7 responder en base a los resultados
+        */
         $movimiento_a_borrar = Movimiento::find($id_mov);
         $orden_anterior = $movimiento_a_borrar["orden"];
         //var_dump($movimiento_a_borrar);
         //var_dump("-----------------------");
-        //Paso 2 - eliminar el ultimo movimiento
-        $resultado2 = $movimiento_a_borrar->delete();
+        //Paso 2 - guardar el log
+        $valor_anteriores ="
+        {
+            'orden': ".(string)$movimiento_a_borrar->orden.",
+            'fecha_entrada': '".(string)$movimiento_a_borrar->fecha_entrada."',
+            'fecha_salida': '".(string)$movimiento_a_borrar->fecha_salida."',
+            'comentario': '".(string)$movimiento_a_borrar->comentario."',
+            'bandera_observacion': ".(string)$movimiento_a_borrar->bandera_observacion.",
+            'observacion': '".(string)$movimiento_a_borrar->observacion."',
+            'subsanacion': '".(string)$movimiento_a_borrar->subsanacion."',
+            'id_area': ".(string)$movimiento_a_borrar->id_area.",
+            'id_expediente': ".(string)$movimiento_a_borrar->id_expediente.",
+            'tramite_finalizado': ".(string)$movimiento_a_borrar->tramite_finalizado.",
+            'confirmado': ".(string)$movimiento_a_borrar->confirmado.",
+            'fecha_confirmacion': '".(string)$movimiento_a_borrar->fecha_confirmacion."',
+            'quien_confirmacion': ".(string)$movimiento_a_borrar->quien_confirmacion.",
+            'comentario_confirmacion': '".(string)$movimiento_a_borrar->comentario_confirmacion."',
+            'created_by': ".(string)$movimiento_a_borrar->created_by.",
+        }";
+        $log = new Log;
+        $log->nombretabla = 'Movimiento';
+        $log->accion = 'delete';
+        $log->valores_nuevos = null;
+        $log->valores_viejos = $valor_anteriores;
+        $log->id_modificado = $id_mov ;
+        $log->estado = 'sin ver'; // "sin ver" - "sin aprobar" - "apronado" - "devuelto" - "archivado"
+        $log->created_by = Auth::user()->id;
+        $resultado2 = $log->save();
+        //Paso 3 - eliminar el ultimo movimiento
+        $resultado3 = $movimiento_a_borrar->delete();
         //var_dump($resultado2);
         //var_dump("-----------------------");
-        //Paso 3 - buscar el movimiento anterior
+        //Paso 4 - buscar el movimiento anterior
         $movimiento_anterior = Movimiento::select('*')->where('id', '=', intval($id_mov)-1)->first();
         //var_dump($movimiento_anterior);
         //var_dump("-----------------------");
-        //Paso 4 - modificar el ultimo movimiento
+        //Paso 5 - modificar el ultimo movimiento
         $movimiento_anterior->fecha_salida = null;
         $movimiento_anterior->confirmado = 0;
         $movimiento_anterior->fecha_confirmacion = null;
         $movimiento_anterior->quien_confirmacion = null;
         $movimiento_anterior->comentario_confirmacion = null;
-        //Paso 5 - actualizar el registro
+        //Paso 6 - actualizar el registro
         $resultado5= $movimiento_anterior->save();
         //var_dump($resultado5);
         //var_dump("-----------------------");
-        //Paso 6 responder en base a los resultados
-        if($resultado2 && $resultado5)
+        //Paso 7 responder en base a los resultados
+        if($resultado2 && $resultado5 && $resultado3)
             return response('ok', 200);
         else return response('mal', 200);
-
-
     }
     
     public function crear_movimiento_desde_component(Request $request)
@@ -152,9 +188,14 @@ class MovimientosController extends Controller
         Paso 1 - validar datos en el front
         Paso 2 - validar datos en el back
         Paso 3 - obtener el orden relativo del ultimo movimiento
-        Paso 3 - cerrar el movimiento anterior
+        Paso 3 - cerrar el movimiento anterior / le pongo fecha salida y obtengo el ultimo orden de mov
         Paso 4 - crear nuevo movimiento
-        Paso 5 - envio email a agrimensor asociado
+
+        // El PASO 5 se suspende xq pasa a estar al momento de recibir el expediente
+        Paso 5 - veo si tiene subsanacion o no
+        Paso 5.1 - Caso: No tiene subsanacion -->envio email a agrimensor asociado
+        Paso 5.2 - Caso: Si tiene subsanacion -->envio email de subsanacion
+
         Paso 6 - crear notificacion para empleados de la nueva area a la que va el expediente.
         Paso 7 - hacer algo de confirmacion de pase o algo asi
         Paso 8 - Fin
@@ -182,7 +223,7 @@ class MovimientosController extends Controller
         $movimento_nuevo->comentario = $request->comentario;
         $movimento_nuevo->bandera_observacion = $bandera_observacion;
         $movimento_nuevo->observacion = $request->observacion;
-        $movimento_nuevo->subsanacion = $request->subsanacion; // siempre viene vacio xq no esta en el form del front
+        $movimento_nuevo->subsanacion = $request->subsanacion;
         //$movimento_nuevo->id_area = $request->id_area;
         $movimento_nuevo->id_expediente = $request->id_expdiente;
         $movimento_nuevo->tramite_finalizado = $bandera_fin;
@@ -192,20 +233,35 @@ class MovimientosController extends Controller
         $movimento_nuevo->comentario_confirmacion = null;
         $movimento_nuevo->created_by = Auth::user()->id;
         $resultado_paso_4 = $movimento_nuevo->save();
+        //PASO 5 suspendido , pasa a formar porte de la recepcion del expediente
         /*
         //Paso 5 - envio email a agrimensor asociado
         //obtener el email del agrimensor
         $exp = Expediente::select('*')->where('id','=',$request->id_expdiente)->first();
-        $agrimensor = Persona::select('*')->where('id','=',$exp->id_persona)->first();
+        $agrimensor = User::select('email')->where('id','=',$exp->id_persona)->first();
         $to_email = "diegochecarelli@gmail.com";
         //$to_email = $agrimensor->email;
         $area = Area::select('*')->where('id','=',$request->id_area)->first();
         //var_dump($agrimensor->nombre ,date("Y-m-d H:i:s") ,$request->comentario,
         //$bandera_observacion , $area->nombre, $bandera_fin, $request->id_expdiente, $exp->numero_expediente);die();
-        Mail::to($to_email)->send(new MovimientoNuevoEmail($agrimensor->nombre ,date("Y-m-d H:i:s") ,$request->comentario,
-        $bandera_observacion , $area->nombre, $bandera_fin, $request->id_expdiente, $exp->numero_expediente));
-        //Fin Paso 5
+        if($movimento_nuevo->subsanacion == null )
+        {// este es el caso de un movimiento normal sin subsanacion
+            Mail::to($to_email)->send(new MovimientoNuevoEmail($agrimensor->nombre ,date("Y-m-d H:i:s") ,$request->comentario,
+            $bandera_observacion , $area->nombre, $bandera_fin, $request->id_expdiente, $exp->numero_expediente));
+        }
+        else{
+            //movimiento con subsanacion
+            Mail::to($to_email)->send(new MovimientoConSubsanacionEmail($agrimensor->nombre ,date("Y-m-d H:i:s") ,$request->comentario,
+            $bandera_observacion , $area->nombre, $bandera_fin, $request->id_expdiente, $exp->numero_expediente));
+
+        }
+
+
+        //Mail::to($to_email)->send(new MovimientoNuevoEmail($agrimensor->nombre ,date("Y-m-d H:i:s") ,$request->comentario,
+        //$bandera_observacion , $area->nombre, $bandera_fin, $request->id_expdiente, $exp->numero_expediente));
         */
+        //Fin Paso 5
+        
         //  Paso 6 - crear notificacion para empleados de la nueva area a la que va el expediente.
         //ni idea de esto
 
@@ -225,7 +281,11 @@ class MovimientosController extends Controller
         Paso 1: buscar el registro del mov
         Paso 2: crear objeeto actualizado
         Paso 3: actualizar
-        Paso 4: mandar email al agrimensor del expediente
+        Paso 4 - veo si tiene subsanacion o no
+        Paso 4.1 - Caso: No tiene subsanacion -->envio email a agrimensor asociado
+        Paso 4.2 - Caso: Si tiene subsanacion -->envio email de subsanacion
+
+
         */
         //Paso 1
         $moviento_a_actualizar = Movimiento::find($request->movimiento_id);
@@ -249,14 +309,24 @@ class MovimientosController extends Controller
         //$bandera_observacion , $area->nombre, $bandera_fin, $request->id_expdiente, $exp->numero_expediente);die();
         $bandera_observacion = ($request->comentario!= null) ? true : false;
         $bandera_fin = false; // no puede ser final si estoy recibiendo
-        Mail::to($to_email)->send(new MovimientoNuevoEmail($agrimensor->name ,date("Y-m-d H:i:s") ,$request->comentario,
-        $bandera_observacion , $area->nombre, $bandera_fin, $exp->id, $exp->numero_expediente));
+
+        if($moviento_a_actualizar->subsanacion == null )
+        {// este es el caso de un movimiento normal sin subsanacion
+            Mail::to($to_email)->send(new MovimientoNuevoEmail($agrimensor->name ,date("Y-m-d H:i:s") ,$request->comentario,
+            $bandera_observacion , $area->nombre, $bandera_fin, $exp->id, $exp->numero_expediente));
+        }
+        else{
+            //movimiento con subsanacion
+            Mail::to($to_email)->send(new MovimientoConSubsanacionEmail($agrimensor->name ,date("Y-m-d H:i:s") ,$request->comentario,
+            $bandera_observacion , $area->nombre, $bandera_fin, $exp->id, $exp->numero_expediente, $moviento_a_actualizar->subsanacion));
+        }
         //Fin Paso 4
         if($resultado_update)
             return response()->json("ok");
         else
             return response()->json("mal");
-
+        //Mail::to($to_email)->send(new MovimientoNuevoEmail($agrimensor->nombre ,date("Y-m-d H:i:s") ,$request->comentario,
+        //$bandera_observacion , $area->nombre, $bandera_fin, $request->id_expdiente, $exp->numero_expediente));
     }
 
     /**

@@ -49,8 +49,6 @@ class VoyagerBreadController extends Controller
     public function create(Request $request, $table)
     {
         $this->authorize('browse_bread');
-        var_dump("estoy acasss");
-        die();
 
         $dataType = Voyager::model('DataType')->whereName($table)->first();
 
@@ -96,8 +94,8 @@ class VoyagerBreadController extends Controller
     public function store(Request $request)
     {
         $this->authorize('browse_bread');
-        var_dump("estoy acawwwwsss");
-        die();
+        /*var_dump("estoy acawwwwsss");
+        die();*/
         try {
             $dataType = Voyager::model('DataType');
             $res = $dataType->updateDataType($request->all(), true);

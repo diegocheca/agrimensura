@@ -31,7 +31,7 @@ export default {
           {
             label: 'Ventas',
             backgroundColor: '#FF0066',
-            data: [ 20, 40, 50, 20, 50, 40, 250]
+            data: [ 20, 40, 50, 20, 50, 40, 850]
           },
           {
             label: 'Compras',

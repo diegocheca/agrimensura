@@ -294,7 +294,15 @@ class VoyagerBaseController extends Controller
             //var_dump($dataTypeContent);
             //die();
         }
-        if( ($slug== "expedientes") && (Auth::user()->role_id == 3)) 
+        if( 
+            ($slug== "expedientes") 
+            && 
+            ( 
+                (Auth::user()->role_id == 3)  // para los agentes de la dgr
+                || 
+                (Auth::user()->role_id == 6) // para los agentes de mesa de entrada
+            )
+        ) 
         {
             $elementos_a_eliminar = [];
             //voy a recorrer el array entero con todos los expedientes. aca voy a ver si hay expediente que yo no deberia ver.
@@ -707,6 +715,11 @@ class VoyagerBaseController extends Controller
             // Send confirmation code
             /*var_dump($request->get('email'), $codigo, $request->get('name') ,$request->get('cuil'));
             die();*/
+            $usuario = User::select('*')->where('email','=',$request->get('email'))->first();
+            $usuario->confirmation_code = $codigo;
+            $usuario->confirmed = false;
+            $usuario->email_verified_at = null;
+            $usuario->save();
             Mail::to($request->get('email'))->send(new VerificationEmail($codigo, $request->get('name') ,$request->get('cuil')));//nueva
         }
 

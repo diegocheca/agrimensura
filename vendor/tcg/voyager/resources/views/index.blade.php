@@ -5,6 +5,11 @@
         @include('voyager::alerts')
         @include('voyager::dimmers')
         <div id="app">
+
+            <autocompletar-component></autocompletar-component>
+
+            <buscar-component></buscar-component>
+
             <example-component></example-component>
             <grafica-component></grafica-component>
             <tabs>
@@ -18,6 +23,17 @@
                 <h1>this is the content of about About Our Vision tab.</h1>
                 </tab>
             </tabs>
+
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+
+
+
+            <hr>
+           
 
 
         </div>

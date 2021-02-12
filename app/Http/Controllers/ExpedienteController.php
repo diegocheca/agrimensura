@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Expediente;
 use Illuminate\Http\Request;
 use App\Tramite;
 use App\Persona;
@@ -103,4 +104,18 @@ class ExpedienteController extends Controller
     {
         //
     }
+    public function buscador(Request $request)
+    {
+        $numero = $request->query;
+        $expedientes = Expediente::where('numero_expediente','like','%'.$numero.'%')->get();
+        return response()->json($expedientes);
+
+    }
+    public function traer_exp_buscador()
+    {
+        $expedientes = Expediente::select('id', 'numero_expediente','id_tramite', 'id_persona')->get();
+        return response()->json($expedientes);
+
+    }
+    
 }
