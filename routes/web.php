@@ -9,7 +9,8 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ExcelCSVController;
 use App\Http\Controllers\ExpedienteController;
 use App\Expediente;
- 
+use App\Http\Controllers\BuscadorController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,6 +43,7 @@ Route::get('admin/expedientes_por_num/{num_exp}', function ($num_exp){
 Route::get('/oficinas_para_add_mov', [MovimientosController::class, "traer_oficinas_para_select"])->name('oficinas-para-select');
 Route::get('/datos_expediente/{num_exp}', [MovimientosController::class, "traer_expediente_para_component"])->name('datos_expediente');
 Route::get('/datos_ultimo_movimiento_para_exp/{num_exp}', [MovimientosController::class, "traer_ultimo_mov_exp"])->name('datos_ultimo_mov');
+Route::get('/datos_ultimo_movimiento_para_exp_ajax/{num_exp}', [MovimientosController::class, "traer_ultimo_mov_exp_ajax"])->name('datos_ultimo_mov_ajax');
 Route::post('/crear_movimiento', [MovimientosController::class, "crear_movimiento_desde_component"])->name('crear-movimiento');
 Route::post('/devolver_movimiento/{id}', [MovimientosController::class, "devolver_movimiento_desde_component"])->name('devolver-movimiento');
 Route::get('/devolver_movimiento/{id}', [MovimientosController::class, "devolver_movimiento_desde_component"])->name('devolver-movimiento');
@@ -69,6 +71,9 @@ Route::get('/comprobante_exp/{area}/{id}/{numero_expediente}/{nombre}', [PDFCont
 
 
 Route::get('/datos_expedientes_para_buscador', [ExpedienteController::class, "traer_exp_buscador"])->name('traer_exp_buscador');
+
+//buscador
+Route::post('buscador_web', [BuscadorController::class, "consulta_web"])->name('buscador.consulta');
 // excel
 
 Route::get('excel-csv-file', [ExcelCSVController::class, 'index']);

@@ -91,6 +91,23 @@ class MovimientosController extends Controller
         //var_dump($ultimo_movimiento);die();
 
         return response()->json($ultimo_movimiento);
+
+        
+        
+    }
+    public function traer_ultimo_mov_exp_ajax($num_exp){
+        $expediente = Expediente::select('*')->where('numero_expediente', '=', $num_exp)->first();
+        $ultimo_movimiento = Movimiento::join('areas', 'areas.id', '=', 'movimientos.id_area')
+        ->join('expedientes', 'expedientes.id', '=', 'movimientos.id_expediente')
+        ->join('users', 'users.id', '=', 'expedientes.id_persona')
+        ->select('movimientos.*', 'areas.nombre', 'users.name as profesional', 'users.email as profesionalemail')
+        ->where('movimientos.id_expediente','=', $expediente->id)
+        ->latest('created_at')
+        ->first();
+        //$expediente = Expediente::join('movimientos', 'movimientos.id_area', '=', 'expedientes.')select('*')->where('numero_expediente', '=', $num_exp)->first();
+        //var_dump($ultimo_movimiento);die();
+
+        return response()->json($ultimo_movimiento);
         
     }
     

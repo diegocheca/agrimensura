@@ -7,9 +7,10 @@
     <meta name="keywords" content="Bootstrap, Landing page, Template, Business, Service">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="author" content="Grayrids">
-    <title>Slick - Bootstrap 4 Template</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>CPASJ - Colegio de Profesionales de la Agrimensura de SJ</title>
     <!--====== Favicon Icon ======-->
-    <link rel="shortcut icon" href="img/2.png" type="image/png">
+    <link rel="icon" href="{{ url('slick/img/cpasj.ico')}}"  type="image/icon type">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ url('slick/css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{ url('slick/css/animate.css')}}">
@@ -43,28 +44,25 @@
                 <a class="nav-link page-scroll" href="#home">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link page-scroll" href="#services">About</a>
+                <a class="nav-link page-scroll" href="#services">Info</a>
               </li>  
               <li class="nav-item">
-                <a class="nav-link page-scroll" href="#features">Services</a>
+                <a class="nav-link page-scroll" href="#features">Servicios</a>
               </li>                            
               <li class="nav-item">
-                <a class="nav-link page-scroll" href="#showcase">Showcase</a>
+                <a class="nav-link page-scroll" href="#buscador">Buscador</a>
               </li>       
               <li class="nav-item">
-                <a class="nav-link page-scroll" href="#pricing">Pricing</a>
-              </li>     
-              <li class="nav-item">
-                <a class="nav-link page-scroll" href="#team">Team</a>
+                <a class="nav-link page-scroll" href="#team">Dptos</a>
               </li> 
-              <li class="nav-item">
+              {{-- <li class="nav-item">
                 <a class="nav-link page-scroll" href="#blog">Blog</a>
-              </li>  
+              </li>   --}}
               <li class="nav-item">
                 <a class="nav-link page-scroll" href="#contact">Contact</a>
               </li> 
               <li class="nav-item">
-                <a class="btn btn-singin" href="#">Download</a>
+                <a class="btn btn-singin" href="{{url('admin')}}">Ingresar</a>
               </li>
             </ul>
           </div>
@@ -74,11 +72,11 @@
         <div class="row space-100">
           <div class="col-lg-6 col-md-12 col-xs-12">
             <div class="contents">
-              <h2 class="head-title">Handcrafted Web Template <br>For Business and Startups</h2>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab <br>dolores ea fugiat nesciunt quisquam.</p>
+              <h2 class="head-title">Sistema web para la gestion de Expedientes <br>Colegio de Professionales de la Agrimensura</h2>
+              <p>Sistema web para el seguimientos de expedientes </p>
               <div class="header-button">
-                <a href="#" class="btn btn-border-filled">Get Started</a>
-                <a href="#contact" class="btn btn-border page-scroll">Contact Us</a>
+                <a href="{{url('/admin/')}}" class="btn btn-border-filled">Iniciar Sistema</a>
+                <a href="#contact" class="btn btn-border page-scroll">Contacto</a>
               </div>
             </div>
           </div>
@@ -104,8 +102,8 @@
               <div class="icon">
                 <i class="lni-cog"></i>
               </div>
-              <h4>Bootstrap 4</h4>
-              <p>Share processes and data secure lona need to know basis Our team assured your web site is always safe.</p>
+              <h4>Proceso Eficiente</h4>
+              <p>Se implementó un sólido y moderno proceso para la administración eficiente de los tramites a realizar por los Profesionales dela Agrimensura .</p>
             </div>
           </div>
           <!-- End Col -->
@@ -113,10 +111,10 @@
           <div class="col-lg-4 col-md-6 col-xs-12">
             <div class="services-item text-center">
               <div class="icon">
-                <i class="lni-brush"></i>
+                <i class="lni-cloud-sync"></i>
               </div>
-              <h4>Slick Design</h4>
-              <p>Share processes and data secure lona need to know basis Our team assured your web site is always safe.</p>
+              <h4>Datos en la Nube</h4>
+              <p>Tanto el sistema como los datos se encuentran en la nube, esto garantiza un servicio ininterrumpido y confiable, los datos nunca se perderán.</p>
             </div>
           </div>
           <!-- End Col -->
@@ -124,10 +122,10 @@
           <div class="col-lg-4 col-md-6 col-xs-12">
             <div class="services-item text-center">
               <div class="icon">
-                <i class="lni-heart"></i>
+                <i class="lni-lock"></i>
               </div>
-              <h4>Crafted with Love</h4>
-              <p>Share processes and data secure lona need to know basis Our team assured your web site is always safe.</p>
+              <h4>Seguro y Confiable</h4>
+              <p>El sistema fue diseñado teniendo en cuenta las mejores prácticas y estándares globales para brindar un servicio seguro.</p>
             </div>
           </div>
           <!-- End Col -->
@@ -147,17 +145,17 @@
           <!-- Start Col -->
           <div class="col-lg-6 col-md-12 pl-0 pt-70 pr-5">
             <div class="business-item-img">
-              <img src="img/business/business-img.png" class="img-fluid" alt="">
+              <img src="{{ url('slick/img/business/business-img.png')}}" class="img-fluid" alt="">
             </div>
           </div>
           <!-- End Col -->
           <!-- Start Col -->
           <div class="col-lg-6 col-md-12 pl-4">
             <div class="business-item-info">
-              <h3>Crafted For Business, Startup and Agency Websites</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do <br> tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim <br> veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea <br> commodo consequat. Duis aute irure dolor in reprehenderit in voluptate <br> velit esse cillum dolore eu fugiat nulla pariatur.</p>
+              <h3>Siempre contectados</h3>
+              <p>Se ha implementado una metodología que persigue la conectividad de las partes sobre todo. <br>El sistema dará aviso a los <strong>Profesionales de la Agrimensura de San Juan </strong> el estado de los expedientes en tiempo real. De esta manara, se reducen tiempos administrativos, ahorro de tiempos de los profesionales, suma transparencia y crea un fluido canal de comunicación.</p>
 
-              <a class="btn btn-common" href="#">download</a>
+              
             </div>
           </div>
           <!-- End Col -->
@@ -177,9 +175,9 @@
           <div class="col-lg-12">
             <div class="features-text section-header text-center">  
               <div>   
-                <h2 class="section-title">Services We Provide</h2>
+                <h2 class="section-title">Servicios Brindados</h2>
                 <div class="desc-text">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do <br> eiusmod tempor incididunt ut labore et dolore.</p>
+                  <p>Algunos de los sericios y caracteristicas del sistema, que son puestos a disposición para los <br> <strong>Profesionales de la Agrimensura de San Juan </strong>.</p>
                 </div>
               </div> 
             </div>
@@ -194,11 +192,11 @@
              <!-- Start Fetatures -->
             <div class="feature-item featured-border1">
                <div class="feature-icon float-left">
-                 <i class="lni-coffee-cup"></i>
+                 <i class="lni-key"></i>
                </div>
                <div class="feature-info float-left">
-                 <h4>Easy to Customize</h4>
-                 <p>Producing long lasting organic SEO results for <br> brand of different kinds for more than a decade,<br> we understand that’s your.</p>
+                 <h4>Acceso Seguro</h4>
+                 <p>Cada usuario tiene acceso a información limitada<br> brindando seguridad y confidencialidad.</p>
                </div>
             </div>
             <!-- End Fetatures -->
@@ -210,11 +208,12 @@
              <!-- Start Fetatures -->
             <div class="feature-item featured-border2">
                <div class="feature-icon float-left">
-                 <i class="lni-briefcase"></i>
+                 <i class="lni-add-file"></i>
                </div>
                <div class="feature-info float-left">
-                 <h4>Business Template</h4>
-                 <p>Producing long lasting organic SEO results for <br> brand of different kinds for more than a decade,<br> we understand that’s your.</p>
+                 <h4>Archivos Online</h4>
+                 <p>Los archivos adjuntos en cada expediente <br> son alamcenados de una manera <br> segura y confible</p>
+                 <!--  seguro <br>y confiable, estando disponibles para ser accedidos <br>en todo momento.-->
                </div>
             </div>
             <!-- End Fetatures -->
@@ -226,11 +225,11 @@
              <!-- Start Fetatures -->
             <div class="feature-item featured-border1">
                <div class="feature-icon float-left">
-                 <i class="lni-invention"></i>
+                 <a href="#buscador"><i class="lni-search"></i></a>
                </div>
                <div class="feature-info float-left">
-                 <h4>Clean & Trendy Design</h4>
-                 <p>Producing long lasting organic SEO results for <br> brand of different kinds for more than a decade,<br> we understand that’s your.</p>
+                 <h4>Buscador</h4>
+                 <p>Se ha desarrollado un buscador online <br> de expedientes para saber su estado actual<br> en cualquier momento.</p>
                </div>
             </div>
             <!-- End Fetatures -->
@@ -242,11 +241,11 @@
              <!-- Start Fetatures -->
             <div class="feature-item featured-border2">
                <div class="feature-icon float-left">
-                <i class="lni-layers"></i>
+                <i class="lni-mobile"></i>
                </div>
                <div class="feature-info float-left">
-                 <h4>Tons of Sections</h4>
-                 <p>Producing long lasting organic SEO results for <br> brand of different kinds for more than a decade,<br> we understand that’s your.</p>
+                 <h4>Movil</h4>
+                 <p>Puede ser accedido desde dispositivos <br> moviles sin importar su pantalla a marca.</p>
                </div>
             </div>
             <!-- End Fetatures -->
@@ -261,8 +260,8 @@
                  <i class="lni-reload"></i>
                </div>
                <div class="feature-info float-left">
-                 <h4>Free Future Updates</h4>
-                 <p>Producing long lasting organic SEO results for <br> brand of different kinds for more than a decade,<br> we understand that’s your.</p>
+                 <h4>Actualización</h4>
+                 <p>El sistema será mejorado constantemente <br> para así,  brindar un aún mejor servicio</p>
                </div>
             </div>
             <!-- End Fetatures -->
@@ -277,8 +276,8 @@
                  <i class="lni-support"></i>
                </div>
                <div class="feature-info float-left">
-                 <h4>Premier Support</h4>
-                 <p>Producing long lasting organic SEO results for <br> brand of different kinds for more than a decade,<br> we understand that’s your.</p>
+                 <h4>Sporte Técnico</h4>
+                 <p>El sistema tiene soporte técnico 24/7 ante  <br> cualquier incoveniente o duda brindando una <br> rápida respuesta.</p>
                </div>
             </div>
             <!-- End Fetatures -->
@@ -292,11 +291,131 @@
     </section>
     <!-- Cool Fetatures Section End --> 
 
+   <!-- Search Section -->
+   <section id="buscador" class="section">
+    <!-- Container Starts -->
+    <div class="container">
+      <!-- Start Row -->
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="contact-text section-header text-center">  
+            <div>   
+              <h2 class="section-title">Buscador de Expedientes</h2>
+              <div class="desc-text">
+                <span>Por favor ingreso los datos del expediente que esta buscando</span>  
+              </div>
+            </div> 
+          </div>
+        </div>
 
-    <!-- Recent Showcase Section Start -->
+      </div>
+      <!-- End Row -->
+      <!-- Start Row -->
+      <div class="row">
+
+       
+        <!-- Start Col -->
+        <div class="col-lg-6 col-md-12">
+          <form id="buscar_form" action="{{url('buscador_web')}}">
+            <div class="form-group">
+              <label for="numero">Numero :</label>
+              <input class="form-control" name="numero" id="numero" type="text" />
+            </div>  
+            <div class="form-group">
+              <label for="profesional">Profesional :</label>
+              <input class="form-control" name="profesional" id="profesional" type="text" />
+            </div>  
+            <div class="form-group">
+              <label for="movimientos">Cantidad de Movimientos :</label>
+              <input class="form-control" name="movimientos" id="movimientos" type="text" />
+            </div>  
+            <div class="submit-button">
+              <button class="btn btn-common" style="width:100%" id="submit" type="submit">Buscar</button>
+              <div id="msgSubmit" class="h3 hidden"></div> 
+              <div class="clearfix"></div> 
+            </div>
+          </form>
+          <input id="id_exp" name="id_exp" type="hidden" />
+        </div>
+        <!-- End Col -->
+        <!-- Start Col -->
+        <div class="col-lg-1">
+          
+        </div>
+        <!-- End Col -->
+        <!-- Start Col -->
+        <div class="col-lg-4 col-md-12">
+          <span>Resultado</span>
+          <div id="container"></div>
+        </div>
+        <!-- End Col -->
+        <!-- Start Col -->
+        <div class="col-lg-1">
+        </div>
+        <!-- End Col -->
+
+      </div>
+      <!-- End Row -->
+    </div>
+  </section>
+  <!-- Search Section End -->
+
+  <div class="modal fade" id="modalRegister" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Datos del Expediente</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="num_exp_buscado" class="col-form-label">Numero de expediente:</label>
+              <input type="text" class="form-control" id="num_exp_buscado">
+            </div>
+            
+            <div class="form-group">
+              <label for="oficina_actual_buscado" class="col-form-label">Oficina Actual:</label>
+              <input type="text" class="form-control" id="oficina_actual_buscado">
+            </div>
+            <div class="form-group">
+              <label for="profesional_buscado" class="col-form-label">Profesional Solicitante:</label>
+              <input type="text" class="form-control" id="profesional_buscado">
+            </div>
+            <div class="form-group">
+              <label for="profesional_email_buscado" class="col-form-label">Email del Profesional:</label>
+              <input type="text" class="form-control" id="profesional_email_buscado">
+            </div>
+            
+            <div class="form-group">
+              <label for="fecha_ult_mov_buscado" class="col-form-label">Fecha de ultimo Movimiento:</label>
+              <input type="text" class="form-control" id="fecha_ult_mov_buscado">
+            </div>
+            <div class="form-group">
+              <label for="cantidad_mov_buscado" class="col-form-label">Cantidad de Movimentos:</label>
+              <input type="text" class="form-control" id="cantidad_mov_buscado">
+            </div>
+            <div class="form-group">
+              <label for="comentario_ult_mov_buscado" class="col-form-label">Comentario de Movimiento:</label>
+              <input type="text" class="form-control" id="comentario_ult_mov_buscado">
+            </div>
+            
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          {{-- <button type="button" class="btn btn-primary">Send message</button> --}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- Recent Showcase Section Start ->
     <section id="showcase">
       <div class="container-fluid right-position">
-        <!-- Start Row -->
+        <!-- Start Row ->
         <div class="row gradient-bg">
           <div class="col-lg-12">
             <div class="showcase-text section-header text-center">  
@@ -311,14 +430,14 @@
           </div>
 
         </div>
-        <!-- End Row -->
-        <!-- Start Row -->
+        <!-- End Row ->
+        <!-- Start Row ->
         <div class="row justify-content-center showcase-area">
           <div class="col-lg-12 col-md-12 col-xs-12 pr-0">
             <div class="showcase-slider owl-carousel">
               <div class="item">
                 <div class="screenshot-thumb">
-                  <img src="img/showcase/01.jpg" class="img-fluid" alt="" />
+                  <img src="{{ url('slick/img/showcase/01.jpg')}}" class="img-fluid" alt="" />
                   <div class="hover-content text-center">
                     <div class="fancy-table">
                       <div class="table-cell">
@@ -327,7 +446,7 @@
                           <h5>Redesign Slack</h5>
                         </div>
                         <div class="zoom-icon">
-                          <a class="lightbox" href="img/showcase/01.jpg"><i class="lni-zoom-in"></i></a>
+                          <a class="lightbox" href="{{ url('slick/img/showcase/01.jpg')}}"><i class="lni-zoom-in"></i></a>
                           <a href="#"><i class="lni-link"></i></a>
                         </div>
                       </div>
@@ -338,7 +457,7 @@
               </div>
               <div class="item">
                 <div class="screenshot-thumb">
-                  <img src="img/showcase/02.jpg" class="img-fluid" alt="" />
+                  <img src="{{ url('slick/img/showcase/02.jpg')}}" class="img-fluid" alt="" />
                   <div class="hover-content text-center">
                     <div class="fancy-table">
                       <div class="table-cell">
@@ -347,7 +466,7 @@
                           <h5>Redesign Slack</h5>
                         </div>
                         <div class="zoom-icon">
-                          <a class="lightbox" href="img/showcase/02.jpg"><i class="lni-zoom-in"></i></a>
+                          <a class="lightbox" href="{{ url('slick/img/showcase/02.jpg')}}"><i class="lni-zoom-in"></i></a>
                           <a href="#"><i class="lni-link"></i></a>
                         </div>
                       </div>
@@ -357,7 +476,7 @@
               </div>
               <div class="item">
                 <div class="screenshot-thumb">
-                  <img src="img/showcase/03.jpg" class="img-fluid" alt="" />
+                  <img src="{{ url('slick/img/showcase/03.jpg')}}" class="img-fluid" alt="" />
                   <div class="hover-content text-center">
                     <div class="fancy-table">
                       <div class="table-cell">
@@ -366,7 +485,7 @@
                           <h5>Redesign Slack</h5>
                         </div>
                         <div class="zoom-icon">
-                          <a class="lightbox" href="img/showcase/03.jpg"><i class="lni-zoom-in"></i></a>
+                          <a class="lightbox" href="{{ url('slick/img/showcase/03.jpg')}}"><i class="lni-zoom-in"></i></a>
                           <a href="#"><i class="lni-link"></i></a>
                         </div>
                       </div>
@@ -376,7 +495,7 @@
               </div>
               <div class="item">
                 <div class="screenshot-thumb">
-                  <img src="img/showcase/04.jpg" class="img-fluid" alt="" />
+                  <img src="{{ url('slick/img/showcase/04.jpg')}}" class="img-fluid" alt="" />
                   <div class="hover-content text-center">
                     <div class="fancy-table">
                       <div class="table-cell">
@@ -385,7 +504,7 @@
                           <h5>Redesign Slack</h5>
                         </div>
                         <div class="zoom-icon">
-                          <a class="lightbox" href="img/showcase/04.jpg"><i class="lni-zoom-in"></i></a>
+                          <a class="lightbox" href="{{ url('slick/img/showcase/04.jpg')}}"><i class="lni-zoom-in"></i></a>
                           <a href="#"><i class="lni-link"></i></a>
                         </div>
                       </div>
@@ -706,15 +825,15 @@
             </div>
           </div>
         </div>
-        <!-- End Row -->
+        <!-- End Row ->
       </div>
     </section>
     <!-- Recent Showcase Section End --> 
 
-    <!-- Our Pricing Plan Section Start -->
+    <!-- Our Pricing Plan Section Start ->
     <section id="pricing" class="section">
       <div class="container">
-        <!-- Start Row -->
+        <!-- Start Row ->
         <div class="row">
           <div class="col-lg-12">
             <div class="pricing-text section-header text-center">  
@@ -729,10 +848,10 @@
           </div>
 
         </div>
-        <!-- End Row -->
-        <!-- Start Row -->
+        <!-- End Row ->
+        <!-- Start Row ->
         <div class="row pricing-tables">
-         <!--  Start Col -->
+         <!--  Start Col ->
           <div class="col-lg-4 col-md-4 col-xs-12">
             <div class="pricing-table text-center">
               <div class="pricing-details">
@@ -752,8 +871,8 @@
               </div>
             </div>
           </div>
-           <!--  End Col -->
-         <!--  Start Col -->
+           <!--  End Col ->
+         <!--  Start Col ->
           <div class="col-lg-4 col-md-4 col-xs-12">
             <div class="pricing-table text-center">
               <div class="pricing-details">
@@ -773,8 +892,8 @@
               </div>
             </div>
           </div>
-           <!--  End Col -->
-         <!--  Start Col -->
+           <!--  End Col ->
+         <!--  Start Col ->
           <div class="col-lg-4 col-md-4 col-xs-12">
             <div class="pricing-table text-center">
               <div class="pricing-details">
@@ -794,18 +913,18 @@
               </div>
             </div>
           </div>
-           <!--  End Col -->
+           <!--  End Col ->
 
         </div>
-        <!-- End Row -->
+        <!-- End Row ->
       </div>
     </section>
     <!-- Our Pricing Plan Section End --> 
 
-    <!-- Client Testimoninals Section Start -->
+    <!-- Client Testimoninals Section Start ->
     <section id="testimonial" class="section">
       <div class="container right-position">
-        <!-- Start Row -->
+        <!-- Start Row ->
         <div class="row">
           <div class="col-md-12 col-sm-12">
             <div class="video-promo-content text-center">
@@ -817,8 +936,8 @@
             </div>
           </div>
         </div>
-        <!-- End Row -->
-        <!-- Start Row -->
+        <!-- End Row ->
+        <!-- Start Row ->
         <div class="row justify-content-center testimonial-area">
           <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12 pr-20 pl-20" style="overflow: hidden;padding-bottom: 60px">
             <div id="client-testimonial" class="text-center owl-carousel">
@@ -904,7 +1023,7 @@
             </div>
           </div>
         </div>
-        <!-- End Row -->
+        <!-- End Row ->
       </div>
     </section>
     <!-- Client Testimoninals Section End --> 
@@ -918,10 +1037,9 @@
           <div class="col-lg-12">
             <div class="team-text section-header text-center">  
               <div>   
-                <h2 class="section-title">Team Members</h2>
+                <h2 class="section-title">Departamentos</h2>
                 <div class="desc-text">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do</p>  
-                  <p>eiusmod tempor incididunt ut labore et dolore.</p>
+                  <p>Estos son los departamento que componen el CPASJ</p>  
                 </div>
               </div> 
             </div>
@@ -935,7 +1053,7 @@
           <div class="col-lg-3 col-md-6 col-xs-12">
             <div class="single-team">
               <div class="team-thumb">
-                <img src="img/team/01.jpg" class="img-fluid" alt="">
+                <img src="{{url('slick/img/team/oficina1.svg')}}" class="img-fluid" alt="" width="263" height="310">
               </div>
 
               <div class="team-details">
@@ -947,8 +1065,9 @@
                   </ul>
                 </div> 
                 <div class="team-inner text-center">
-                  <h5 class="team-title">Patric Green</h5>
-                  <p>Lead Designer</p>
+                  <h5 class="team-title">Oficina de Mesa de Entrada</h5>
+                  <p>Tel: 4302525</p>
+                  <p>email: mesaentrada@sanjuan.gov.ar</p>
                 </div>
               </div>
             </div>
@@ -959,7 +1078,7 @@
           <div class="col-lg-3 col-md-6 col-xs-12">
             <div class="single-team">
               <div class="team-thumb">
-                <img src="img/team/02.jpg" class="img-fluid" alt="">
+                <img src="{{url('slick/img/team/oficina2.svg')}}" class="img-fluid" alt="" width="263" height="310">
               </div>
 
               <div class="team-details">
@@ -971,8 +1090,9 @@
                   </ul>
                 </div>
                 <div class="team-inner text-center">
-                  <h5 class="team-title">Celina D Cruze</h5>
-                  <p>Front-end Developer</p>
+                  <h5 class="team-title">Oficina Contable</h5>
+                  <p>Tel: 4302525</p>
+                  <p>email: contable@sanjuan.gov.ar</p>
                 </div>
               </div>
             </div>
@@ -983,7 +1103,7 @@
           <div class="col-lg-3 col-md-6 col-xs-12">
             <div class="single-team">
               <div class="team-thumb">
-                <img src="img/team/03.jpg" class="img-fluid" alt="">
+                <img src="{{url('slick/img/team/oficina3.svg')}}" class="img-fluid" alt="" width="263" height="310">
               </div>
 
               <div class="team-details">
@@ -995,8 +1115,9 @@
                   </ul>
                 </div>
                 <div class="team-inner text-center">
-                  <h5 class="team-title">Daryl Dixon</h5>
-                  <p>Content Writer</p>
+                  <h5 class="team-title">Oficina Director</h5>
+                  <p>Tel: 4302525</p>
+                  <p>email: directordgr@sanjuan.gov.ar</p>
                 </div>
               </div>
             </div>
@@ -1007,7 +1128,7 @@
           <div class="col-lg-3 col-md-6 col-xs-12">
             <div class="single-team">
               <div class="team-thumb">
-                <img src="img/team/04.jpg" class="img-fluid" alt="">
+                <img src="{{url('slick/img/team/oficina4.svg')}}" class="img-fluid" alt="" width="263" height="310">
               </div>
 
               <div class="team-details">
@@ -1019,8 +1140,9 @@
                   </ul>
                 </div>
                 <div class="team-inner text-center">
-                  <h5 class="team-title">Mark Parker</h5>
-                  <p>Support Engineer</p>
+                  <h5 class="team-title">Oficina Letrada</h5>
+                  <p>Tel: 4302525</p>
+                  <p>email: letrada@sanjuan.gov.ar</p>
                 </div>
               </div>
             </div>
@@ -1035,11 +1157,11 @@
     <!-- Team section End -->
 
 
-    <!-- Blog Section -->
+    <!-- Blog Section ->
     <section id="blog" class="section">
-      <!-- Container Starts -->
+      <!-- Container Starts ->
       <div class="container">
-        <!-- Start Row -->
+        <!-- Start Row ->
         <div class="row">
           <div class="col-lg-12">
             <div class="blog-text section-header text-center">  
@@ -1054,12 +1176,12 @@
           </div>
 
         </div>
-        <!-- End Row -->
-        <!-- Start Row -->
+        <!-- End Row ->
+        <!-- Start Row ->
         <div class="row">
-          <!-- Start Col -->
+          <!-- Start Col ->
           <div class="col-lg-4 col-md-6 col-xs-12 blog-item">
-            <!-- Blog Item Starts -->
+            <!-- Blog Item Starts ->
             <div class="blog-item-wrapper">
               <div class="blog-item-img">
                 <a href="single-post.html">
@@ -1078,10 +1200,10 @@
             </div>
             <!-- Blog Item Wrapper Ends-->
           </div>
-          <!-- End Col -->
-          <!-- Start Col -->
+          <!-- End Col ->
+          <!-- Start Col ->
           <div class="col-lg-4 col-md-6 col-xs-12 blog-item">
-            <!-- Blog Item Starts -->
+            <!-- Blog Item Starts ->
             <div class="blog-item-wrapper">
               <div class="blog-item-img">
                 <a href="single-post.html">
@@ -1098,12 +1220,12 @@
                 <span class="date float-right"><i class="lni-calendar"></i><a href="#">10 April, 2020</a></span>
               </div>
             </div>
-            <!-- Blog Item Wrapper Ends-->
+            <!-- Blog Item Wrapper Ends->
           </div>
-          <!-- End Col -->
-          <!-- Start Col -->
+          <!-- End Col ->
+          <!-- Start Col ->
           <div class="col-lg-4 col-md-6 col-xs-12 blog-item">
-            <!-- Blog Item Starts -->
+            <!-- Blog Item Starts ->
             <div class="blog-item-wrapper">
               <div class="blog-item-img">
                 <a href="single-post.html">
@@ -1120,12 +1242,12 @@
                 <span class="date float-right"><i class="lni-calendar"></i><a href="#">10 April, 2020</a></span>
               </div>
             </div>
-            <!-- Blog Item Wrapper Ends-->
+            <!-- Blog Item Wrapper Ends->
           </div>
-          <!-- End Col -->
+          <!-- End Col ->
 
         </div>
-        <!-- End Row -->
+        <!-- End Row ->
       </div>
     </section>
     <!-- blog Section End -->
@@ -1139,10 +1261,9 @@
           <div class="col-lg-12">
             <div class="contact-text section-header text-center">  
               <div>   
-                <h2 class="section-title">Get In Touch</h2>
+                <h2 class="section-title">Contactanos</h2>
                 <div class="desc-text">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do</p>  
-                  <p>eiusmod tempor incididunt ut labore et dolore.</p>
+                  <p>Ante cualquier duda, sugerencia o inquitud, no dude en escribirnos</p>  
                 </div>
               </div> 
             </div>
@@ -1152,9 +1273,42 @@
         <!-- End Row -->
         <!-- Start Row -->
         <div class="row">
+
+         
           <!-- Start Col -->
           <div class="col-lg-6 col-md-12">
-          <form id="contactForm">
+            @if(Session::has('success'))
+            <div class="alert alert-success">
+              {{ Session::get('success') }}
+            </div>
+          @endif
+          {!! Form::open(['route'=>'contact.store']) !!}
+          <div class="form-group {{ $errors->has('name') ? 'has-error' : '' }}">
+              {!! Form::label('Name:') !!}
+              {!! Form::text('name', old('name'), ['class'=>'form-control', 'placeholder'=>'Name']) !!}
+          <span class="text-danger">{{ $errors->first('name') }}</span>
+          </div>
+          <div class="form-group {{ $errors->has('email') ? 'has-error' : '' }}">
+              {!! Form::label('Email:') !!}
+              {!! Form::text('email', old('email'), ['class'=>'form-control', 'placeholder'=>'Email']) !!}
+          <span class="text-danger">{{ $errors->first('email') }}</span>
+          </div>
+          <div class="form-group {{ $errors->has('message') ? 'has-error' : '' }}">
+              {!! Form::label('Message:') !!}
+              {!! Form::textarea('message', old('message'), ['class'=>'form-control', 'placeholder'=>'Message']) !!}
+          <span class="text-danger">{{ $errors->first('message') }}</span>
+          </div>
+          {{-- <div class="form-group">
+            <button class="btn btn-success">Enviar</button>
+          </div> --}}
+          <div class="submit-button">
+            <button class="btn btn-common" style="width:100%" id="submit" type="submit">Enviar</button>
+            <div id="msgSubmit" class="h3 hidden"></div> 
+            <div class="clearfix"></div> 
+          </div>
+
+          {!! Form::close() !!}
+          {{-- <form id="contactForm">
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
@@ -1186,13 +1340,13 @@
                   <div class="help-block with-errors"></div>
                 </div>
                 <div class="submit-button">
-                  <button class="btn btn-common" id="submit" type="submit">Submit</button>
+                  <button class="btn btn-common" style="width:100%" id="submit" type="submit">Enviar</button>
                   <div id="msgSubmit" class="h3 hidden"></div> 
                   <div class="clearfix"></div> 
                 </div>
               </div>
             </div>            
-          </form>
+          </form> --}}
           </div>
           <!-- End Col -->
           <!-- Start Col -->
@@ -1203,7 +1357,7 @@
           <!-- Start Col -->
           <div class="col-lg-4 col-md-12">
             <div class="contact-img">
-              <img src="img/contact/01.png" class="img-fluid" alt="">
+              <img src="{{ url('slick/img/contact/01.png')}}" class="img-fluid" alt="">
             </div>
           </div>
           <!-- End Col -->
@@ -1337,6 +1491,73 @@
     <script src="{{ url('slick/js/nivo-lightbox.js')}}"></script>     
     <script src="{{ url('slick/js/jquery.magnific-popup.min.js')}}"></script>      
     <script src="{{ url('slick/js/main.js')}}"></script>
-    
+    <script> 
+    //mis funciones 
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    //he seleccionado un expediente
+    function buscar_datos_exp(id){
+      $('#modalRegister').modal('show');
+      $('#id_exp').val(id);
+      $('#num_exp_buscado').val(id);
+      $.ajax({
+          type: 'GET',
+          url: 'http://localhost:8000/datos_ultimo_movimiento_para_exp_ajax/'+id,
+          success: function(data) {
+            console.log('el resultado es:\n');
+            console.log(data);
+            $('#oficina_actual_buscado').val(data.nombre);
+            $('#profesional_buscado').val(data.profesional);
+            $('#profesional_email_buscado').val(data.profesionalemail);
+            $('#cantidad_mov_buscado').val(data.orden);
+            var fecha = new Date(data.fecha_entrada);
+
+            $('#fecha_ult_mov_buscado').val(fecha.toLocaleDateString());
+            $('#comentario_ult_mov_buscado').val(data.comentario);
+          },
+          error: function(error) {
+            // Do something with the error
+            alert("error en algo");
+          }
+      });
+    };
+    $('#buscar_form').submit(function(event){
+      event.preventDefault();
+      var $form = $(this);
+      $.ajax({
+          type: 'POST',
+          url: $form.attr('action'),
+          data: $form.serialize(),
+          success: function(data) {
+            // Do something with the response
+            console.log('el resultado es:\n');
+            console.log(data);
+            var html = "";
+            $("#container").html("");
+            html += "<ul>";
+            $.each(data, function (index, item) {
+                    html += "<li> <a href='#' onclick='buscar_datos_exp("+item.numero_expediente+")'>" + item.numero_expediente + "</a></li><hr>";
+            });
+            html += "</ul>";
+            $("#container").append(html);
+          },
+          error: function(error) {
+            // Do something with the error
+            alert("error en algo");
+          }
+      });
+    });
+    //fin de mis funciones
+    $('document').ready(function () {
+      //para expedientes
+      //fin expedientes
+
+      //Init datepicker for date fields if data-datepicker attribute defined
+      //or if browser does not handle date inputs
+      });
+</script>
   </body>
 </html>
