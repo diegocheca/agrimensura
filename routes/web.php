@@ -43,6 +43,7 @@ Route::get('admin/expedientes_por_num/{num_exp}', function ($num_exp){
 Route::get('/oficinas_para_add_mov', [MovimientosController::class, "traer_oficinas_para_select"])->name('oficinas-para-select');
 Route::get('/datos_expediente/{num_exp}', [MovimientosController::class, "traer_expediente_para_component"])->name('datos_expediente');
 Route::get('/datos_ultimo_movimiento_para_exp/{num_exp}', [MovimientosController::class, "traer_ultimo_mov_exp"])->name('datos_ultimo_mov');
+Route::get('/datos_penultimo_movimiento_para_exp/{num_exp}', [MovimientosController::class, "traer_penultimo_mov_exp"])->name('datos_ultimo_mov');
 Route::get('/datos_ultimo_movimiento_para_exp_ajax/{num_exp}', [MovimientosController::class, "traer_ultimo_mov_exp_ajax"])->name('datos_ultimo_mov_ajax');
 Route::post('/crear_movimiento', [MovimientosController::class, "crear_movimiento_desde_component"])->name('crear-movimiento');
 Route::post('/devolver_movimiento/{id}', [MovimientosController::class, "devolver_movimiento_desde_component"])->name('devolver-movimiento');
@@ -59,9 +60,15 @@ Route::post('/recibir_expediente_por_movimiento', [MovimientosController::class,
 Route::get('/register/verify/{code}', 'App\Http\Controllers\Auth\VerificationController@verify');
 
 
+
+
 //expedientes
+Route::post('/archivar_expediente/{id}', [ExpedienteController::class, "archivar_expediente_desde_componente"])->name('archivar-expediente');
+//Route::get('/archivar_expediente/{id}', [ExpedienteController::class, "archivar_expediente_desde_componente"])->name('archivar-expediente');
 Route::get('/nombres_archivos_tramites/{num_tra}', [ExpedienteController::class, "traer_nombres_archivos_tramites"])->name('nombres_tramites');
 Route::get('/cargar_profesionales', [ExpedienteController::class, "traer_personas_profesionales"])->name('cargar_profesionales');
+Route::get('/expediente_finalizado/{num_tra}', [ExpedienteController::class, "expediente_finalizado"])->name('expediente-finalizado');
+Route::get('/soy_agrimensor', [ExpedienteController::class, "revisar_si_soy_agrimensor"])->name('soy-agrimensor');
 
 Route::get('/pruebafecha', [MovimientosController::class, "probando_la_fecha"])->name('prueba-fecha');
 

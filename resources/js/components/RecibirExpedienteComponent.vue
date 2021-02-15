@@ -14,7 +14,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="alert alert-info" role="alert">
-                                        <h4>Esta accion implica que usted esta recibiendo el expediente <strong> {{num_expediente}} </strong> en la mano, para recibirlo en su oficina</h4>
+                                        <h4>Esta acción implica que usted esta recibiendo el expediente <strong> {{num_expediente}} </strong> en la mano, para recibirlo en su oficina</h4>
                                     </div>
                                     <div class="form-group row">
                                         <form @submit="formRecibirSubmit">
@@ -23,7 +23,7 @@
                                             <div class="form-group col-md-12">
                                                 <div class="form-group col-md-6">
                                                         <div class="form-group col-md-4">
-                                                            <label for="numero_expediente">Numero de Expediente:</label>
+                                                            <label for="numero_expediente">Número de Expediente:</label>
                                                         </div>
                                                         <div class="form-group col-md-8">
                                                             <input style="width:100%" type="text" id="numero_expediente" disabled v-model="num_expediente" />
@@ -31,7 +31,7 @@
                                                 </div>
                                                 <div class="form-group col-md-6">
                                                     <div class="form-group col-md-4">
-                                                        <label for="fecha_inicio_expediente">Creado el dia:</label>
+                                                        <label for="fecha_inicio_expediente">Creado el día:</label>
                                                     </div>
                                                     <div class="form-group col-md-8">
                                                         <input style="width:100%" type="text" id="fecha_inicio_expediente" disabled v-model="fecha_creacion" />
@@ -41,7 +41,7 @@
                                             <div class="form-group col-md-12">
                                                 <div class="form-group col-md-6">
                                                     <div class="form-group col-md-4">
-                                                        <label for="creado_por">Creado Por:</label>
+                                                        <label for="creado_por">Profesional Solicitante:</label>
                                                     </div>
                                                     <div class="form-group col-md-8">
                                                         <input style="width:100%" type="text" id="creado_por" disabled v-model="nombre_completo" />
@@ -49,7 +49,7 @@
                                                 </div>
                                                 <div class="form-group col-md-6">
                                                     <div class="form-group col-md-4">
-                                                        <label for="email_creador">Email del creador:</label>
+                                                        <label for="email_creador">Email del Profesional:</label>
                                                     </div>
                                                     <div class="form-group col-md-8">
                                                         <input style="width:100%" type="text" id="email_creador" disabled v-model="iniciador.email" />
@@ -59,10 +59,10 @@
                                             <div class="form-group col-md-12">
                                                 <div class="form-group col-md-6">
                                                     <div class="form-group col-md-4">
-                                                        <label for="numero_tramite">Numero de tramite:</label>
+                                                        <label for="numero_tramite">Número de trámite:</label>
                                                     </div>
                                                     <div class="form-group col-md-8">
-                                                        <input style="width:100%" type="text" id="numero_tramite" disabled v-model="expediente.id_tramite" />
+                                                        <input style="width:100%" type="text" id="numero_tramite" disabled v-model="expediente.nomtramite" />
                                                     </div>
                                                 </div>
                                                 <div class="form-group col-md-6">
@@ -74,7 +74,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <h3>Datos del ultimo movimiento</h3>
+                                            <h3>Datos del último movimiento</h3>
                                             <br>
                                             <div class="form-group col-md-12">
                                                 <div class="form-group col-md-6">
@@ -82,7 +82,7 @@
                                                         <label for="oficina_de_donde_viene">Oficina de donde viene:</label>
                                                     </div>
                                                     <div class="form-group col-md-8">
-                                                        <input style="width:100%" type="text" class="form-control" id="oficina_de_donde_viene" disabled v-model="ultimo_movimiento.nombre" />
+                                                        <input style="width:100%" type="text" class="form-control" id="oficina_de_donde_viene" disabled v-model="penultimo_movimiento.nombre" />
                                                     </div>
                                                 </div>
                                                 <div class="form-group col-md-6">
@@ -97,7 +97,7 @@
                                             <div class="form-group col-md-12">
                                                 <div class="form-group col-md-6">
                                                     <div class="form-group col-md-4">
-                                                        <label for="ultimo_comentario">Ultimo Comentario:</label>
+                                                        <label for="ultimo_comentario">Último Comentario:</label>
                                                     </div>
                                                     <div class="form-group col-md-8">
                                                         <textarea style="width:100%" class="form-control" id="ultimo_comentario" disabled v-model="ultimo_movimiento.comentario" rows="3"></textarea>
@@ -107,7 +107,7 @@
                                             <div class="form-group col-md-12">
                                                 <div class="form-group col-md-6">
                                                     <div class="form-group col-md-4">
-                                                        <label for="posee_observacion">Posee observacion?:</label>
+                                                        <label for="posee_observacion">Posee observación?:</label>
                                                     </div>
                                                     <div class="form-group col-md-8">
                                                         <input v-if="ultimo_movimiento.bandera_observacion == 1" style="width:100%" class="form-control" type="text" id="posee_observacion" disabled value="Si, si posee"/>
@@ -116,7 +116,7 @@
                                                 </div>
                                                 <div v-if="ultimo_movimiento.bandera_observacion != null" class="form-group col-md-6">
                                                     <div class="form-group col-md-4">
-                                                        <label for="ultima_observacion">Observacion:</label>
+                                                        <label for="ultima_observacion">Observación:</label>
                                                     </div>
                                                     <div class="form-group col-md-8">
                                                         <textarea style="width:100%" class="form-control" id="ultima_observacion" disabled v-model="ultimo_movimiento.observacion" rows="3"></textarea>
@@ -124,14 +124,14 @@
                                                 </div>
                                                 <div v-else class="form-group col-md-6">
                                                     <div class="alert alert-warning">
-                                                        Sin Observacion en su ultimo movimiento
+                                                        Sin Observación en su último movimiento
                                                     </div>
                                                 </div>
                                             </div>
                                             <div v-if="ultimo_movimiento.subsanacion != null" class="form-group col-md-12">
                                                 <div class="form-group col-md-6">
                                                     <div class="form-group col-md-4">
-                                                        <label for="posee_subsanacion">Posee subsanacion?:</label>
+                                                        <label for="posee_subsanacion">Posee subsanación?:</label>
                                                     </div>
                                                     <div class="form-group col-md-8">
                                                         <input v-if="ultimo_movimiento.subsanacion != '' " style="width:100%" class="form-control" type="text" id="posee_subsanacion" disabled value="Si, si posee"/>
@@ -140,7 +140,7 @@
                                                 </div>
                                                 <div class="form-group col-md-6">
                                                     <div class="form-group col-md-4">
-                                                        <label for="ultima_subsanacion">Subsanacion:</label>
+                                                        <label for="ultima_subsanacion">Subsanación:</label>
                                                     </div>
                                                     <div class="form-group col-md-8">
                                                         <textarea style="width:100%" id="ultima_subsanacion" disabled v-model="ultimo_movimiento.subsanacion" />
@@ -150,7 +150,7 @@
                                             <div v-else class="form-group col-md-12">
                                                 <div class="form-group col-md-4">
                                                     <div class="alert alert-warning">
-                                                        Sin Subsanacion en su ultimo movimiento
+                                                        Sin Subsanación en su último movimiento
                                                     </div>
                                                 </div>
                                             </div>
@@ -206,6 +206,7 @@ export default {
         showModal_recibir: false,
         expediente: [],
         ultimo_movimiento: [],
+        penultimo_movimiento: [],
         iniciador: [],
         bandera_comentario_recibo: false,
         comentario_confirmacion: ''
@@ -252,6 +253,13 @@ export default {
                 console.log('mi ultimo movimiento es:\n');
                 console.log(this.ultimo_movimiento);
             });
+            //busco los datos del pen-ultimo movimiento
+             axios.get('/datos_penultimo_movimiento_para_exp/'+this.num_expediente).then(res=>{
+                this.penultimo_movimiento = res.data;
+                console.log('mi PENULIMO movimiento es:\n');
+                console.log(this.penultimo_movimiento);
+            });
+
             //busco datos de persona que lo creo
              axios.get('/datos_de_quien_creo_expdiente/'+this.num_expediente).then(res=>{
                 this.iniciador = res.data;

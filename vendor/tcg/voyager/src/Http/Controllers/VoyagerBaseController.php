@@ -16,7 +16,7 @@ use TCG\Voyager\Events\BreadImagesDeleted;
 use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\Http\Controllers\Traits\BreadRelationshipParser;
 use App\Expediente;
-
+use App\Log;
 
 use File;
 use Illuminate\Support\Facades\Storage;
@@ -184,13 +184,20 @@ class VoyagerBaseController extends Controller
         if (view()->exists("voyager::$slug.browse")) {
             $view = "voyager::$slug.browse";
         }
-
         //MIS MODIFICACIONES
         // 1 - limito los expedientes que pueden ver los agrimensores
         //1.1 veo si el slug es expedientes y tmb si soy agrimensor
         //var_dump(Auth::user()->role_id);die(); el role_id = 3 es el agrimensor
         //si soy admin o mesa de entrada o empleado de la dgr debo ver todos los expedientes
-        if( ($slug== "expedientes") && (Auth::user()->role_id == 4)) // para el caso de ser agente de la dgr
+        if( 
+            ($slug== "expedientes") 
+            && 
+            ( 
+                (Auth::user()->role_id == 4) // es para agentes de  la dgr
+                || 
+                (Auth::user()->role_id == 6) // para el rol de mesa de entrada
+            ) // para el caso de ser agente de la dgr
+        )
         {
             $elementos_a_eliminar = [];
             //voy a recorrer el array entero con todos los expedientes. aca voy a ver si hay expediente que yo no deberia ver.
@@ -198,11 +205,13 @@ class VoyagerBaseController extends Controller
             //se tiene q hacer en dos for, no se puede hacer en uno solo, xq a medida q vaya borrando elemmentos del array se modifican los limites del for
             /*
             PASOS a seguir:
-            1- busco todos los movimientos que esten en mi oficina
-            2 - join con los expedientes relacionados a esos movimientos
-            3 - luego
+            Paso 1 - busco todos los movimientos que esten en mi oficina
+            Paso 2 - pasar los movimientos a un array con indice ordenado y ascendente, para luego ser ordenados
+            Paso 3 - Ordenar los movimientos, es necesario ordenarolos para louego hacer la comparacion contra la query que hizo voyager,
+            la query de voyager devuelve los movimientos ordenados descendentemente, por eso necesito tenerlos igual para comparar eficientemente.
+            Paso 4 - con los movimientos ya ordenados, puedo hacer la comparativa contra la query de voyager y ver q elemento voy a sacar
             */
-
+            //Paso 1 - busco todos los movimientos que esten en mi oficina
             $movimientos_en_oficina = Movimiento::select('*')
             ->where('id_area', '=', Auth::user()->id_area)
             ->where('fecha_salida', '=', null)
@@ -211,6 +220,7 @@ class VoyagerBaseController extends Controller
             ->unique('id_expediente');
             $movimientos_ordenados = [];
             //var_dump($movimientos_en_oficina);die();
+            //Paso 2 - pasar los movimientos a un array con indice ordenado y ascendente, para luego ser ordenados
             for ($i=0 , $contador = 0; $i < 99999 ; $i++) { 
                 if(isset($movimientos_en_oficina[$i]))
                 {
@@ -223,6 +233,8 @@ class VoyagerBaseController extends Controller
             //var_dump($movimientos_ordenados);
             $y = $i;
             $l = $contador;
+            //Paso 3 - Ordenar los movimientos, es necesario ordenarolos para louego hacer la comparacion contra la query que hizo voyager,
+            //la query de voyager devuelve los movimientos ordenados descendentemente, por eso necesito tenerlos igual para comparar eficientemente.
             // ordenar
             //https://juncotic.com/ordenamiento-de-burbuja-algoritmos-de-ordenamiento/
             do
@@ -248,15 +260,13 @@ class VoyagerBaseController extends Controller
             //var_dump($movimientos_ordenados);
             //die();
             //var_dump(count($dataTypeContent));die();
+            //Paso 4 - crear el array ordenado listo para luego para ser comparado
             for ($i=0 , $indice_a_eliminar=0, $indice_elem_ordenados = 0; $i < count($dataTypeContent) ; $i++) { 
                 // mi numero de departamento o area es: Auth::user()->id_area
-
-                
                 //voy a comprobar si cada uno de esots 
                 /*var_dump("comparo:       ");
                 var_dump($dataTypeContent[$i]["id"]);
                 var_dump(" - y: ");*/
-                
                 //corto cuando termino de recoorer el array mas cortito (el de movimientos de mi area)
                 if($indice_elem_ordenados >= count($movimientos_ordenados))
                 { // significa que ya complete mi array de elementos a borrar , entonces borro el resto de "todos"
@@ -284,6 +294,7 @@ class VoyagerBaseController extends Controller
             if($i )
             //var_dump($elementos_a_eliminar);
             //die();
+            //Paso 5 - con los movimientos ya ordenados, puedo hacer la comparativa contra la query de voyager y ver q elemento voy a sacar
             for ($y=0; $y < count($elementos_a_eliminar); $y++) { 
                 //voy a empezar a eliminar los registros que no sean mios
                 //array_splice($dataTypeContent, $elementos_a_eliminar[$y], 1); // empiezo a recorrer el arreglo de eliminar para ir sacandolos del arreay q voy a pasar
@@ -294,14 +305,10 @@ class VoyagerBaseController extends Controller
             //var_dump($dataTypeContent);
             //die();
         }
-        if( 
+        elseif( 
             ($slug== "expedientes") 
             && 
-            ( 
-                (Auth::user()->role_id == 3)  // para los agentes de la dgr
-                || 
-                (Auth::user()->role_id == 6) // para los agentes de mesa de entrada
-            )
+                (Auth::user()->role_id == 3)  // para los agrimensores
         ) 
         {
             $elementos_a_eliminar = [];
@@ -488,9 +495,7 @@ class VoyagerBaseController extends Controller
         */
         $slug = $this->getSlug($request);
         //var_dump($slug);die();
-
         $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
-
         // Compatibility with Model binding.
         $id = $id instanceof \Illuminate\Database\Eloquent\Model ? $id->{$id->getKeyName()} : $id;
 
@@ -510,7 +515,6 @@ class VoyagerBaseController extends Controller
         // Validate fields with ajax
         $val = $this->validateBread($request->all(), $dataType->editRows, $dataType->name, $id)->validate();
         //var_dump($dataType->editRows, $data);die();
-
         $this->insertUpdateData($request, $slug, $dataType->editRows, $data);
 
         event(new BreadDataUpdated($dataType, $data));
@@ -621,14 +625,16 @@ class VoyagerBaseController extends Controller
         if($slug == "expedientes")
         {
             /*
+            CREANDO UN EXPEDIENTE
             Voy a ahcer el diagrama de flujo de iniciar expediente
             Paso 1 - Completar form de crear expediente (antes)
             Paso 2 - validar los datos en el back (arriba)
             Paso 3 - Crear registro en la base de datos (arriba)
             Paso 4 - Enviar por email aviso al agrimensor implicado
             Paso 5 - crear notificacion interna
-            Paso 6 - generar log
-            Paso 7 -  crear carpet aen el servidor
+            Paso 6 - generar log del expediente
+            Paso 10 - generar log del nuevo movimiento
+            Paso 7 -  crear carpeta en el servidor
             Paso 8 - crear e imprimir caratula
             Paso 9 - crear movimiento
             */
@@ -646,16 +652,15 @@ class VoyagerBaseController extends Controller
             //Inicio Paso 4 - Enviar por email aviso al agrimensor implicado
             //aviso de nuevo expdietne creado a su email.
             //busco el nombre del area
-            $area = Area::find(3); // va siempre a mensa de entrada cuando comienza el exp
+            //$area = Area::find(3); // va siempre a mensa de entrada cuando comienza el exp
             //busco el nombre de la persona y su email
             //$agrimensor = Persona::find($exp->id_persona);
             $agrimensor = User::find($exp->id_persona);
             //var_dump($agrimensor);die();
-            $to_email = 'diegochecarelli@gmail.com';
+            $to_email = 'diegochecarelli@hotmail.com';
             //buscar email de la persona
-            //constructor de email : //($nombre, $fecha_creado, $nombre_area, $id_expediente, $num_expe, $tramite)
             //var_dump($area, Auth::user()->id_area);
-            Mail::to($to_email)->send(new ExpedienteNuevoEmail(Auth::user()->name ,$exp->created_at ,$area->nombre, $data->id, $exp->numero_expediente, "tramite en proceso"));
+            Mail::to($to_email)->send(new ExpedienteNuevoEmail(Auth::user()->name ,$exp->created_at ,"mesa de entrada", $data->id, $exp->numero_expediente, "tramite en proceso"));
             //Fin Paso 4
             //Inicia Paso 9 - crear movimiento
             //crear el nuevo movimiento
@@ -678,7 +683,77 @@ class VoyagerBaseController extends Controller
             $resultado_paso_8 = $movimento_nuevo->save();
             //Fin Paso 9
             //Suspendida Paso 5 - crear notificacion interna 
-            //Suspendida Paso 6 - generar log
+            //Inicia Paso 6 - generar log
+            $valor_nuevos ="
+            {
+                'id': '".(string)$exp->id."',
+                'numero_exp': '".(string)$exp->numero_expediente."',
+                'path_papeles': ".(string)$exp->path_papeles.",
+                'id_tramite': ".(string)$exp->id_tramite.",
+                'id_persona': '".(string)$exp->id_persona."',
+                'file1': ".(string)$exp->file1.",
+                'file2': ".(string)$exp->file2.",
+                'file3': ".(string)$exp->file3.",
+                'file4': ".(string)$exp->file4.",
+                'file5': ".(string)$exp->file5.",
+                'file6': ".(string)$exp->file6.",
+                'file7': ".(string)$exp->file7.",
+                'file8': ".(string)$exp->file8.",
+                'file9': ".(string)$exp->file9.",
+                'file10': ".(string)$exp->file10.",
+                'file11': ".(string)$exp->file11.",
+                'file12': ".(string)$exp->file12.",
+                'file13': ".(string)$exp->file13.",
+                'file14': ".(string)$exp->file14.",
+                'file15': ".(string)$exp->file15.",
+                'file16': ".(string)$exp->file16.",
+                'file17': ".(string)$exp->file17.",
+                'finalizo': '0',
+                'created_by': ".(string)Auth::user()->id.",
+                'comentario_log': 'se creo un nuevo expediente desde mesa de entrada'
+            }";
+            $log = new Log;
+            $log->nombretabla = 'Expedientes';
+            $log->accion = 'add';
+            $log->valores_nuevos = $valor_nuevos;
+            $log->valores_viejos = null;
+            $log->id_modificado = $exp->id ;
+            $log->estado = 'sin ver'; // "sin ver" - "sin aprobar" - "apronado" - "devuelto" - "archivado"
+            $log->created_by = Auth::user()->id;
+            $resultado6 = $log->save();
+            //Fin paso 6
+            //Inicio paso 10 - crear log de movimiento
+            $valor_nuevos ="
+            {
+                'orden': ".(string)$movimento_nuevo->orden.",
+                'fecha_entrada': '".(string)$movimento_nuevo->fecha_entrada."',
+                'fecha_salida': '".(string)$movimento_nuevo->fecha_salida."',
+                'comentario': '".(string)$movimento_nuevo->comentario."',
+                'bandera_observacion': ".(string)$movimento_nuevo->bandera_observacion.",
+                'observacion': '".(string)$movimento_nuevo->observacion."',
+                'subsanacion': '".(string)$movimento_nuevo->subsanacion."',
+                'id_area': ".(string)$movimento_nuevo->id_area.",
+                'id_expediente': ".(string)$movimento_nuevo->id_expediente.",
+                'tramite_finalizado': ".(string)$movimento_nuevo->tramite_finalizado.",
+                'confirmado': ".(string)$movimento_nuevo->confirmado.",
+                'fecha_confirmacion': '".(string)$movimento_nuevo->fecha_confirmacion."',
+                'quien_confirmacion': ".(string)$movimento_nuevo->quien_confirmacion.",
+                'comentario_confirmacion': '".(string)$movimento_nuevo->comentario_confirmacion."',
+                'created_by': ".(string)$movimento_nuevo->created_by.",
+                'comentario_de_log': 'valores del primer movimiento creado automaticamente cuando se crea un expediente en mesa de entrada.'
+            }";
+
+            $log2 = new Log;
+            $log2->nombretabla = 'Movimientos';
+            $log2->accion = 'edit';
+            $log2->valores_nuevos = $valor_nuevos;
+            $log2->valores_viejos = null;
+            $log2->id_modificado = $movimento_nuevo->id ;
+            $log2->estado = 'sin ver'; // "sin ver" - "sin aprobar" - "apronado" - "devuelto" - "archivado"
+            $log2->created_by = Auth::user()->id;
+            $resultado10 = $log2->save();
+            //Fin paso 5
+            //Fin paso 10
             //Inicia Paso 8
             /*$data_para_pdf = [
                 'title' => 'Comprobante de Creacion de Un nuevo Expdiente',
@@ -705,7 +780,9 @@ class VoyagerBaseController extends Controller
             Paso 5- mandar email de verificacion
             Paso 6- crear notificacion
             Paso 7- crear log
-            Paso 8- */
+            Paso 8- Comprobar si estoy creando una persona de mesa de entrada. si esasi ,entonces
+            debo asignarle el id_area = 3 y role_id=6
+            */
 
             //Inicia Paso 5 - Mandar email de verificacion 
             //creacion de la carpeta personal en el servidor
@@ -715,19 +792,54 @@ class VoyagerBaseController extends Controller
             // Send confirmation code
             /*var_dump($request->get('email'), $codigo, $request->get('name') ,$request->get('cuil'));
             die();*/
+            //Paso 4 , ya esta hecho más arriba
+            //Paso 5 - mandar email de verificacion
             $usuario = User::select('*')->where('email','=',$request->get('email'))->first();
             $usuario->confirmation_code = $codigo;
             $usuario->confirmed = false;
             $usuario->email_verified_at = null;
+            /*Paso 8- Comprobar si estoy creando una persona de mesa de entrada. si esasi ,entonces
+            debo asignarle el id_area = 3 y role_id=6*/
+            if($usuario->role_id==6)
+                $usuario->id_area = 3;
+            //Fin paso 
             $usuario->save();
             Mail::to($request->get('email'))->send(new VerificationEmail($codigo, $request->get('name') ,$request->get('cuil')));//nueva
+            //Fin paso 5
+            //Paso 7 - crear log
+            $valor_nuevos ="
+            {
+                'id': '".(string)$usuario->id."',
+                'role_id': '".(string)$usuario->role_id."',
+                'name': ".(string)$usuario->name.",
+                'email': ".(string)$usuario->email.",
+                'avatar': '".(string)$usuario->avatar."',
+                'confirmed': ".(string)$usuario->confirmed.",
+                'confirmation_code': ".(string)$usuario->confirmation_code.",
+                'email_verified_at': ".(string)$usuario->email_verified_at.",
+                'settings': ".(string)$usuario->settings.",
+                'created_at': ".(string)$usuario->created_at.",
+                'updated_at': ".(string)$usuario->updated_at.",
+                'domicilio': ".(string)$usuario->domicilio.",
+                'cuil': ".(string)$usuario->cuil.",
+                'empleado_dgr': ".(string)$usuario->empleado_dgr.",
+                'created_by': ".(string)$usuario->created_by.",
+                'id_area': ".(string)$usuario->id_area.",
+                'oficina': ".(string)$usuario->oficina.",
+                'comentario_log': 'se creo un nuevo expediente desde mesa de entrada'
+            }";
+            $log = new Log;
+            $log->nombretabla = 'Users';
+            $log->accion = 'add';
+            $log->valores_nuevos = $valor_nuevos;
+            $log->valores_viejos = null;
+            $log->id_modificado = $usuario->id ;
+            $log->estado = 'sin ver'; // "sin ver" - "sin aprobar" - "apronado" - "devuelto" - "archivado"
+            $log->created_by = Auth::user()->id;
+            $resultado6 = $log->save();
+            //Fin Paso 7
         }
-
-        
-
-
         event(new BreadDataAdded($dataType, $data));
-
         if (!$request->has('_tagging')) {
             if (auth()->user()->can('browse', $data)) {
                 $redirect = redirect()->route("voyager.{$dataType->slug}.index");
@@ -1217,11 +1329,17 @@ class VoyagerBaseController extends Controller
                     $total_count = $model->count();
                     $relationshipOptions = $model->take($on_page)->skip($skip)->get();
                 }
-
-                //var_dump($relationshipOptions[0]);die();
+                //CU: BUSCAR USERS AGRIMENSORES P/ SELECT DE CREAR EXPEDIENTES
+                /*
+                Paso 1 - comprobar que estoy en la consulta deseada
+                Paso 2 - creo objeto con elementos a eliminar  (solo dejo los que tienen role_id == 3)
+                Paso 3 - saco los elementos del objeto que obtuvo voyager con su jquery
+                */
+                //Paso 1 - comprobar que estoy en la consulta deseada
                 if(($slug == "expedientes") && ($request->type == "expediente_belongsto_persona_relationship"))
                 {// se que estoy en la relacion de expedientes y users
                     //voy a eliminar aquellos resultados que no son agentes de la dgr. es decir, voy a sacar los admin, y los agrimensores
+                    //Paso 2 - creo objeto con elementos a eliminar  (solo dejo los que tienen role_id == 3)
                     $elementos_a_eliminar = []; // en este array pongo los indices de los elementos del array original para luego sacarlos
                     for ($i=0 , $indice_a_eliminar=0, $indice_elem_ordenados = 0; $i < count($relationshipOptions) ; $i++) { 
                         //var_dump($results[$i]["text"]);die();
@@ -1231,23 +1349,20 @@ class VoyagerBaseController extends Controller
                             $indice_a_eliminar++;// sumo la cantidad de registros que no son mios
                         }
                     }
+                    //Paso 3 - saco los elementos del objeto que obtuvo voyager con su jquery
                     for ($y=0; $y < count($elementos_a_eliminar); $y++) { 
                         //voy a empezar a eliminar los registros que no son agrimensores
                         unset($relationshipOptions[$elementos_a_eliminar[$y]]);
                     }
                 }
                 //var_dump($relationshipOptions);die();
-
-
                 $results = [];
-
                 if (!$row->required && !$search && $page == 1) {
                     $results[] = [
                         'id'   => '',
                         'text' => __('voyager::generic.none'),
                     ];
                 }
-
                 // Sort results
                 if (!empty($options->sort->field)) {
                     if (!empty($options->sort->direction) && strtolower($options->sort->direction) == 'desc') {
@@ -1263,10 +1378,7 @@ class VoyagerBaseController extends Controller
                         'text' => $relationshipOption->{$options->label},
                     ];
                 }
-                
-                
-                    //var_dump($total_count);die();
-
+                //var_dump($total_count);die();
                 return response()->json([
                     'results'    => $results,
                     'pagination' => [
@@ -1287,3 +1399,4 @@ class VoyagerBaseController extends Controller
         return response()->json([], 404);
     }
 }
+

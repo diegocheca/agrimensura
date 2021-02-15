@@ -2250,6 +2250,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2262,6 +2269,7 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
   },
   data: function data() {
     return {
+      puedo_ver: false,
       mostrar_modal: false,
       url: '',
       derecha: true,
@@ -2284,20 +2292,19 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
         bandera_comentario_recibo: false,
         comentario_confirmacion: ''
       },
+      expediente_a_archivar: [],
       prueba: false,
       expdiente: [],
       ultimo_movimiento: [],
       oficinas: [],
-      output: ''
+      output: '',
+      expediente_ya_finalizado: false
     };
   },
 
   /*created(){
-    axios.get('/movimientos/'+this.num_expediente).then(res=>{
-      this.notas = res.data;
-      console.log('mis datos son:\n');
-      console.log(this.notas);
-    })
+      //this.expediente_terminado();
+      this.agrimensor();
   },*/
   computed: {
     charactersLeftcomentario: function charactersLeftcomentario() {
@@ -2339,25 +2346,48 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
       } else this.mostrar_modal = false; //alert(this.num_expediente);
 
     },
-    mostrar_mover_expediente: function mostrar_mover_expediente() {
+    archivar_expediente: function archivar_expediente() {
       var _this2 = this;
+
+      var returnVal = confirm("Esta seguro de archivar este expediente?");
+      console.log(returnVal);
+
+      if (returnVal.toString() == "true") {
+        // voy a archivar
+        axios.post('/archivar_expediente/' + this.num_expediente).then(function (res) {
+          _this2.expediente_a_archivar = res.data;
+          console.log('\nlos datos del expediente es:\n');
+          console.log(_this2.expediente_a_archivar);
+          toastr__WEBPACK_IMPORTED_MODULE_1___default().success('El expediente se archivó correctamente');
+          setInterval(location.reload(true), 5000);
+        });
+        this.mostrar_modal = false;
+        this.mostrar_timeline = false;
+        this.mostrar_formulario_movimiento = false;
+      } else {
+        // NO voy a archivar
+        alert("Nada cambió");
+      }
+    },
+    mostrar_mover_expediente: function mostrar_mover_expediente() {
+      var _this3 = this;
 
       this.mostrar_modal = true;
       this.mostrar_formulario_movimiento = true;
       this.mostrar_timeline = false;
       axios.get('/datos_expediente/' + this.num_expediente).then(function (res) {
-        _this2.expdiente = res.data;
+        _this3.expdiente = res.data;
         console.log('mi expedeinte es:\n');
-        console.log(_this2.expdiente); //busco el nombre de la oficina actual del expdiente
+        console.log(_this3.expdiente); //busco el nombre de la oficina actual del expdiente
 
         /*for (let i in this.oficinas) {
                 if(this.oficina[i].id == "")
         }*/
       });
       axios.get('/datos_ultimo_movimiento_para_exp/' + this.num_expediente).then(function (res) {
-        _this2.ultimo_movimiento = res.data;
+        _this3.ultimo_movimiento = res.data;
         console.log('mi ultimo movimiento es:\n');
-        console.log(_this2.ultimo_movimiento); //busco el nombre de la oficina actual del expdiente
+        console.log(_this3.ultimo_movimiento); //busco el nombre de la oficina actual del expdiente
 
         /*for (let i in this.oficinas) {
                 if(this.oficina[i].id == "")
@@ -2365,9 +2395,9 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
       }); //busco todos los nombres e id de las oficinas para el select
 
       axios.get('/oficinas_para_add_mov').then(function (res) {
-        _this2.oficinas = res.data;
+        _this3.oficinas = res.data;
         console.log('mis oficinas son:\n');
-        console.log(_this2.oficinas);
+        console.log(_this3.oficinas);
       });
     },
     formSubmit: function formSubmit(e) {
@@ -2492,16 +2522,53 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
             this.nuevo_movimiento.tramite_finalizado=false;
             this.mostrar_modal =false;*/
             toastr__WEBPACK_IMPORTED_MODULE_1___default().success('Se devolvio el expediente exitosamente');
+            setInterval(location.reload(true), 5000);
           }
         })["catch"](function (error) {
           currentObj.output = error;
           toastr__WEBPACK_IMPORTED_MODULE_1___default().error('hubo un error');
+          setInterval(location.reload(true), 5000);
         });
       } //Detectamos si el usuario denegó el mensaje
       else {
-          alert("¡Haz denegado el mensaje!");
+          alert("¡El movimiento no se modificó, gracias!");
         }
+    },
+    expediente_terminado: function expediente_terminado() {
+      axios.get('/expediente_finalizado/' + this.num_expediente).then(function (response) {
+        if (response.data == 0) return false;else return true;
+      });
+    },
+    ver_bones: function ver_bones() {
+      axios.get('/soy_agrimensor').then(function (response) {
+        console.log(response.data);
+        if (response.data == 0) return false;else return true;
+      });
     }
+    /*,
+    agrimensor(){
+        axios.get('/soy_agrimensor/').then(function (response) {
+            if(response.data === true)
+            {
+                toastr.info('si soy administrador');
+                console.log('voy a devolver un false');
+                return false;
+                //this.url = 'true';
+            }
+            else{
+                toastr.warning('no soy agirmensor');
+                console.log('voy a devolver un true');
+                return true;
+                //this.url = 'false';
+            } 
+        })
+        .catch(function (error) {
+            console.log("error soy agrimensor funcion");
+            console.log(error);
+            toastr.error('hubo un error al buscar el perfil');
+        });
+    },*/
+
   }
 });
 
@@ -2729,6 +2796,7 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
       showModal_recibir: false,
       expediente: [],
       ultimo_movimiento: [],
+      penultimo_movimiento: [],
       iniciador: [],
       bandera_comentario_recibo: false,
       comentario_confirmacion: ''
@@ -2773,6 +2841,12 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
         _this.ultimo_movimiento = res.data;
         console.log('mi ultimo movimiento es:\n');
         console.log(_this.ultimo_movimiento);
+      }); //busco los datos del pen-ultimo movimiento
+
+      axios.get('/datos_penultimo_movimiento_para_exp/' + this.num_expediente).then(function (res) {
+        _this.penultimo_movimiento = res.data;
+        console.log('mi PENULIMO movimiento es:\n');
+        console.log(_this.penultimo_movimiento);
       }); //busco datos de persona que lo creo
 
       axios.get('/datos_de_quien_creo_expdiente/' + this.num_expediente).then(function (res) {
@@ -71226,7 +71300,24 @@ var render = function() {
                                 },
                                 [_vm._v(_vm._s(_vm.num_expediente))]
                               )
-                            ])
+                            ]),
+                            _vm._v(" "),
+                            _vm.expediente_terminado()
+                              ? _c(
+                                  "div",
+                                  {
+                                    staticClass: "alert alert-danger",
+                                    attrs: { role: "alert" }
+                                  },
+                                  [
+                                    _c("h3", [
+                                      _vm._v(
+                                        "Este expediente ha finalizado y ha sido archivado"
+                                      )
+                                    ])
+                                  ]
+                                )
+                              : _vm._e()
                           ]),
                           _vm._v(" "),
                           _c("div", { staticClass: "modal-body" }, [
@@ -71244,28 +71335,6 @@ var render = function() {
                                       }
                                     },
                                     [_vm._v("Cancelar")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "a",
-                                    {
-                                      attrs: {
-                                        href: _vm.url_para_archivos_expediente(
-                                          _vm.num_expediente
-                                        ),
-                                        target: "_blank"
-                                      }
-                                    },
-                                    [
-                                      _c(
-                                        "button",
-                                        {
-                                          staticClass: "btn btn-secondary",
-                                          attrs: { type: "button" }
-                                        },
-                                        [_vm._v("Archivos del Exp")]
-                                      )
-                                    ]
                                   ),
                                   _vm._v(" "),
                                   _c(
@@ -71504,7 +71573,8 @@ var render = function() {
                                                     _vm._v(" "),
                                                     _c("br"),
                                                     _vm._v(" "),
-                                                    movimiento.subsanacion != ""
+                                                    movimiento.subsanacion !=
+                                                    null
                                                       ? _c("p", [
                                                           _vm._v(
                                                             " Este movmiento "
@@ -71534,8 +71604,26 @@ var render = function() {
                                                     _vm._v(" "),
                                                     _c("br"),
                                                     _vm._v(" "),
+                                                    movimiento.tramite_finalizado
+                                                      ? _c("p", [
+                                                          _vm._v("Estado: "),
+                                                          _c("strong", [
+                                                            _vm._v("Archivado")
+                                                          ])
+                                                        ])
+                                                      : _c("p", [
+                                                          _vm._v(
+                                                            "Estado: Recibido"
+                                                          )
+                                                        ]),
+                                                    _vm._v(" "),
                                                     _c("p", [
-                                                      _vm._v("Estado: Recibido")
+                                                      _vm._v(
+                                                        "El valor es: " +
+                                                          _vm._s(
+                                                            _vm.ver_bones()
+                                                          )
+                                                      )
                                                     ]),
                                                     _vm._v(" "),
                                                     _vm.se_puede_recibir(
@@ -71596,6 +71684,27 @@ var render = function() {
                                                             }
                                                           },
                                                           [_vm._v(" Mover")]
+                                                        )
+                                                      : _vm._e(),
+                                                    _vm._v(" "),
+                                                    _vm.se_puede_mover(
+                                                      movimiento.confirmado,
+                                                      movimiento.fecha_salida
+                                                    )
+                                                      ? _c(
+                                                          "button",
+                                                          {
+                                                            staticClass:
+                                                              "btn btn-dark",
+                                                            attrs: {
+                                                              id: "archivar"
+                                                            },
+                                                            on: {
+                                                              click:
+                                                                _vm.archivar_expediente
+                                                            }
+                                                          },
+                                                          [_vm._v(" Archivar")]
                                                         )
                                                       : _vm._e()
                                                   ],
@@ -72683,7 +72792,7 @@ var render = function() {
                               [
                                 _c("h4", [
                                   _vm._v(
-                                    "Esta accion implica que usted esta recibiendo el expediente "
+                                    "Esta acción implica que usted esta recibiendo el expediente "
                                   ),
                                   _c("strong", [
                                     _vm._v(
@@ -72733,7 +72842,7 @@ var render = function() {
                                                 },
                                                 [
                                                   _vm._v(
-                                                    "Numero de Expediente:"
+                                                    "Número de Expediente:"
                                                   )
                                                 ]
                                               )
@@ -72799,7 +72908,7 @@ var render = function() {
                                                       "fecha_inicio_expediente"
                                                   }
                                                 },
-                                                [_vm._v("Creado el dia:")]
+                                                [_vm._v("Creado el día:")]
                                               )
                                             ]
                                           ),
@@ -72866,7 +72975,11 @@ var render = function() {
                                                 {
                                                   attrs: { for: "creado_por" }
                                                 },
-                                                [_vm._v("Creado Por:")]
+                                                [
+                                                  _vm._v(
+                                                    "Profesional Solicitante:"
+                                                  )
+                                                ]
                                               )
                                             ]
                                           ),
@@ -72930,7 +73043,11 @@ var render = function() {
                                                     for: "email_creador"
                                                   }
                                                 },
-                                                [_vm._v("Email del creador:")]
+                                                [
+                                                  _vm._v(
+                                                    "Email del Profesional:"
+                                                  )
+                                                ]
                                               )
                                             ]
                                           ),
@@ -73003,7 +73120,7 @@ var render = function() {
                                                     for: "numero_tramite"
                                                   }
                                                 },
-                                                [_vm._v("Numero de tramite:")]
+                                                [_vm._v("Número de trámite:")]
                                               )
                                             ]
                                           ),
@@ -73020,9 +73137,9 @@ var render = function() {
                                                     name: "model",
                                                     rawName: "v-model",
                                                     value:
-                                                      _vm.expediente.id_tramite,
+                                                      _vm.expediente.nomtramite,
                                                     expression:
-                                                      "expediente.id_tramite"
+                                                      "expediente.nomtramite"
                                                   }
                                                 ],
                                                 staticStyle: { width: "100%" },
@@ -73033,7 +73150,7 @@ var render = function() {
                                                 },
                                                 domProps: {
                                                   value:
-                                                    _vm.expediente.id_tramite
+                                                    _vm.expediente.nomtramite
                                                 },
                                                 on: {
                                                   input: function($event) {
@@ -73044,7 +73161,7 @@ var render = function() {
                                                     }
                                                     _vm.$set(
                                                       _vm.expediente,
-                                                      "id_tramite",
+                                                      "nomtramite",
                                                       $event.target.value
                                                     )
                                                   }
@@ -73128,7 +73245,7 @@ var render = function() {
                                   ),
                                   _vm._v(" "),
                                   _c("h3", [
-                                    _vm._v("Datos del ultimo movimiento")
+                                    _vm._v("Datos del último movimiento")
                                   ]),
                                   _vm._v(" "),
                                   _c("br"),
@@ -73176,10 +73293,10 @@ var render = function() {
                                                     name: "model",
                                                     rawName: "v-model",
                                                     value:
-                                                      _vm.ultimo_movimiento
+                                                      _vm.penultimo_movimiento
                                                         .nombre,
                                                     expression:
-                                                      "ultimo_movimiento.nombre"
+                                                      "penultimo_movimiento.nombre"
                                                   }
                                                 ],
                                                 staticClass: "form-control",
@@ -73191,7 +73308,8 @@ var render = function() {
                                                 },
                                                 domProps: {
                                                   value:
-                                                    _vm.ultimo_movimiento.nombre
+                                                    _vm.penultimo_movimiento
+                                                      .nombre
                                                 },
                                                 on: {
                                                   input: function($event) {
@@ -73201,7 +73319,7 @@ var render = function() {
                                                       return
                                                     }
                                                     _vm.$set(
-                                                      _vm.ultimo_movimiento,
+                                                      _vm.penultimo_movimiento,
                                                       "nombre",
                                                       $event.target.value
                                                     )
@@ -73311,7 +73429,7 @@ var render = function() {
                                                     for: "ultimo_comentario"
                                                   }
                                                 },
-                                                [_vm._v("Ultimo Comentario:")]
+                                                [_vm._v("Último Comentario:")]
                                               )
                                             ]
                                           ),
@@ -73389,7 +73507,7 @@ var render = function() {
                                                     for: "posee_observacion"
                                                   }
                                                 },
-                                                [_vm._v("Posee observacion?:")]
+                                                [_vm._v("Posee observación?:")]
                                               )
                                             ]
                                           ),
@@ -73454,7 +73572,7 @@ var render = function() {
                                                           "ultima_observacion"
                                                       }
                                                     },
-                                                    [_vm._v("Observacion:")]
+                                                    [_vm._v("Observación:")]
                                                   )
                                                 ]
                                               ),
@@ -73526,7 +73644,7 @@ var render = function() {
                                                 },
                                                 [
                                                   _vm._v(
-                                                    "\n                                                    Sin Observacion en su ultimo movimiento\n                                                "
+                                                    "\n                                                    Sin Observación en su último movimiento\n                                                "
                                                   )
                                                 ]
                                               )
@@ -73562,7 +73680,7 @@ var render = function() {
                                                     },
                                                     [
                                                       _vm._v(
-                                                        "Posee subsanacion?:"
+                                                        "Posee subsanación?:"
                                                       )
                                                     ]
                                                   )
@@ -73632,7 +73750,7 @@ var render = function() {
                                                           "ultima_subsanacion"
                                                       }
                                                     },
-                                                    [_vm._v("Subsanacion:")]
+                                                    [_vm._v("Subsanación:")]
                                                   )
                                                 ]
                                               ),
@@ -73708,7 +73826,7 @@ var render = function() {
                                                 },
                                                 [
                                                   _vm._v(
-                                                    "\n                                                    Sin Subsanacion en su ultimo movimiento\n                                                "
+                                                    "\n                                                    Sin Subsanación en su último movimiento\n                                                "
                                                   )
                                                 ]
                                               )

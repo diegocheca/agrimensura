@@ -35,7 +35,7 @@ class ExpedienteNuevoEmail extends Mailable
     public function build()
     {
         //return $this->view('view.name');
-        return $this->from("gismineronacional@gmail.com")->view('emails.expediente-nuevo-email')->with([
+        return $this->from("no-reply@ingagrimensor.com")->view('emails.expediente-nuevo-email')->with([
             'nombre' => $this->name,
             'fecha_creado' => $this->fecha_creado,
             'nombre_area' => $this->nombre_area,

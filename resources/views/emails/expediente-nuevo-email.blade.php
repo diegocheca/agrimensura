@@ -69,13 +69,13 @@
         </div>
         <div class="info"><b>Se acaba de crear un nuevo expediente a su nombre.</b></div>
 
-        <p>Saludos profesional de la agrimensura, <strong>{{$nombre}}</strong>, esperamos tenga un excelente día.</p>
-        <p> Nos comunicamos desde el Colegio de Profesionales Agrimensores de San Juan. 
-            Para darle aviso que en la fecha y hora {{$fecha_creado}}, se creo un nuevo expdiente que lo involucra, con numero: {{$num_expe}}, la vez esta siendo trasladado hacia el area: <strong> {{$nombre_area}}</strong></p>
+        <p>Saludos Profesional de la Agrimensura, <strong>{{$nombre}}</strong>, esperamos tenga un excelente día.</p>
+        <p> Nos comunicamos desde el Colegio de Profesionales de Agrimensores de San Juan. 
+            Para darle aviso que en la fecha y hora {{$fecha_creado}}, se creó un nuevo expediente que lo involucra, con numero: {{$num_expe}}, a la vez esta siendo trasladado hacia el departamento: <strong> {{$nombre_area}}</strong></p>
         <strong><p>Es aviso no requiere de su intervensión.</p></strong>
         <p>Puede ver los datos del expediente, haciendo click en el siguiente boton</p>
         <div class="form-group">
-            <a {{url('admin/expedientes/create/'. $id_expediente) }} ><button class="button">Ver Informacion de {{$num_expe}}</button></a>
+            <a {{url('admin/expedientes/'. $id_expediente) }} ><button class="button">Ver Informacion de {{$num_expe}}</button></a>
         </div>
         <p>Se le seguiran enviando novedades, gracias por utilizar este servicio</p>
         <h4>Esperamos siga teniendo un gran día</h4>

@@ -77,7 +77,9 @@ class MovimientosController extends Controller
     }
     
     public function traer_expediente_para_component($num_exp){
-        $expediente = Expediente::select('*')->where('numero_expediente', '=', $num_exp)->first();
+        $expediente = Expediente::select('expedientes.*', 'tramites.nombre as nomtramite')
+        ->join('tramites', 'tramites.id', '=', 'expedientes.id_tramite')
+        ->where('numero_expediente', '=', $num_exp)->first();
         //$ultimo_movimiento = Movimiento::select('*')->where('id_expediente','=', $expediente->id)->get();
         //$expediente = Expediente::join('movimientos', 'movimientos.id_area', '=', 'expedientes.')select('*')->where('numero_expediente', '=', $num_exp)->first();
         //var_dump($ultimo_movimiento);die();
@@ -95,6 +97,20 @@ class MovimientosController extends Controller
         
         
     }
+    public function traer_penultimo_mov_exp($num_exp){
+        $expediente = Expediente::select('*')->where('numero_expediente', '=', $num_exp)->first();
+        $ultimo_movimiento = Movimiento::select('*')->where('movimientos.id_expediente','=', $expediente->id)->latest('created_at')->first();
+        //$ordennuevo = intval($ultimo_movimiento->orden)-1;
+        //var_dump($ordennuevo);die();
+        $penultimo_movimiento = Movimiento::
+        join('areas', 'areas.id', '=', 'movimientos.id_area')
+        ->select('movimientos.*', 'areas.nombre')
+        ->where('movimientos.orden','=', intval($ultimo_movimiento->orden)-1)
+        ->where('movimientos.id_expediente','=', $expediente->id)
+        ->first();
+        return response()->json($penultimo_movimiento);
+    }
+
     public function traer_ultimo_mov_exp_ajax($num_exp){
         $expediente = Expediente::select('*')->where('numero_expediente', '=', $num_exp)->first();
         $ultimo_movimiento = Movimiento::join('areas', 'areas.id', '=', 'movimientos.id_area')
@@ -202,6 +218,7 @@ class MovimientosController extends Controller
     {
         //Proceso a realizar
         /*
+        CU: CREAR MOVIMIENTO
         Paso 1 - validar datos en el front
         Paso 2 - validar datos en el back
         Paso 3 - obtener el orden relativo del ultimo movimiento
@@ -285,6 +302,37 @@ class MovimientosController extends Controller
         // Paso 7 - hacer algo de confirmacion de pase o algo asi
         //ni idea de esto
 
+        //Paso 8 - guardar el log
+
+        $valor_nuevos ="
+        {
+            'orden': ".(string)$movimento_nuevo->orden.",
+            'fecha_entrada': '".(string)$movimento_nuevo->fecha_entrada."',
+            'fecha_salida': '".(string)$movimento_nuevo->fecha_salida."',
+            'comentario': '".(string)$movimento_nuevo->comentario."',
+            'bandera_observacion': ".(string)$movimento_nuevo->bandera_observacion.",
+            'observacion': '".(string)$movimento_nuevo->observacion."',
+            'subsanacion': '".(string)$movimento_nuevo->subsanacion."',
+            'id_area': ".(string)$movimento_nuevo->id_area.",
+            'id_expediente': ".(string)$movimento_nuevo->id_expediente.",
+            'tramite_finalizado': ".(string)$movimento_nuevo->tramite_finalizado.",
+            'confirmado': ".(string)$movimento_nuevo->confirmado.",
+            'fecha_confirmacion': '".(string)$movimento_nuevo->fecha_confirmacion."',
+            'quien_confirmacion': ".(string)$movimento_nuevo->quien_confirmacion.",
+            'comentario_confirmacion': '".(string)$movimento_nuevo->comentario_confirmacion."',
+            'created_by': ".(string)$movimento_nuevo->created_by.",
+        }";
+
+        $log = new Log;
+        $log->nombretabla = 'Movimiento';
+        $log->accion = 'add';
+        $log->valores_nuevos = $valor_nuevos;
+        $log->valores_viejos = null;
+        $log->id_modificado = $movimento_nuevo->id ;
+        $log->estado = 'sin ver'; // "sin ver" - "sin aprobar" - "apronado" - "devuelto" - "archivado"
+        $log->created_by = Auth::user()->id;
+        $resultado8 = $log->save();
+
         //if($resultado == "true")
         return response()->json("ok");
 
@@ -301,8 +349,6 @@ class MovimientosController extends Controller
         Paso 4 - veo si tiene subsanacion o no
         Paso 4.1 - Caso: No tiene subsanacion -->envio email a agrimensor asociado
         Paso 4.2 - Caso: Si tiene subsanacion -->envio email de subsanacion
-
-
         */
         //Paso 1
         $moviento_a_actualizar = Movimiento::find($request->movimiento_id);
@@ -322,7 +368,7 @@ class MovimientosController extends Controller
         $agrimensor = User::find($exp->id_persona);
         $to_email = "diegochecarelli@gmail.com"; // esto en desarrollo
         //$to_email = $agrimensor->email; esto es en produccion
-        $area = Area::find($agrimensor->id_area);
+        $area = Area::find($moviento_a_actualizar->id_area);
         //$bandera_observacion , $area->nombre, $bandera_fin, $request->id_expdiente, $exp->numero_expediente);die();
         $bandera_observacion = ($request->comentario!= null) ? true : false;
         $bandera_fin = false; // no puede ser final si estoy recibiendo

@@ -11,13 +11,16 @@
                                     <span aria-hidden="true">&times;</span>
                                     </button>
                                     <h4 class="modal-title">Estos son los movimientos del expediente numero: <a :href="url_para_ver_expediente(num_expediente)" target="_blank">{{ num_expediente }}</a>  </h4>
+                                    <div v-if="expediente_terminado()" class="alert alert-danger" role="alert">
+                                            <h3>Este expediente ha finalizado y ha sido archivado</h3>
+                                        </div>
                                 </div>
                                 <div class="modal-body">
                                 
                                 <div v-if="mostrar_timeline">
                                     <!--botones de accion-->
                                     <button type="button" class="btn btn-warning" @click="mostrar_modal=false">Cancelar</button>
-                                    <a :href="url_para_archivos_expediente(num_expediente)" target="_blank"><button type="button" class="btn btn-secondary">Archivos del Exp</button></a>
+                                    <!-- <a :href="url_para_archivos_expediente(num_expediente)" target="_blank"><button type="button" class="btn btn-secondary">Archivos del Exp</button></a> -->
                                     <a :href="url_para_ver_expediente(num_expediente)" target="_blank"><button type="button" class="btn btn-secondary">Ver Expediente</button></a>
                                     <div v-if="mostrar_timeline_sin_datos">
                                         <div class="alert alert-warning" role="alert">
@@ -41,13 +44,17 @@
                                                 <p v-if="movimiento.bandera_observacion"> Este movmiento <strong>Si</strong> posee una observacion: {{ movimiento.observacion }} </p>
                                                 <p v-else> Este movmiento <strong>No</strong> posee una observacion</p>
                                                 <br>
-                                                <p v-if="movimiento.subsanacion != ''"> Este movmiento <strong>Si</strong> posee una subsanacion: {{ movimiento.subsanacion }} </p>
+                                                <p v-if="movimiento.subsanacion != null"> Este movmiento <strong>Si</strong> posee una subsanacion: {{ movimiento.subsanacion }} </p>
                                                 <p v-else> Este movmiento <strong>No</strong> posee una subsanacion</p>
                                                 <br>
-                                                <p>Estado: Recibido</p>
-                                                <recibirexpediente v-if="se_puede_recibir(movimiento.confirmado, movimiento.fecha_salida)" :num_expediente=num_expediente  link_sis="localhost:8000//admin/"></recibirexpediente>
-                                                <button class="btn btn-danger" v-if="se_puede_recibir(movimiento.confirmado, movimiento.fecha_salida)" @click="revertir_movimiento(movimiento.id)">Devolver</button>
-                                                <button v-if="se_puede_mover(movimiento.confirmado, movimiento.fecha_salida)" id="mover" @click="mostrar_mover_expediente" class="btn btn-success"> Mover</button>
+                                                   <p v-if="movimiento.tramite_finalizado" >Estado: <strong>Archivado</strong></p>
+                                                   <p v-else>Estado: Recibido</p>
+                                                   <p>El valor es: {{ver_bones()}}</p>
+                                                    <recibirexpediente v-if="se_puede_recibir(movimiento.confirmado, movimiento.fecha_salida)" :num_expediente=num_expediente  link_sis="localhost:8000//admin/"></recibirexpediente>
+                                                    <button class="btn btn-danger" v-if="se_puede_recibir(movimiento.confirmado, movimiento.fecha_salida)" @click="revertir_movimiento(movimiento.id)">Devolver</button>
+                                                    <button v-if="se_puede_mover(movimiento.confirmado, movimiento.fecha_salida)" id="mover" @click="mostrar_mover_expediente" class="btn btn-success"> Mover</button>
+                                                    <button v-if="se_puede_mover(movimiento.confirmado, movimiento.fecha_salida)" id="archivar" @click="archivar_expediente" class="btn btn-dark"> Archivar</button>
+                                                
 
                                             </div>
                                             <!-- <div v-else class="timeline-content right">
@@ -270,6 +277,7 @@ export default {
     
     data() {
         return {
+        puedo_ver: false,
         mostrar_modal: false,
         url: '',
         derecha: true,
@@ -292,21 +300,20 @@ export default {
             bandera_comentario_recibo: false,
             comentario_confirmacion:''
         },
+        expediente_a_archivar:[],
         prueba: false,
         expdiente: [],
         ultimo_movimiento: [],
         oficinas: [],
-        output: ''
+        output: '',
+        expediente_ya_finalizado: false
         }
     },
-  /*created(){
-    axios.get('/movimientos/'+this.num_expediente).then(res=>{
-      this.notas = res.data;
-      console.log('mis datos son:\n');
-      console.log(this.notas);
-    })
-  },*/
-  computed: {
+    /*created(){
+        //this.expediente_terminado();
+        this.agrimensor();
+    },*/
+    computed: {
         charactersLeftcomentario() {
             var char = this.nuevo_movimiento.comentario.length,
                 limit = 150;
@@ -353,6 +360,25 @@ export default {
             
         else this.mostrar_modal =false;
         //alert(this.num_expediente);
+      },
+      archivar_expediente() {
+        var returnVal = confirm("Esta seguro de archivar este expediente?");
+        console.log(returnVal);
+        if(returnVal.toString() == "true"){ // voy a archivar
+            axios.post('/archivar_expediente/'+this.num_expediente).then(res=>{
+                this.expediente_a_archivar = res.data;
+                console.log('\nlos datos del expediente es:\n');
+                console.log(this.expediente_a_archivar);
+                toastr.success('El expediente se archivó correctamente');
+                setInterval(location.reload(true),5000);
+            });
+            this.mostrar_modal = false;
+            this.mostrar_timeline = false;
+            this.mostrar_formulario_movimiento = false;
+        }
+        else{// NO voy a archivar
+            alert("Nada cambió");
+        }
       },
       mostrar_mover_expediente() {
           this.mostrar_modal =true;
@@ -533,18 +559,62 @@ export default {
                         this.nuevo_movimiento.tramite_finalizado=false;
                         this.mostrar_modal =false;*/
                         toastr.success('Se devolvio el expediente exitosamente');
+                        setInterval(location.reload(true),5000);
                     }
                 })
                 .catch(function (error) {
                     currentObj.output = error;
                     toastr.error('hubo un error');
+                    setInterval(location.reload(true),5000);
                 });
             }
             //Detectamos si el usuario denegó el mensaje
             else {
-                alert("¡Haz denegado el mensaje!");
+                alert("¡El movimiento no se modificó, gracias!");
             }
-        }
+        },
+        expediente_terminado(){
+            axios.get('/expediente_finalizado/'+this.num_expediente).then(function (response) {
+                if(response.data == 0)
+                    return false;
+                else return true;
+            
+            })
+
+        },
+        ver_bones(){
+            axios.get('/soy_agrimensor').then(function (response) {
+                console.log(response.data);
+                if(response.data == 0)
+                    return false;
+                else return true;
+            
+            });
+
+        },
+        /*,
+        agrimensor(){
+            axios.get('/soy_agrimensor/').then(function (response) {
+                if(response.data === true)
+                {
+                    toastr.info('si soy administrador');
+                    console.log('voy a devolver un false');
+                    return false;
+                    //this.url = 'true';
+                }
+                else{
+                    toastr.warning('no soy agirmensor');
+                    console.log('voy a devolver un true');
+                    return true;
+                    //this.url = 'false';
+                } 
+            })
+            .catch(function (error) {
+                console.log("error soy agrimensor funcion");
+                console.log(error);
+                toastr.error('hubo un error al buscar el perfil');
+            });
+        },*/
   },
     
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Moviento de expediente {{$num_expe}}</title>
+<title>Moviento de expediente {{$num_exp}}</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
 <style>
@@ -64,28 +64,24 @@
 </head>
 <body>
         <div class="container box" style="width: 970px;">
-            <h1 style="text-align:center;"> {{ $nombre }} </h1>
-            <h3 align="center">{{ $fecha_entrada }}</h3>
+            <h1 style="text-align:center;"> {{ $nombre_profesional }} </h1>
+            <h3 align="center">{{ $fecha }}</h3>
         </div>
-        <div class="ojo"><b>Su expdiente posee problemas que requieren ser subsanados.</b></div>
+        <div class="success"><b>Final de Expediente: El expediente con numero: <strong>{{$num_exp}}</strong>, ha finalizado<br> Desde ahora se considera como archivado, en el departamento <strong>Archivo</strong>.</b></div>
 
-        <p>Saludos Profesional de la Agrimensura <strong>{{$nombre}}</strong>, esperamos tenga un excelente día.</p>
+        <p>Saludos Profesional de la Agrimensura, <strong>{{$nombre_profesional}}</strong>, esperamos tenga un excelente día.</p>
         <p> Nos comunicamos desde el Colegio de Profesionales Agrimensores de San Juan. 
-            Para comunicarle que el expediente, con número: {{$num_expe}}, ha sido calificado como un expediente que requiere ser subsanado por ustred, a pedido del área: <strong> {{$nombre_area}}</strong></p>
-        <p>Este aviso requiere de su intervención.</p>
-        <hr>
-        <br>
-        <h4>La subsanación es:</h4>
-        <p>{{ $subsanacion }}</p>
-        <br>
-        <hr>
-        <p>Para remediar esta situación debe asistir en persona a la mesa de entrada de la DGR, con domicilio .... y teléfono interno: ....</p>
-        <p>Puede ver el camino ya recorrido por el expediente, haciendo click en el siguiente enlace</p>
+            Para darle aviso que en la fecha y hora <strong>{{$fecha}}</strong>, el expediente {{$num_exp}} se ha marcado como <strong>Archivado</strong></p>
+        <strong><p>Es aviso no requiere de su intervensión.</p></strong>
+        <p>Puede ver los datos del expediente, haciendo click en el siguiente boton</p>
         <div class="form-group">
-            <a {{url('admin/ver_movimientos') }} ><button class="button">Ver historial de  {{$num_expe}}</button></a>
+            <a {{url('admin/expedientes/'. $id_expediente) }} ><button class="button">Ver Informacion de {{$num_exp}}</button></a>
         </div>
-        <p>Se le seguiran enviando novedades, gracias por utilizar este servicio</p>
+        <p>Gracias por utilizar este servicio</p>
         <h4>Esperamos siga teniendo un gran día</h4>
         <h4>Saludos atentamente</h4>
+
+
+
 </body>
 </html>

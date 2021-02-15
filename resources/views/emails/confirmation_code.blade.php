@@ -4,7 +4,7 @@
     <meta charset="utf-8">
 </head>
 <body>
-    <h2>Hola {{ $name }}, gracias por registrarte en el sistema de <strong>Registro de Productores Mineros (RPM)</strong> !</h2>
+    <h2>Hola {{ $name }}, gracias por registrarte en el sistema de <strong>Expedientes Online del Colegio de Agrimensor de San Juan</strong> !</h2>
     <p>Por favor confirma tu correo electrónico.</p>
     <p>Su cuil es: {{$cuil}}</p>
     <p>Para ello simplemente debes hacer click en el siguiente enlace:</p>
@@ -14,6 +14,6 @@
     </a>
 
     <p>Desde ya muchas gracias</p>
-    <p>Saludos desde el equipo de RPM</p>
+    <p>Saludos atemtamente</p>
 </body>
 </html>

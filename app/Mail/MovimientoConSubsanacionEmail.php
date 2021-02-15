@@ -37,7 +37,7 @@ class MovimientoConSubsanacionEmail extends Mailable
      */
     public function build()
     {
-        return $this->from("gismineronacional@gmail.com")->view('emails.moviento-con-subsanacion-email')->with([
+        return $this->from("no-reply@ingagrimensor.com")->view('emails.moviento-con-subsanacion-email')->with([
             'nombre' => $this->name,
             'fecha_entrada' => $this->fecha_entrada,
             'comentario' => $this->comentario,

@@ -71,7 +71,7 @@
 
         <p>Saludos <strong>{{$nombre}}</strong>, esperamos tenga un excelente día.</p>
         <p> Nos comunicamos desde el Colegio de Profesionales Agrimensores de San Juan. 
-            Para comunicarle que el expdiente, con numero: {{$num_expe}}, ha sido trasladado recientemente hacia a una nueva area: <strong> {{$nombre_area}}</strong></p>
+            Para comunicarle que el expdiente, con numero: {{$num_expe}}, ha sido trasladado recientemente hacia a una nuevo departamento: <strong> {{$nombre_area}}</strong></p>
         <p>No se requiere de su intervensión.</p>
         <p>Puede ver el camino ya recorrido por el expediente, haciendo click en el siguiente enlace</p>
         <div class="form-group">

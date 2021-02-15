@@ -32,7 +32,7 @@ class ContactEmail extends Mailable
     public function build()
     {
         //return $this->view('view.name');
-        return $this->from("gismineronacional@gmail.com")->view('emails.email-contact')->with([
+        return $this->from("no-reply@ingagrimensor.com")->view('emails.email-contact')->with([
             'name' => $this->name,
             'email' => $this->email,
             'bodyMessage' => $this->bodyMessage,

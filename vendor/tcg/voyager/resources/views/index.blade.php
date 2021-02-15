@@ -4,39 +4,46 @@
     <div class="page-content">
         @include('voyager::alerts')
         @include('voyager::dimmers')
+        <div class="container">
+            <h1>Sistema de Expediente Online de Argimensura</h1>
+        </div>
+        
         <div id="app">
 
-            <autocompletar-component></autocompletar-component>
+            @if(Auth::user()->role_id == 1)
+                <autocompletar-component></autocompletar-component>
 
-            <buscar-component></buscar-component>
+                <buscar-component></buscar-component>
 
-            <example-component></example-component>
-            <grafica-component></grafica-component>
-            <tabs>
-                <tab name="About Us" :selected="true">
-                <h1>this is the content of About Us tab.</h1>
-                </tab>
-                <tab name="About Our Culture">
-                <h1>this is the content of About Our Culture tab.</h1>
-                </tab>
-                <tab name="About Our Vision">
-                <h1>this is the content of about About Our Vision tab.</h1>
-                </tab>
-            </tabs>
+                <example-component></example-component>
+                <grafica-component></grafica-component>
+                <tabs>
+                    <tab name="About Us" :selected="true">
+                    <h1>this is the content of About Us tab.</h1>
+                    </tab>
+                    <tab name="About Our Culture">
+                    <h1>this is the content of About Our Culture tab.</h1>
+                    </tab>
+                    <tab name="About Our Vision">
+                    <h1>this is the content of about About Our Vision tab.</h1>
+                    </tab>
+                </tabs>
 
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
 
 
 
-            <hr>
-           
+                <hr>
+            @endif
+            
 
 
         </div>
+        @if(Auth::user()->role_id == 1)
         <div class="row">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
@@ -201,6 +208,7 @@
                     </div>
             </div>
         </div>
+        @endif
         <div class="analytics-container">
             <?php $google_analytics_client_id = Voyager::setting("admin.google_analytics_client_id"); ?>
             @if (isset($google_analytics_client_id) && !empty($google_analytics_client_id))

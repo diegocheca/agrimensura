@@ -37,7 +37,7 @@ class MovimientoNuevoEmail extends Mailable
      */
     public function build()
     {
-        return $this->from("gismineronacional@gmail.com")->view('emails.moviento-nuevo-email')->with([
+        return $this->from("no-reply@ingagrimensor.com")->view('emails.moviento-nuevo-email')->with([
             'nombre' => $this->name,
             'fecha_entrada' => $this->fecha_entrada,
             'comentario' => $this->comentario,
