@@ -2257,18 +2257,40 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['num_expediente', 'link_sis'],
+  props: ['num_expediente', 'link_sis', 'mi_role', 'mi_area'],
   name: "movimientos",
   components: {
     recibirexpediente: _RecibirExpedienteComponent_vue__WEBPACK_IMPORTED_MODULE_2__.default
   },
   data: function data() {
     return {
+      subsanacion_a_mandar: null,
       puedo_ver: false,
       mostrar_modal: false,
       url: '',
@@ -2327,6 +2349,74 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
     since: function since(d) {
       return moment__WEBPACK_IMPORTED_MODULE_0___default()(d).fromNow();
     },
+    puedo_ver_botones: function puedo_ver_botones() {
+      switch (this.mi_role) {
+        case "1":
+          // soy admimn
+          return true;
+          break;
+
+        case "3":
+          // soy agrimensor
+          return false;
+          break;
+
+        case "4":
+          // soy agente dgr
+          return true;
+          break;
+
+        case "5":
+          // soy agente dgr
+          return true;
+          break;
+
+        case "6":
+          // soy agente dgr
+          return true;
+          break;
+
+        default:
+          console.log("no entre en ninguna");
+          return false;
+      }
+
+      ;
+    },
+    puedo_archivar: function puedo_archivar(conf, fecha_salida) {
+      switch (this.mi_role) {
+        case 1:
+          // soy admimn
+          return true;
+          break;
+
+        case 3:
+          // soy agrimensor
+          return false;
+          break;
+
+        case 4:
+          // soy agente dgr
+          if (this.mi_area == 9) //soy de archivo
+            return true;else return false;
+          break;
+
+        case 5:
+          // soy agente directivo
+          return false;
+          break;
+
+        case 6:
+          // soy mesa de entrada
+          return false;
+          break;
+
+        default:
+          return false;
+      }
+
+      ;
+    },
     mostrar_ver_movimientos: function mostrar_ver_movimientos() {
       var _this = this;
 
@@ -2336,6 +2426,12 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
           _this.movimientos_del_expediente = res.data;
           console.log('mis datos son:\n');
           console.log(_this.movimientos_del_expediente.length);
+          /*console.log(this.movimientos_del_expediente[0].subsanacion);
+          var algo = this.movimientos_del_expediente[0].subsanacion;
+          if(algo === null)
+              console.log("es vacio");
+          else console.log("No vacio");*/
+
           _this.mostrar_timeline = true;
           _this.mostrar_formulario_movimiento = false;
 
@@ -2359,6 +2455,29 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
           console.log('\nlos datos del expediente es:\n');
           console.log(_this2.expediente_a_archivar);
           toastr__WEBPACK_IMPORTED_MODULE_1___default().success('El expediente se archivó correctamente');
+          setInterval(location.reload(true), 5000);
+        });
+        this.mostrar_modal = false;
+        this.mostrar_timeline = false;
+        this.mostrar_formulario_movimiento = false;
+      } else {
+        // NO voy a archivar
+        alert("Nada cambió");
+      }
+    },
+    mandar_subsanacion: function mandar_subsanacion(id) {
+      var subsanacion_a_mandar_data = {
+        subsanacion: this.subsanacion_a_mandar
+      };
+      var returnVal = confirm("Esta seguro de subsanar este movimiento?");
+      console.log(returnVal);
+
+      if (returnVal.toString() == "true") {
+        // voy a subsanar este movimiento
+        axios.post('/subsanar_movimiento/' + id, subsanacion_a_mandar_data).then(function (res) {
+          console.log('\nlos datos del subsanacion es:\n');
+          console.log(res.data);
+          toastr__WEBPACK_IMPORTED_MODULE_1___default().success('El movimiento se subsano correctamente');
           setInterval(location.reload(true), 5000);
         });
         this.mostrar_modal = false;
@@ -2473,22 +2592,42 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
       if (conf != 1 && fecha_salida == null) return true;
       return false;
     },
+    se_puede_devolver: function se_puede_devolver(conf, fecha_salida, orden) {
+      if (conf != 1 && fecha_salida == null && orden > 1) return true;
+      return false;
+    },
     se_puede_mover: function se_puede_mover(conf, fecha_salida) {
       if (conf == 1 && fecha_salida == null) return true;
       return false;
     },
-    cambio_subsanacion: function cambio_subsanacion() {
-      console.log('el valor es');
-      console.log(this.nuevo_movimiento.subsanacion);
 
-      if (this.nuevo_movimiento.bandera_subsanacion == true) {
+    /*cambio_subsanacion() {
+        console.log('el valor es');
+        console.log(this.nuevo_movimiento.subsanacion);
+        if( this.nuevo_movimiento.bandera_subsanacion == true )
+        {
+            this.nuevo_movimiento.id_area = 3;
+            this.nuevo_movimiento.tramite_finalizado = false;
+        }
+        if( this.nuevo_movimiento.bandera_subsanacion == false )
+        {
+            this.nuevo_movimiento.subsanacion = '';
+            this.nuevo_movimiento.bandera_subsanacion = false;
+        }
+            
+      },*/
+    cambio_observacion: function cambio_observacion() {
+      console.log('el valor es');
+      console.log(this.nuevo_movimiento.bandera_observacion);
+
+      if (this.nuevo_movimiento.bandera_observacion == true) {
         this.nuevo_movimiento.id_area = 3;
         this.nuevo_movimiento.tramite_finalizado = false;
       }
 
-      if (this.nuevo_movimiento.bandera_subsanacion == false) {
-        this.nuevo_movimiento.subsanacion = '';
-        this.nuevo_movimiento.bandera_subsanacion = false;
+      if (this.nuevo_movimiento.bandera_observacion == false) {
+        this.nuevo_movimiento.observacion = '';
+        this.nuevo_movimiento.tramite_finalizado = false;
       }
     },
     cambio_finalizo: function cambio_finalizo() {
@@ -2498,6 +2637,8 @@ moment__WEBPACK_IMPORTED_MODULE_0___default().locale('es');
       if (this.nuevo_movimiento.tramite_finalizado == true) {
         this.nuevo_movimiento.id_area = 9;
         this.nuevo_movimiento.bandera_subsanacion = false;
+        this.nuevo_movimiento.bandera_observacion = false;
+        this.nuevo_movimiento.observacion = '';
       }
     },
     revertir_movimiento: function revertir_movimiento(id_mov) {
@@ -71299,6 +71440,13 @@ var render = function() {
                                   }
                                 },
                                 [_vm._v(_vm._s(_vm.num_expediente))]
+                              ),
+                              _vm._v(
+                                "  -- Mi rol: " +
+                                  _vm._s(_vm.mi_role) +
+                                  " -- mi area: " +
+                                  _vm._s(_vm.mi_area) +
+                                  " "
                               )
                             ]),
                             _vm._v(" "),
@@ -71543,64 +71691,143 @@ var render = function() {
                                                       ])
                                                     ]),
                                                     _vm._v(" "),
-                                                    movimiento.bandera_observacion
-                                                      ? _c("p", [
-                                                          _vm._v(
-                                                            " Este movmiento "
-                                                          ),
-                                                          _c("strong", [
-                                                            _vm._v("Si")
+                                                    movimiento.observacion != ""
+                                                      ? _c("div", [
+                                                          _c("p", [
+                                                            _vm._v(
+                                                              " Este movmiento "
+                                                            ),
+                                                            _c("strong", [
+                                                              _vm._v("Si")
+                                                            ]),
+                                                            _vm._v(
+                                                              " posee una observacion: " +
+                                                                _vm._s(
+                                                                  movimiento.observacion
+                                                                ) +
+                                                                " "
+                                                            )
                                                           ]),
-                                                          _vm._v(
-                                                            " posee una observacion: " +
-                                                              _vm._s(
-                                                                movimiento.observacion
-                                                              ) +
-                                                              " "
-                                                          )
+                                                          _vm._v(" "),
+                                                          movimiento.subsanacion !==
+                                                          null
+                                                            ? _c("div", [
+                                                                _c("p", [
+                                                                  _vm._v(
+                                                                    " Este movmiento "
+                                                                  ),
+                                                                  _c("strong", [
+                                                                    _vm._v("Si")
+                                                                  ]),
+                                                                  _vm._v(
+                                                                    " posee una subsanacion: " +
+                                                                      _vm._s(
+                                                                        movimiento.subsanacion
+                                                                      ) +
+                                                                      " "
+                                                                  )
+                                                                ])
+                                                              ])
+                                                            : _c("div", [
+                                                                _c("p", [
+                                                                  _vm._v(
+                                                                    " Este movmiento "
+                                                                  ),
+                                                                  _c("strong", [
+                                                                    _vm._v(
+                                                                      " aún No"
+                                                                    )
+                                                                  ]),
+                                                                  _vm._v(
+                                                                    " posee una subsanacion"
+                                                                  )
+                                                                ]),
+                                                                _vm._v(" "),
+                                                                _vm.mi_role == 6
+                                                                  ? _c(
+                                                                      "textarea",
+                                                                      {
+                                                                        directives: [
+                                                                          {
+                                                                            name:
+                                                                              "model",
+                                                                            rawName:
+                                                                              "v-model",
+                                                                            value:
+                                                                              _vm.subsanacion_a_mandar,
+                                                                            expression:
+                                                                              "subsanacion_a_mandar"
+                                                                          }
+                                                                        ],
+                                                                        staticClass:
+                                                                          "form-control",
+                                                                        attrs: {
+                                                                          placeholder:
+                                                                            "Por favor ingrese la subsanación..."
+                                                                        },
+                                                                        domProps: {
+                                                                          value:
+                                                                            _vm.subsanacion_a_mandar
+                                                                        },
+                                                                        on: {
+                                                                          input: function(
+                                                                            $event
+                                                                          ) {
+                                                                            if (
+                                                                              $event
+                                                                                .target
+                                                                                .composing
+                                                                            ) {
+                                                                              return
+                                                                            }
+                                                                            _vm.subsanacion_a_mandar =
+                                                                              $event.target.value
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    )
+                                                                  : _vm._e(),
+                                                                _vm._v(" "),
+                                                                _vm.mi_role == 6
+                                                                  ? _c(
+                                                                      "button",
+                                                                      {
+                                                                        staticClass:
+                                                                          "btn btn-primary",
+                                                                        on: {
+                                                                          click: function(
+                                                                            $event
+                                                                          ) {
+                                                                            return _vm.mandar_subsanacion(
+                                                                              movimiento.id
+                                                                            )
+                                                                          }
+                                                                        }
+                                                                      },
+                                                                      [
+                                                                        _vm._v(
+                                                                          "Subsanar"
+                                                                        )
+                                                                      ]
+                                                                    )
+                                                                  : _vm._e()
+                                                              ])
                                                         ])
-                                                      : _c("p", [
-                                                          _vm._v(
-                                                            " Este movmiento "
-                                                          ),
-                                                          _c("strong", [
-                                                            _vm._v("No")
-                                                          ]),
-                                                          _vm._v(
-                                                            " posee una observacion"
-                                                          )
+                                                      : _c("div", [
+                                                          _c("p", [
+                                                            _vm._v(
+                                                              " Este movmiento "
+                                                            ),
+                                                            _c("strong", [
+                                                              _vm._v("No")
+                                                            ]),
+                                                            _vm._v(
+                                                              " posee una observacion"
+                                                            )
+                                                          ])
                                                         ]),
                                                     _vm._v(" "),
                                                     _c("br"),
-                                                    _vm._v(" "),
-                                                    movimiento.subsanacion !=
-                                                    null
-                                                      ? _c("p", [
-                                                          _vm._v(
-                                                            " Este movmiento "
-                                                          ),
-                                                          _c("strong", [
-                                                            _vm._v("Si")
-                                                          ]),
-                                                          _vm._v(
-                                                            " posee una subsanacion: " +
-                                                              _vm._s(
-                                                                movimiento.subsanacion
-                                                              ) +
-                                                              " "
-                                                          )
-                                                        ])
-                                                      : _c("p", [
-                                                          _vm._v(
-                                                            " Este movmiento "
-                                                          ),
-                                                          _c("strong", [
-                                                            _vm._v("No")
-                                                          ]),
-                                                          _vm._v(
-                                                            " posee una subsanacion"
-                                                          )
-                                                        ]),
                                                     _vm._v(" "),
                                                     _c("br"),
                                                     _vm._v(" "),
@@ -71611,104 +71838,128 @@ var render = function() {
                                                             _vm._v("Archivado")
                                                           ])
                                                         ])
+                                                      : _vm._e(),
+                                                    _vm._v(" "),
+                                                    movimiento.confirmado == 1
+                                                      ? _c("p", [
+                                                          _vm._v("Estado: "),
+                                                          _c("strong", [
+                                                            _vm._v(
+                                                              "Enviado y Recibido"
+                                                            )
+                                                          ])
+                                                        ])
                                                       : _c("p", [
                                                           _vm._v(
-                                                            "Estado: Recibido"
+                                                            "Estado: Enviado sin Confirmar"
                                                           )
                                                         ]),
                                                     _vm._v(" "),
-                                                    _c("p", [
-                                                      _vm._v(
-                                                        "El valor es: " +
-                                                          _vm._s(
-                                                            _vm.ver_bones()
-                                                          )
-                                                      )
-                                                    ]),
-                                                    _vm._v(" "),
-                                                    _vm.se_puede_recibir(
-                                                      movimiento.confirmado,
-                                                      movimiento.fecha_salida
-                                                    )
+                                                    _vm.puedo_ver_botones()
                                                       ? _c(
-                                                          "recibirexpediente",
-                                                          {
-                                                            attrs: {
-                                                              num_expediente:
-                                                                _vm.num_expediente,
-                                                              link_sis:
-                                                                "localhost:8000//admin/"
-                                                            }
-                                                          }
-                                                        )
-                                                      : _vm._e(),
-                                                    _vm._v(" "),
-                                                    _vm.se_puede_recibir(
-                                                      movimiento.confirmado,
-                                                      movimiento.fecha_salida
-                                                    )
-                                                      ? _c(
-                                                          "button",
-                                                          {
-                                                            staticClass:
-                                                              "btn btn-danger",
-                                                            on: {
-                                                              click: function(
-                                                                $event
-                                                              ) {
-                                                                return _vm.revertir_movimiento(
-                                                                  movimiento.id
+                                                          "div",
+                                                          [
+                                                            _vm.se_puede_recibir(
+                                                              movimiento.confirmado,
+                                                              movimiento.fecha_salida
+                                                            )
+                                                              ? _c(
+                                                                  "recibirexpediente",
+                                                                  {
+                                                                    attrs: {
+                                                                      num_expediente:
+                                                                        _vm.num_expediente,
+                                                                      link_sis:
+                                                                        "localhost:8000//admin/"
+                                                                    }
+                                                                  }
                                                                 )
-                                                              }
-                                                            }
-                                                          },
-                                                          [_vm._v("Devolver")]
-                                                        )
-                                                      : _vm._e(),
-                                                    _vm._v(" "),
-                                                    _vm.se_puede_mover(
-                                                      movimiento.confirmado,
-                                                      movimiento.fecha_salida
-                                                    )
-                                                      ? _c(
-                                                          "button",
-                                                          {
-                                                            staticClass:
-                                                              "btn btn-success",
-                                                            attrs: {
-                                                              id: "mover"
-                                                            },
-                                                            on: {
-                                                              click:
-                                                                _vm.mostrar_mover_expediente
-                                                            }
-                                                          },
-                                                          [_vm._v(" Mover")]
-                                                        )
-                                                      : _vm._e(),
-                                                    _vm._v(" "),
-                                                    _vm.se_puede_mover(
-                                                      movimiento.confirmado,
-                                                      movimiento.fecha_salida
-                                                    )
-                                                      ? _c(
-                                                          "button",
-                                                          {
-                                                            staticClass:
-                                                              "btn btn-dark",
-                                                            attrs: {
-                                                              id: "archivar"
-                                                            },
-                                                            on: {
-                                                              click:
-                                                                _vm.archivar_expediente
-                                                            }
-                                                          },
-                                                          [_vm._v(" Archivar")]
+                                                              : _vm._e(),
+                                                            _vm._v(" "),
+                                                            _vm.se_puede_devolver(
+                                                              movimiento.confirmado,
+                                                              movimiento.fecha_salida,
+                                                              movimiento.orden
+                                                            )
+                                                              ? _c(
+                                                                  "button",
+                                                                  {
+                                                                    staticClass:
+                                                                      "btn btn-danger",
+                                                                    on: {
+                                                                      click: function(
+                                                                        $event
+                                                                      ) {
+                                                                        return _vm.revertir_movimiento(
+                                                                          movimiento.id
+                                                                        )
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  [
+                                                                    _vm._v(
+                                                                      "Devolver"
+                                                                    )
+                                                                  ]
+                                                                )
+                                                              : _vm._e(),
+                                                            _vm._v(" "),
+                                                            _vm.se_puede_mover(
+                                                              movimiento.confirmado,
+                                                              movimiento.fecha_salida
+                                                            )
+                                                              ? _c(
+                                                                  "button",
+                                                                  {
+                                                                    staticClass:
+                                                                      "btn btn-success",
+                                                                    attrs: {
+                                                                      id:
+                                                                        "mover"
+                                                                    },
+                                                                    on: {
+                                                                      click:
+                                                                        _vm.mostrar_mover_expediente
+                                                                    }
+                                                                  },
+                                                                  [
+                                                                    _vm._v(
+                                                                      " Mover"
+                                                                    )
+                                                                  ]
+                                                                )
+                                                              : _vm._e(),
+                                                            _vm._v(" "),
+                                                            _vm.puedo_archivar(
+                                                              movimiento.confirmado,
+                                                              movimiento.fecha_salida
+                                                            )
+                                                              ? _c(
+                                                                  "button",
+                                                                  {
+                                                                    staticClass:
+                                                                      "btn btn-dark",
+                                                                    attrs: {
+                                                                      id:
+                                                                        "archivar"
+                                                                    },
+                                                                    on: {
+                                                                      click:
+                                                                        _vm.archivar_expediente
+                                                                    }
+                                                                  },
+                                                                  [
+                                                                    _vm._v(
+                                                                      " Archivar"
+                                                                    )
+                                                                  ]
+                                                                )
+                                                              : _vm._e()
+                                                          ],
+                                                          1
                                                         )
                                                       : _vm._e()
-                                                  ],
-                                                  1
+                                                  ]
                                                 )
                                               ]
                                             )
@@ -71824,7 +72075,7 @@ var render = function() {
                                                       _vm.nuevo_movimiento
                                                         .tramite_finalizado ||
                                                       _vm.nuevo_movimiento
-                                                        .bandera_subsanacion
+                                                        .bandera_observacion
                                                   },
                                                   on: {
                                                     change: function($event) {
@@ -72020,53 +72271,61 @@ var render = function() {
                                                             .bandera_observacion
                                                     },
                                                     on: {
-                                                      change: function($event) {
-                                                        var $$a =
-                                                            _vm.nuevo_movimiento
-                                                              .bandera_observacion,
-                                                          $$el = $event.target,
-                                                          $$c = $$el.checked
-                                                            ? true
-                                                            : false
-                                                        if (
-                                                          Array.isArray($$a)
-                                                        ) {
-                                                          var $$v = null,
-                                                            $$i = _vm._i(
-                                                              $$a,
-                                                              $$v
-                                                            )
-                                                          if ($$el.checked) {
-                                                            $$i < 0 &&
-                                                              _vm.$set(
-                                                                _vm.nuevo_movimiento,
-                                                                "bandera_observacion",
-                                                                $$a.concat([
-                                                                  $$v
-                                                                ])
+                                                      change: [
+                                                        function($event) {
+                                                          var $$a =
+                                                              _vm
+                                                                .nuevo_movimiento
+                                                                .bandera_observacion,
+                                                            $$el =
+                                                              $event.target,
+                                                            $$c = $$el.checked
+                                                              ? true
+                                                              : false
+                                                          if (
+                                                            Array.isArray($$a)
+                                                          ) {
+                                                            var $$v = null,
+                                                              $$i = _vm._i(
+                                                                $$a,
+                                                                $$v
                                                               )
-                                                          } else {
-                                                            $$i > -1 &&
-                                                              _vm.$set(
-                                                                _vm.nuevo_movimiento,
-                                                                "bandera_observacion",
-                                                                $$a
-                                                                  .slice(0, $$i)
-                                                                  .concat(
-                                                                    $$a.slice(
-                                                                      $$i + 1
+                                                            if ($$el.checked) {
+                                                              $$i < 0 &&
+                                                                _vm.$set(
+                                                                  _vm.nuevo_movimiento,
+                                                                  "bandera_observacion",
+                                                                  $$a.concat([
+                                                                    $$v
+                                                                  ])
+                                                                )
+                                                            } else {
+                                                              $$i > -1 &&
+                                                                _vm.$set(
+                                                                  _vm.nuevo_movimiento,
+                                                                  "bandera_observacion",
+                                                                  $$a
+                                                                    .slice(
+                                                                      0,
+                                                                      $$i
                                                                     )
-                                                                  )
-                                                              )
+                                                                    .concat(
+                                                                      $$a.slice(
+                                                                        $$i + 1
+                                                                      )
+                                                                    )
+                                                                )
+                                                            }
+                                                          } else {
+                                                            _vm.$set(
+                                                              _vm.nuevo_movimiento,
+                                                              "bandera_observacion",
+                                                              $$c
+                                                            )
                                                           }
-                                                        } else {
-                                                          _vm.$set(
-                                                            _vm.nuevo_movimiento,
-                                                            "bandera_observacion",
-                                                            $$c
-                                                          )
-                                                        }
-                                                      }
+                                                        },
+                                                        _vm.cambio_observacion
+                                                      ]
                                                     }
                                                   }),
                                                   _vm._v(" "),
@@ -72183,6 +72442,24 @@ var render = function() {
                                                             )
                                                           )
                                                         ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "div",
+                                                        {
+                                                          staticClass:
+                                                            "alert alert-warning",
+                                                          attrs: {
+                                                            role: "alert"
+                                                          }
+                                                        },
+                                                        [
+                                                          _c("span", [
+                                                            _vm._v(
+                                                              "Al crear una observación en el movimiento, será requida una subsanación por parte del profesional de la agrimensura para poder resolver esta observación. Esto implica que el expediente debe ser transportado hacia el Departamento de mesa de entrada, para allí esperar al profesional de la agrimensura se haga presente en persona"
+                                                            )
+                                                          ])
+                                                        ]
                                                       )
                                                     ]
                                                   )
@@ -72194,249 +72471,6 @@ var render = function() {
                                       ),
                                       _vm._v(" "),
                                       _c("hr"),
-                                      _vm._v(" "),
-                                      _c(
-                                        "div",
-                                        { staticClass: "form-group col-md-12" },
-                                        [
-                                          _c(
-                                            "div",
-                                            {
-                                              staticClass: "form-group col-md-4"
-                                            },
-                                            [
-                                              _c(
-                                                "label",
-                                                {
-                                                  staticClass: "control-label",
-                                                  attrs: { for: "name" }
-                                                },
-                                                [_vm._v("Tiene Subsanacion?")]
-                                              ),
-                                              _vm._v(" "),
-                                              _c(
-                                                "div",
-                                                { staticClass: "checkbox-ios" },
-                                                [
-                                                  _c("input", {
-                                                    directives: [
-                                                      {
-                                                        name: "model",
-                                                        rawName: "v-model",
-                                                        value:
-                                                          _vm.nuevo_movimiento
-                                                            .bandera_subsanacion,
-                                                        expression:
-                                                          "nuevo_movimiento.bandera_subsanacion"
-                                                      }
-                                                    ],
-                                                    staticClass:
-                                                      "checkbox-ios__toggle",
-                                                    attrs: {
-                                                      id: "checkboxQuestiondos",
-                                                      name:
-                                                        "checkboxQuestiondos",
-                                                      type: "checkbox"
-                                                    },
-                                                    domProps: {
-                                                      checked: Array.isArray(
-                                                        _vm.nuevo_movimiento
-                                                          .bandera_subsanacion
-                                                      )
-                                                        ? _vm._i(
-                                                            _vm.nuevo_movimiento
-                                                              .bandera_subsanacion,
-                                                            null
-                                                          ) > -1
-                                                        : _vm.nuevo_movimiento
-                                                            .bandera_subsanacion
-                                                    },
-                                                    on: {
-                                                      change: [
-                                                        function($event) {
-                                                          var $$a =
-                                                              _vm
-                                                                .nuevo_movimiento
-                                                                .bandera_subsanacion,
-                                                            $$el =
-                                                              $event.target,
-                                                            $$c = $$el.checked
-                                                              ? true
-                                                              : false
-                                                          if (
-                                                            Array.isArray($$a)
-                                                          ) {
-                                                            var $$v = null,
-                                                              $$i = _vm._i(
-                                                                $$a,
-                                                                $$v
-                                                              )
-                                                            if ($$el.checked) {
-                                                              $$i < 0 &&
-                                                                _vm.$set(
-                                                                  _vm.nuevo_movimiento,
-                                                                  "bandera_subsanacion",
-                                                                  $$a.concat([
-                                                                    $$v
-                                                                  ])
-                                                                )
-                                                            } else {
-                                                              $$i > -1 &&
-                                                                _vm.$set(
-                                                                  _vm.nuevo_movimiento,
-                                                                  "bandera_subsanacion",
-                                                                  $$a
-                                                                    .slice(
-                                                                      0,
-                                                                      $$i
-                                                                    )
-                                                                    .concat(
-                                                                      $$a.slice(
-                                                                        $$i + 1
-                                                                      )
-                                                                    )
-                                                                )
-                                                            }
-                                                          } else {
-                                                            _vm.$set(
-                                                              _vm.nuevo_movimiento,
-                                                              "bandera_subsanacion",
-                                                              $$c
-                                                            )
-                                                          }
-                                                        },
-                                                        _vm.cambio_subsanacion
-                                                      ]
-                                                    }
-                                                  }),
-                                                  _vm._v(" "),
-                                                  _c(
-                                                    "label",
-                                                    {
-                                                      staticClass:
-                                                        "checkbox-ios__label",
-                                                      attrs: {
-                                                        for:
-                                                          "checkboxQuestiondos"
-                                                      }
-                                                    },
-                                                    [
-                                                      _c(
-                                                        "span",
-                                                        {
-                                                          staticClass:
-                                                            "checkbox-ios__value left"
-                                                        },
-                                                        [_vm._v("No tiene")]
-                                                      ),
-                                                      _vm._v(" "),
-                                                      _c(
-                                                        "span",
-                                                        {
-                                                          staticClass:
-                                                            "checkbox-ios__value right"
-                                                        },
-                                                        [_vm._v("Si tiene")]
-                                                      )
-                                                    ]
-                                                  )
-                                                ]
-                                              )
-                                            ]
-                                          ),
-                                          _vm._v(" "),
-                                          _c(
-                                            "transition",
-                                            { attrs: { name: "slide-fade" } },
-                                            [
-                                              _vm.nuevo_movimiento
-                                                .bandera_subsanacion
-                                                ? _c(
-                                                    "div",
-                                                    {
-                                                      staticClass:
-                                                        "form-group col-md-8"
-                                                    },
-                                                    [
-                                                      _c(
-                                                        "label",
-                                                        {
-                                                          attrs: {
-                                                            for: "subsanacion"
-                                                          }
-                                                        },
-                                                        [
-                                                          _vm._v(
-                                                            "Subsanacion de la observacion:"
-                                                          )
-                                                        ]
-                                                      ),
-                                                      _vm._v(" "),
-                                                      _c("textarea", {
-                                                        directives: [
-                                                          {
-                                                            name: "model",
-                                                            rawName: "v-model",
-                                                            value:
-                                                              _vm
-                                                                .nuevo_movimiento
-                                                                .subsanacion,
-                                                            expression:
-                                                              "nuevo_movimiento.subsanacion"
-                                                          }
-                                                        ],
-                                                        staticClass:
-                                                          "form-control",
-                                                        attrs: {
-                                                          id: "subsanacion",
-                                                          rows: "3"
-                                                        },
-                                                        domProps: {
-                                                          value:
-                                                            _vm.nuevo_movimiento
-                                                              .subsanacion
-                                                        },
-                                                        on: {
-                                                          input: function(
-                                                            $event
-                                                          ) {
-                                                            if (
-                                                              $event.target
-                                                                .composing
-                                                            ) {
-                                                              return
-                                                            }
-                                                            _vm.$set(
-                                                              _vm.nuevo_movimiento,
-                                                              "subsanacion",
-                                                              $event.target
-                                                                .value
-                                                            )
-                                                          }
-                                                        }
-                                                      }),
-                                                      _vm._v(" "),
-                                                      _c(
-                                                        "span",
-                                                        {
-                                                          staticClass: "limiter"
-                                                        },
-                                                        [
-                                                          _vm._v(
-                                                            _vm._s(
-                                                              _vm.charactersLeftsubsanacion
-                                                            )
-                                                          )
-                                                        ]
-                                                      )
-                                                    ]
-                                                  )
-                                                : _vm._e()
-                                            ]
-                                          )
-                                        ],
-                                        1
-                                      ),
                                       _vm._v(" "),
                                       _c("div", {
                                         staticClass: "form-group col-md-6"

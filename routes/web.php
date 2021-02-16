@@ -53,11 +53,13 @@ Route::get('/devolver_movimiento/{id}', [MovimientosController::class, "devolver
 Route::get('/datos_de_quien_creo_expdiente/{num_exp}', [MovimientosController::class, "traer_datos_creado_exp"])->name('datos_creador_exp');
 Route::post('/recibir_expediente_por_movimiento', [MovimientosController::class, "recibir_exp_por_movimiento"])->name('recibir-exp-por-movimiento');
 
+Route::post('/subsanar_movimiento/{id}', [MovimientosController::class, "subsanar_movimiento_desde_componente"])->name('subsanar-movimiento');
 //areas
 
 
 //register and login
 Route::get('/register/verify/{code}', 'App\Http\Controllers\Auth\VerificationController@verify');
+
 
 
 

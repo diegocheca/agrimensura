@@ -10,7 +10,7 @@
                                     <button type="button" class="close" @click="mostrar_modal=false">
                                     <span aria-hidden="true">&times;</span>
                                     </button>
-                                    <h4 class="modal-title">Estos son los movimientos del expediente numero: <a :href="url_para_ver_expediente(num_expediente)" target="_blank">{{ num_expediente }}</a>  </h4>
+                                    <h4 class="modal-title">Estos son los movimientos del expediente numero: <a :href="url_para_ver_expediente(num_expediente)" target="_blank">{{ num_expediente }}</a>  -- Mi rol: {{mi_role}} -- mi area: {{mi_area}} </h4>
                                     <div v-if="expediente_terminado()" class="alert alert-danger" role="alert">
                                             <h3>Este expediente ha finalizado y ha sido archivado</h3>
                                         </div>
@@ -41,19 +41,35 @@
                                                 <p>Oficina: <strong> {{ movimiento.nombre}} </strong></p>
                                                 <p>
                                                     El Movimiento tiene el registro <strong>{{ movimiento.id}}</strong> tiene fecha de entrada: <strong> {{ formatear_fecha(movimiento.fecha_entrada)  }} </strong> y fecha de salida <strong> {{ formatear_fecha(movimiento.fecha_salida) }}</strong>, contabilizando un total de: <strong> {{calcular_direfencia_de_dias(movimiento.fecha_entrada, movimiento.fecha_salida )}}</strong></p> 
-                                                <p v-if="movimiento.bandera_observacion"> Este movmiento <strong>Si</strong> posee una observacion: {{ movimiento.observacion }} </p>
-                                                <p v-else> Este movmiento <strong>No</strong> posee una observacion</p>
+                                                <div v-if="movimiento.observacion != ''">
+                                                    <p > Este movmiento <strong>Si</strong> posee una observacion: {{ movimiento.observacion }} </p>
+                                                    <div v-if="movimiento.subsanacion !== null ">
+                                                        <p > Este movmiento <strong>Si</strong> posee una subsanacion: {{ movimiento.subsanacion }} </p>
+                                                    </div>
+                                                    <div v-else>
+                                                        <p > Este movmiento <strong> aún No</strong> posee una subsanacion</p>
+                                                        <textarea v-if="mi_role == 6" class="form-control" v-model="subsanacion_a_mandar"  placeholder="Por favor ingrese la subsanación..."> </textarea>
+                                                        <button v-if="mi_role == 6" class="btn btn-primary" @click="mandar_subsanacion(movimiento.id)">Subsanar</button>
+                                                    </div>
+                                                </div>
+                                                <!-- sin observacion -->
+                                                <div v-else> 
+                                                    <p > Este movmiento <strong>No</strong> posee una observacion</p>
+                                                </div>
                                                 <br>
-                                                <p v-if="movimiento.subsanacion != null"> Este movmiento <strong>Si</strong> posee una subsanacion: {{ movimiento.subsanacion }} </p>
-                                                <p v-else> Este movmiento <strong>No</strong> posee una subsanacion</p>
+                                                
+                                                
+                                                
                                                 <br>
                                                    <p v-if="movimiento.tramite_finalizado" >Estado: <strong>Archivado</strong></p>
-                                                   <p v-else>Estado: Recibido</p>
-                                                   <p>El valor es: {{ver_bones()}}</p>
+                                                   <p v-if="movimiento.confirmado == 1" >Estado: <strong>Enviado y Recibido</strong></p>
+                                                   <p v-else>Estado: Enviado sin Confirmar</p>
+                                                <div v-if="puedo_ver_botones()">
                                                     <recibirexpediente v-if="se_puede_recibir(movimiento.confirmado, movimiento.fecha_salida)" :num_expediente=num_expediente  link_sis="localhost:8000//admin/"></recibirexpediente>
-                                                    <button class="btn btn-danger" v-if="se_puede_recibir(movimiento.confirmado, movimiento.fecha_salida)" @click="revertir_movimiento(movimiento.id)">Devolver</button>
+                                                    <button class="btn btn-danger" v-if="se_puede_devolver(movimiento.confirmado, movimiento.fecha_salida, movimiento.orden )" @click="revertir_movimiento(movimiento.id)">Devolver</button>
                                                     <button v-if="se_puede_mover(movimiento.confirmado, movimiento.fecha_salida)" id="mover" @click="mostrar_mover_expediente" class="btn btn-success"> Mover</button>
-                                                    <button v-if="se_puede_mover(movimiento.confirmado, movimiento.fecha_salida)" id="archivar" @click="archivar_expediente" class="btn btn-dark"> Archivar</button>
+                                                    <button v-if="puedo_archivar(movimiento.confirmado, movimiento.fecha_salida)" id="archivar" @click="archivar_expediente" class="btn btn-dark"> Archivar</button>
+                                                </div>
                                                 
 
                                             </div>
@@ -137,7 +153,7 @@
                                                 </div>
                                                 <div class="form-group col-md-6">
                                                     <label for="oficina_destino">Oficina destino:</label>
-                                                    <select class="form-control" id="oficina_destino" v-model="nuevo_movimiento.id_area" :disabled="nuevo_movimiento.tramite_finalizado || nuevo_movimiento.bandera_subsanacion ">
+                                                    <select class="form-control" id="oficina_destino" v-model="nuevo_movimiento.id_area" :disabled="nuevo_movimiento.tramite_finalizado || nuevo_movimiento.bandera_observacion ">
                                                         <option v-for="option in oficinas" :key="option.id" v-bind:value="option.id">{{ option.nombre }}</option>
                                                     </select>
                                                 </div>
@@ -165,7 +181,7 @@
                                                     </div> -->
                                                     <label class="control-label" for="name">Tiene Observacion?</label>
                                                     <div class='checkbox-ios'>
-                                                        <input class='checkbox-ios__toggle' id='checkboxQuestion' name='checkboxQuestion' type='checkbox' v-model="nuevo_movimiento.bandera_observacion">
+                                                        <input class='checkbox-ios__toggle' id='checkboxQuestion' name='checkboxQuestion' type='checkbox' v-model="nuevo_movimiento.bandera_observacion" v-on:change="cambio_observacion">
                                                             <label class='checkbox-ios__label' for='checkboxQuestion'>
                                                             <span class='checkbox-ios__value left'>No tiene</span>
                                                             <span class='checkbox-ios__value right'>Si tiene</span>
@@ -178,13 +194,18 @@
                                                         <label for="observacion">Observacion:</label>
                                                         <textarea class="form-control" id="observacion" rows="3" v-model="nuevo_movimiento.observacion"></textarea>
                                                         <span class="limiter">{{charactersLeftobservacion}}</span>
+                                                     <div class="alert alert-warning" role="alert">
+                                                        <span>Al crear una observación en el movimiento, será requida una subsanación por parte del profesional de la agrimensura para poder resolver esta observación. Esto implica que el expediente debe ser transportado hacia el Departamento de mesa de entrada, para allí esperar al profesional de la agrimensura se haga presente en persona</span>
                                                     </div>
+                                                    </div>
+                                                   
+                                                    
                                                 </transition>
                                             </div>
                                             <hr>
-                                            <div class="form-group col-md-12">
+                                            <!-- <div class="form-group col-md-12">
                                                 <div class="form-group col-md-4">
-                                                    <!-- <p>Tiene Obsercacion?</p>
+                                                    <!- <p>Tiene Obsercacion?</p>
                                                     <div class="custom-control custom-radio custom-control-inline">
                                                         <label for="false" class="custom-control-label" >No, sin observacion</label>
                                                         <input type="radio" id="tiene_obs" value="false" class="custom-control-input" v-model="nuevo_movimiento.bandera_observacion">
@@ -192,7 +213,7 @@
                                                     <div class="custom-control custom-radio custom-control-inline">
                                                         <label for="true" class="custom-control-label">Si, tiene observacion</label>
                                                         <input type="radio" id="tiene_obs" value="true" class="custom-control-input" v-model="nuevo_movimiento.bandera_observacion">
-                                                    </div> -->
+                                                    </div> ->
                                                     <label class="control-label" for="name">Tiene Subsanacion?</label>
                                                     <div class='checkbox-ios'>
                                                         <input class='checkbox-ios__toggle' id='checkboxQuestiondos' name='checkboxQuestiondos' type='checkbox' v-model="nuevo_movimiento.bandera_subsanacion" v-on:change="cambio_subsanacion">
@@ -210,7 +231,7 @@
                                                         <span class="limiter">{{charactersLeftsubsanacion}}</span>
                                                     </div>
                                                 </transition>
-                                            </div>
+                                            </div> -->
                                                     
                                                 <div class="form-group col-md-6">
                                                    
@@ -271,12 +292,13 @@ import recibirexpediente from './RecibirExpedienteComponent.vue'
 
 moment.locale('es');
 export default {
-    props: ['num_expediente', 'link_sis'],
+    props: ['num_expediente', 'link_sis', 'mi_role', 'mi_area'],
     name : "movimientos",
     components: {recibirexpediente},
     
     data() {
         return {
+        subsanacion_a_mandar: null,
         puedo_ver: false,
         mostrar_modal: false,
         url: '',
@@ -339,6 +361,53 @@ export default {
       since(d){
           return moment(d).fromNow();
       },
+      puedo_ver_botones(){
+         
+        switch (this.mi_role) {
+            case "1": // soy admimn
+                return true;
+                break;
+            case "3": // soy agrimensor
+                return false;
+                break;
+            case "4": // soy agente dgr
+                return true;
+                break;
+            case "5": // soy agente dgr
+                return true;
+                break;
+            case "6": // soy agente dgr
+                return true;
+                break;
+            default:
+                console.log("no entre en ninguna");
+                return false;
+        };
+        },
+        puedo_archivar(conf,fecha_salida){
+            switch (this.mi_role) {
+                case 1: // soy admimn
+                    return true;
+                    break;
+                case 3: // soy agrimensor
+                    return false;
+                    break;
+                case 4: // soy agente dgr
+                    if(this.mi_area == 9) //soy de archivo
+                        return true;
+                    else return false;
+                    break;
+                case 5: // soy agente directivo
+                    return false;
+                    break;
+                case 6: // soy mesa de entrada
+                    return false;
+                    break;
+                default:
+                    return false;
+            };
+
+        },
       mostrar_ver_movimientos() {
         if(this.mostrar_modal == false)
         {
@@ -347,6 +416,11 @@ export default {
                 this.movimientos_del_expediente = res.data;
                 console.log('mis datos son:\n');
                 console.log(this.movimientos_del_expediente.length);
+                /*console.log(this.movimientos_del_expediente[0].subsanacion);
+                var algo = this.movimientos_del_expediente[0].subsanacion;
+                if(algo === null)
+                    console.log("es vacio");
+                else console.log("No vacio");*/
                 this.mostrar_timeline = true;
                 this.mostrar_formulario_movimiento=false;
                 if(this.movimientos_del_expediente.length != 0)
@@ -354,7 +428,7 @@ export default {
                     this.mostrar_timeline_sin_datos = false;
                 }
                 else this.mostrar_timeline_sin_datos = true;
-            })
+            });
 
         } 
             
@@ -370,6 +444,25 @@ export default {
                 console.log('\nlos datos del expediente es:\n');
                 console.log(this.expediente_a_archivar);
                 toastr.success('El expediente se archivó correctamente');
+                setInterval(location.reload(true),5000);
+            });
+            this.mostrar_modal = false;
+            this.mostrar_timeline = false;
+            this.mostrar_formulario_movimiento = false;
+        }
+        else{// NO voy a archivar
+            alert("Nada cambió");
+        }
+      },
+      mandar_subsanacion(id) {
+        const subsanacion_a_mandar_data = { subsanacion: this.subsanacion_a_mandar };
+        var returnVal = confirm("Esta seguro de subsanar este movimiento?");
+        console.log(returnVal);
+        if(returnVal.toString() == "true"){ // voy a subsanar este movimiento
+            axios.post('/subsanar_movimiento/'+id, subsanacion_a_mandar_data).then(res=>{
+                console.log('\nlos datos del subsanacion es:\n');
+                console.log(res.data);
+                toastr.success('El movimiento se subsano correctamente');
                 setInterval(location.reload(true),5000);
             });
             this.mostrar_modal = false;
@@ -499,6 +592,13 @@ export default {
             return false;
             
         },
+        se_puede_devolver(conf,fecha_salida, orden){
+            if((conf != 1) && (fecha_salida == null) && (orden > 1) )
+                return true;
+            return false;
+            
+        },
+        
         
         se_puede_mover(conf,fecha_salida){
             if((conf == 1) && (fecha_salida == null) )
@@ -506,7 +606,7 @@ export default {
             return false;
             
         },
-        cambio_subsanacion() {
+        /*cambio_subsanacion() {
             console.log('el valor es');
             console.log(this.nuevo_movimiento.subsanacion);
             if( this.nuevo_movimiento.bandera_subsanacion == true )
@@ -521,6 +621,23 @@ export default {
             }
                 
 
+        },*/
+        
+        cambio_observacion() {
+            console.log('el valor es');
+            console.log(this.nuevo_movimiento.bandera_observacion);
+            if( this.nuevo_movimiento.bandera_observacion == true )
+            {
+                this.nuevo_movimiento.id_area = 3;
+                this.nuevo_movimiento.tramite_finalizado = false;
+            }
+            if( this.nuevo_movimiento.bandera_observacion == false )
+            {
+                this.nuevo_movimiento.observacion = '';
+                this.nuevo_movimiento.tramite_finalizado = false;
+            }
+                
+
         },
 
         cambio_finalizo() {
@@ -530,6 +647,8 @@ export default {
             {
                 this.nuevo_movimiento.id_area = 9;
                 this.nuevo_movimiento.bandera_subsanacion = false;
+                this.nuevo_movimiento.bandera_observacion = false;
+                this.nuevo_movimiento.observacion = '';
 
             }
                 
@@ -592,6 +711,7 @@ export default {
             });
 
         },
+        
         /*,
         agrimensor(){
             axios.get('/soy_agrimensor/').then(function (response) {

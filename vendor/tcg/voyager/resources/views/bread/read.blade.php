@@ -124,8 +124,10 @@
                                 )
                                 {{ "id=div".$row->field }}
                                 @endif
+                                
                         @endif
                         >
+                        
                             @if (isset($row->details->view))
                                 @include($row->details->view, ['row' => $row, 'dataType' => $dataType, 'dataTypeContent' => $dataTypeContent, 'content' => $dataTypeContent->{$row->field}, 'action' => 'read', 'view' => 'read', 'options' => $row->details])
                             @elseif($row->type == "image")
@@ -190,11 +192,29 @@
                                 {!! $dataTypeContent->{$row->field} !!}
                             @elseif($row->type == 'file')
                                 @if(json_decode($dataTypeContent->{$row->field}))
+                                    @php 
+                                        $iteracion = 0;
+                                    @endphp
                                     @foreach(json_decode($dataTypeContent->{$row->field}) as $file)
-                                        <a href="{{ Storage::disk(config('voyager.storage.disk'))->url($file->download_link) ?: '' }}">
+                                    @php
+                                        $link_pdf = Storage::disk(config('voyager.storage.disk'))->url($file->download_link) ?: '';
+                                    @endphp
+                                        <a target="_blank" href="{{ Storage::disk(config('voyager.storage.disk'))->url($file->download_link) ?: '' }}">
                                             {{ $file->original_name ?: '' }}
                                         </a>
+                                        <a class="btn btn-sm btn-success" title="Ver documento" data-toggle="modal" data-target="#modalpdf_{{$row->field}}_{{$iteracion}}">Ver Documento</a>
+                                        {{-- Modal --}}
+                                        <div id="modalpdf_{{$row->field}}_{{$iteracion}}" class="modal fade bd-example-modal-lg" style="width:90%;height:90%;" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg" style="width: 90%; height:90%; display: block; padding-right: 15px;">
+                                                <div class="modal-content" style="width: 100%; height:100%; display: block; padding-right: 15px;">
+                                                    <embed style="width: 100%; height:100%; display: block; padding-right: 15px;" src="{{$link_pdf}}">
+                                                </div>
+                                            </div>
+                                        </div>
                                         <br/>
+                                        @php 
+                                        $iteracion++;
+                                    @endphp
                                     @endforeach
                                 @else
                                     @if ($dataType->name == "expedientes")

@@ -267,7 +267,7 @@
                                                 @endif
                                                 <!-- estoy en el abm de expedientes por tanto pongo el componente de movimientos -->
                                                 @if( ($dataType->name == "expedientes") && ($row->field == "numero_expediente") )
-                                                    <movimientos-expediente num_expediente="{{ $data->{$row->field} }}" link_sis="{{asset('admin/')}}"></movimientos-expediente>
+                                                    <movimientos-expediente num_expediente="{{ $data->{$row->field} }}" link_sis="{{asset('admin/')}}" mi_role="{{Auth::user()->role_id}}" mi_area="{{Auth::user()->id_area}}"></movimientos-expediente>
                                                     {{-- <recibir-expdiente num_expediente="{{ $data->{$row->field} }}" link_sis="{{asset('admin/')}}"></recibir-expdiente> --}}
                                                 @endif
                                             </td>

@@ -147,7 +147,60 @@ class MovimientosController extends Controller
     {
         //
     }
+
     
+    public function subsanar_movimiento_desde_componente(Request $request, $id_mov){
+        /* PASOS A SEGUIR PARA HACER ESTA FUNCION:
+        Paso 1 - Buscar el movimiento actual
+        Paso 2 - guardar el log
+        Paso 3 - modificar el ultimo movimiento
+        Paso 4 - actualizar el registro
+        Paso 5 responder en base a los resultados
+        */
+        $movimiento_a_subsanar = Movimiento::find($id_mov);
+        //var_dump($request->subsanacion);
+        //var_dump("-----------------------");
+        //Paso 2 - guardar el log
+        $valor_anteriores ="
+        {
+            'orden': ".(string)$movimiento_a_subsanar->orden.",
+            'fecha_entrada': '".(string)$movimiento_a_subsanar->fecha_entrada."',
+            'fecha_salida': '".(string)$movimiento_a_subsanar->fecha_salida."',
+            'comentario': '".(string)$movimiento_a_subsanar->comentario."',
+            'bandera_observacion': ".(string)$movimiento_a_subsanar->bandera_observacion.",
+            'observacion': '".(string)$movimiento_a_subsanar->observacion."',
+            'subsanacion': '".(string)$movimiento_a_subsanar->subsanacion."',
+            'id_area': ".(string)$movimiento_a_subsanar->id_area.",
+            'id_expediente': ".(string)$movimiento_a_subsanar->id_expediente.",
+            'tramite_finalizado': ".(string)$movimiento_a_subsanar->tramite_finalizado.",
+            'confirmado': ".(string)$movimiento_a_subsanar->confirmado.",
+            'fecha_confirmacion': '".(string)$movimiento_a_subsanar->fecha_confirmacion."',
+            'quien_confirmacion': ".(string)$movimiento_a_subsanar->quien_confirmacion.",
+            'comentario_confirmacion': '".(string)$movimiento_a_subsanar->comentario_confirmacion."',
+            'created_by': ".(string)$movimiento_a_subsanar->created_by.",
+        }";
+        $log = new Log;
+        $log->nombretabla = 'Movimientos';
+        $log->accion = 'subsanar';
+        $log->valores_nuevos = null;
+        $log->valores_viejos = $valor_anteriores;
+        $log->id_modificado = $id_mov ;
+        $log->estado = 'sin ver'; // "sin ver" - "sin aprobar" - "apronado" - "devuelto" - "archivado"
+        $log->created_by = Auth::user()->id;
+        $resultado2 = $log->save();
+        //Paso 3 - modificar el ultimo movimiento
+        $movimiento_a_subsanar->subsanacion = $request->subsanacion;
+        //Paso 4 - actualizar el registro
+        $resultado3 = $movimiento_a_subsanar->save();
+        //var_dump($resultado2);
+        //var_dump("-----------------------");
+        //Paso 4 - buscar el movimiento anterior
+        //Paso 7 responder en base a los resultados
+        if($resultado3)
+            return response('ok', 200);
+        else return response('mal', 200);
+    }
+
     public function devolver_movimiento_desde_component($id_mov){
         /* PASOS A SEGUIR PARA HACER ESTA FUNCION:
         Paso 1 - Buscar el movimiento actual
@@ -240,8 +293,8 @@ class MovimientosController extends Controller
         $ultimo_movimiento->fecha_salida = date("Y-m-d H:i:s");
         $resultado_paso_3 = $ultimo_movimiento->save();
         //Paso 4 - crear nuevo movimiento
-        $bandera_observacion = $request->bandera_observacion === 'true'? true: false;
-        $bandera_fin = $request->tramite_finalizado === 'true'? true: false;
+        $bandera_observacion = $request->bandera_observacion == 'true'? true: false;
+        $bandera_fin = $request->tramite_finalizado == 'true'? true: false;
         $movimento_nuevo = new Movimiento;
         if($bandera_fin == true) // entonces se termina el expediente
         {
