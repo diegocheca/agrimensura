@@ -57,6 +57,10 @@ Route::post('/subsanar_movimiento/{id}', [MovimientosController::class, "subsana
 //areas
 
 
+
+
+
+
 //register and login
 Route::get('/register/verify/{code}', 'App\Http\Controllers\Auth\VerificationController@verify');
 

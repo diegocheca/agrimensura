@@ -97,6 +97,7 @@ Route::group(['as' => 'voyager.'], function () {
             'prefix' => 'media',
         ], function () use ($namespacePrefix) {
             Route::get('/', ['uses' => $namespacePrefix.'VoyagerMediaController@index',              'as' => 'index']);
+            Route::get('/files_profesionales', ['uses' => $namespacePrefix.'VoyagerMediaController@media_files_profesionales', 'as' => 'files_profesionales']);
             Route::get('/files_expedientes/{id_exp}', ['uses' => $namespacePrefix.'VoyagerMediaController@media_files_expediente',              'as' => 'files_expediente']);
             Route::get('/files_expedientes_por_num/{num_exp}', ['uses' => $namespacePrefix.'VoyagerMediaController@media_files_expediente_por_num',              'as' => 'files_expediente_num']);
             

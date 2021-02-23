@@ -30,7 +30,28 @@
 
         </div>
         <div id="adminmenu">
+            
+            @if (Auth::user()->role_id == 3)
+            {{-- es para el caso de ser professional de la agrimensura  --}}
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="{{url('admin/media/files_profesionales')}}">
+                        <span class="voyager-download"></span>
+                        <span class="title">Bandeja de entrada</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{url('admin/expedientes')}}">
+                        <span class="voyager-archive"></span>
+                        <span class="title">Expedientes</span>
+                    </a>
+                </li>
+            </ul>    
+            @else
             <admin-menu :items="{{ menu('admin', '_json') }}"></admin-menu>
+
+            @endif
+            
         </div>
     </nav>
 </div>

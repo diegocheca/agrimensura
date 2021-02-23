@@ -782,6 +782,7 @@ class VoyagerBaseController extends Controller
             Paso 7- crear log
             Paso 8- Comprobar si estoy creando una persona de mesa de entrada. si esasi ,entonces
             debo asignarle el id_area = 3 y role_id=6
+            Paso 9- creo la carpeta personal de archivos para el profesional de la agrimensura , en caso de ser este role_id
             */
 
             //Inicia Paso 5 - Mandar email de verificacion 
@@ -804,6 +805,12 @@ class VoyagerBaseController extends Controller
                 $usuario->id_area = 3;
             //Fin paso 
             $usuario->save();
+            //PAso 9 
+            //creacion de la carpeta del expediente en el servidor
+            $path = "archivos_agrimensores/pa".(string)$usuario->id;
+            //$result = File::makeDirectory(storage_path($path));
+            $result9 = File::makeDirectory(public_path().'/'.$path,0777,true);
+            //Fin paso 9
             Mail::to($request->get('email'))->send(new VerificationEmail($codigo, $request->get('name') ,$request->get('cuil')));//nueva
             //Fin paso 5
             //Paso 7 - crear log
