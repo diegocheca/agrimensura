@@ -30,6 +30,9 @@ class VoyagerMediaController extends Controller
     {
         // Check permission
         $this->authorize('browse_media');
+        if(Auth::user()->role_id == 3) //soy agrimensor y no puedo entrar
+            return redirect('admin/media/files_profesionales');
+        else
         return Voyager::view('voyager::media.index');
     }
     public function media_files_expediente($id_exp)

@@ -46,6 +46,19 @@
                         <span class="title">Expedientes</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{url('admin/users').'/'.Auth::user()->id.'/edit'}}">
+                        <span class="voyager-person"></span>
+                        <span class="title">Perfil</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{url('admin/users').'/'.Auth::user()->id.'/edit'}}">
+                        <span class="voyager-megaphone"></span>
+                        <span class="title">Notificaciones</span>
+                    </a>
+                </li>
+                
             </ul>    
             @else
             <admin-menu :items="{{ menu('admin', '_json') }}"></admin-menu>

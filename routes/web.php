@@ -10,6 +10,7 @@ use App\Http\Controllers\ExcelCSVController;
 use App\Http\Controllers\ExpedienteController;
 use App\Expediente;
 use App\Http\Controllers\BuscadorController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,9 +58,14 @@ Route::post('/subsanar_movimiento/{id}', [MovimientosController::class, "subsana
 //areas
 
 
-
-
-
+//Pusher
+Route::get('/ver_pusher', [NotificationController::class, "index"])->name('ver-notificaciones');
+Route::get('/enviar_notificacion', [NotificationController::class, "enviar_una_notificacion"])->name('enviar-notificacion');
+Route::get('test', function () {
+    event(new App\Events\StatusLiked('Someone'));
+    //event(new App\Events\MyEvent('hello world'));
+    return "Event htttas been sent!";
+});
 
 //register and login
 Route::get('/register/verify/{code}', 'App\Http\Controllers\Auth\VerificationController@verify');
